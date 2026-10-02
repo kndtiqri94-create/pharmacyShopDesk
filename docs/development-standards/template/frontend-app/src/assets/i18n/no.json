@@ -1,0 +1,286 @@
+{
+  "common": {
+    "selectDepartment": "Velg avdeling",
+    "selectYear": "Velg år",
+    "selectCategory": "Velg kategori",
+    "selectSubCategory": "Velg underkategori",
+    "actions": {
+      "save": "Lagre",
+      "update": "Oppdater",
+      "cancel": "Avbryt",
+      "edit": "Rediger",
+      "delete": "Slett",
+      "add": "Legg til",
+      "search": "Søk",
+      "filter": "Filtrer",
+      "generate": "Generer",
+      "close": "Lukk",
+      "back": "Tilbake",
+      "next": "Neste",
+      "previous": "Forrige",
+      "submit": "Send inn",
+      "reset": "Tilbakestill",
+      "confirm": "Bekreft",
+      "yes": "Ja",
+      "no": "Nei",
+      "login": "Logg inn",
+      "remove": "Fjern"
+    },
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "pending": "Venter",
+      "approved": "Godkjent",
+      "rejected": "Avvist",
+      "draft": "Kladd",
+      "completed": "Fullført"
+    },
+    "messages": {
+      "loading": "Laster...",
+      "noRecordsFound": "Ingen poster funnet.",
+      "searching": "Søker...",
+      "error": "En feil oppstod",
+      "success": "Operasjonen ble fullført",
+      "warning": "Advarsel",
+      "info": "Informasjon"
+    },
+    "validation": {
+      "required": "Dette feltet er påkrevd",
+      "email": "Vennligst oppgi en gyldig e-postadresse",
+      "minLength": "Minimum lengde er {{min}} tegn",
+      "maxLength": "Maksimum lengde er {{max}} tegn",
+      "invalidFormat": "Ugyldig format"
+    }
+  },
+  "navigation": {
+    "home": "Hjem",
+    "dashboard": "Dashbord",
+    "admin": "Administrasjon",
+    "users": "Brukere",
+    "departments": "Avdelinger",
+    "budgets": "Budjetter",
+    "budgetCategories": "Budsjettkategorier",
+    "budgetSubcategories": "Budsjettunderkategorier",
+    "budgetRequests": "Budsjettforespørsler",
+    "budgetReport": "Budsjettrapport",
+    "reports": "Rapporter",
+    "settings": "Innstillinger"
+  },
+  "pages": {
+    "home": {
+      "title": "Velkommen til budsjettstyringssystemet",
+      "subtitle": "Administrer avdelingsbudsjetter effektivt"
+    },
+    "userManagement": {
+      "title": "Brukeradministrasjon",
+      "subtitle": "Administrer systembrukere",
+      "addUser": "Legg til ny bruker",
+      "editUser": "Rediger bruker",
+      "filterUsers": "Filtrer brukere"
+    },
+    "departmentManagement": {
+      "title": "Avdelingsadministrasjon",
+      "subtitle": "Administrer organisasjonsavdelinger",
+      "addDepartment": "Legg til ny avdeling",
+      "editDepartment": "Rediger avdeling"
+    },
+    "budgetManagement": {
+      "title": "Budsjettadministrasjon",
+      "subtitle": "Administrer avdelingsbudsjetter for regnskapsår",
+      "generateBudgets": "Generer budsjetter",
+      "generateMissingBudgets": "Generer manglende budsjetter"
+    },
+    "budgetCategoryManagement": {
+      "title": "Budsjettkategoriadministrasjon",
+      "subtitle": "Administrer budsjettkategorier",
+      "addCategory": "Legg til ny kategori",
+      "editCategory": "Rediger kategori"
+    },
+    "budgetSubcategoryManagement": {
+      "title": "Budsjettunderkategoriadministrasjon",
+      "subtitle": "Administrer budsjettunderkategorier",
+      "addSubcategory": "Legg til ny underkategori",
+      "editSubcategory": "Rediger underkategori"
+    },
+    "budgetRequests": {
+      "title": "Budsjettforespørselsystem",
+      "subtitle": "Opprett budsjettforespørsler for avdelinger",
+      "fiscalYear": "Regnskapsår",
+      "department": "Avdeling",
+      "addBudgetSubCategory": "Legg til budsjettunderkategori",
+      "saveBudgetRequest": "Lagre budsjettforespørsel",
+      "noBudgetSubCategories": "Ingen budsjettunderkategorier lagt til. Klikk 'Legg til budsjettunderkategori' for å komme i gang.",
+      "noBudgetRecordsMessage": "Ingen budsjettposter funnet for det valgte året og avdelingen. Budsjettforespørsler kan kun opprettes når budsjettposter eksisterer."
+    }
+  },
+  "forms": {
+    "user": {
+      "email": "E-post",
+      "displayName": "Visningsnavn",
+      "role": "Rolle",
+      "isActive": "Aktiv bruker",
+      "departmentAssignments": "Avdelingsfordelinger",
+      "selectDepartment": "Velg avdeling",
+      "primaryDepartment": "Hovedavdeling",
+      "addDepartment": "Legg til avdeling",
+      "assignedDepartments": "Tildelte avdelinger:",
+      "primary": "Hoved",
+      "uncheckToDeactivate": "Fjern avmerking for å deaktivere denne brukerkontoen",
+      "clickToSetPrimary": "Klikk på en avdelingschip for å sette den som hovedavdeling, eller bruk fjern-knappen for å fjerne tildeling",
+      "selectCategory": "-- Velg en kategori --",
+      "selectDepartmentPlaceholder": "-- Velg en avdeling --",
+      "selectSubCategory": "-- Velg en underkategori --"
+    },
+    "department": {
+      "code": "Kode",
+      "name": "Navn",
+      "isFinanceDepartment": "Finansavdeling",
+      "financeDepartmentHelp": "Merk av hvis denne avdelingen håndterer finansielle operasjoner"
+    },
+    "budgetCategory": {
+      "name": "Navn",
+      "code": "Kode",
+      "accountCode": "Kontokode",
+      "description": "Beskrivelse",
+      "isActive": "Aktiv kategori",
+      "uncheckToDeactivate": "Fjern avmerking for å deaktivere denne budsjettkategorien"
+    },
+    "budgetSubcategory": {
+      "name": "Navn",
+      "code": "Kode",
+      "category": "Kategori",
+      "accountCode": "Kontokode",
+      "description": "Beskrivelse",
+      "isActive": "Aktiv underkategori",
+      "uncheckToDeactivate": "Fjern avmerking for å deaktivere denne budsjettunderkategorien"
+    },
+    "budget": {
+      "fiscalYear": "Regnskapsår",
+      "month": "Måned",
+      "department": "Avdeling",
+      "status": "Status",
+      "createdBy": "Opprettet av",
+      "createdDate": "Opprettet dato",
+      "allDepartments": "Alle avdelinger",
+      "allYears": "Alle år",
+      "allMonths": "Alle måneder"
+    },
+    "budgetReport": {
+      "title": "Budsjettrapport - Konsolidert visning",
+      "subtitle": "Omfattende budsjettallokeringsrapport på tvers av alle avdelinger",
+      "departmentAccess": "Avdelingsadgang:",
+      "departmentAccessInfo": "Du kan se budsjettinformasjon for alle dine tildelte avdelinger.",
+      "user": "Bruker:",
+      "fiscalYear": "Regnskapsår",
+      "selectAll": "Velg alle",
+      "clearAll": "Fjern alle",
+      "export": "Eksporter",
+      "print": "Skriv ut",
+      "departmentSelection": "Avdelingsvalg",
+      "loadingDepartments": "Laster avdelinger...",
+      "reportSummary": "Rapportoppsummering",
+      "totalAllocation": "Total allokering",
+      "departments": "Avdelinger",
+      "categories": "Kategorier",
+      "records": "Poster",
+      "departmentSummary": "Avdelingsoppsummering",
+      "categoriesLabel": "kategorier",
+      "loadingReport": "Laster budsjettrapportdata...",
+      "noDataFound": "Ingen budsjettallokeringsdata funnet for det valgte året og avdelingene.",
+      "budgetAllocationsReport": "Budsjettallokeringsrapport",
+      "fiscalYearLabel": "Regnskapsår:",
+      "departmentsSelected": "Avdeling(er) valgt",
+      "tableHeaders": {
+        "category": "Kategori",
+        "subcategory": "Underkategori",
+        "department": "Avdeling",
+        "total": "Total"
+      },
+      "messages": {
+        "failedToLoadDepartments": "Kunne ikke laste avdelinger",
+        "failedToLoadBudgetReport": "Kunne ikke laste budsjettrapportdata",
+        "exportFunctionalityComingSoon": "Eksportfunksjonalitet kommer snart"
+      }
+    }
+  },
+  "placeholders": {
+    "email": "F.eks. john.doe@bedrift.no",
+    "displayName": "F.eks. John Doe",
+    "departmentCode": "F.eks. HR",
+    "departmentName": "F.eks. Personalavdeling",
+    "categoryName": "F.eks. Kontorrekvisita",
+    "categoryCode": "F.eks. KONTOR_REK",
+    "accountCode": "F.eks. 5001",
+    "subcategoryName": "F.eks. Papirprodukter",
+    "subcategoryCode": "F.eks. PAPIR_PROD",
+    "subcategoryAccountCode": "F.eks. 5001-01",
+    "categoryDescription": "Skriv inn kategoribeskrivelse",
+    "subcategoryDescription": "Skriv inn underkategoribeskrivelse",
+    "budgetRequestReason": "Skriv inn årsak til budsjettforespørsel"
+  },
+  "budgetGeneration": {
+    "title": "Generer budsjetter",
+    "budgetAnalysis": "Budsjettanalyse for {{year}}",
+    "totalPossibleBudgets": "Totalt mulige budsjetter:",
+    "existingBudgets": "Eksisterende budsjetter:",
+    "missingBudgets": "Manglende budsjetter:",
+    "searchingBudgets": "Søker etter eksisterende budsjetter...",
+    "missingBudgetsToCreate": "Manglende budsjetter å opprette:",
+    "allBudgetsExist": "Alle budsjetter for {{year}} eksisterer allerede!",
+    "warningMessage": "Dette vil opprette {{count}} manglende budsjett(er) for det valgte regnskapsåret. Kun manglende budsjetter vil bli opprettet (eksisterende budsjetter vil ikke bli duplisert).",
+    "fiscalYearRequired": "Regnskapsår er påkrevd",
+    "fiscalYearRange": "Regnskapsår må være mellom 2000 og 2100",
+    "generateMissingBudgets": "Generer manglende budsjetter"
+  },
+  "months": {
+    "january": "Januar",
+    "february": "Februar",
+    "march": "Mars",
+    "april": "April",
+    "may": "Mai",
+    "june": "Juni",
+    "july": "Juli",
+    "august": "August",
+    "september": "September",
+    "october": "Oktober",
+    "november": "November",
+    "december": "Desember",
+    "short": {
+      "jan": "JAN",
+      "feb": "FEB",
+      "mar": "MAR",
+      "apr": "APR",
+      "may": "MAI",
+      "jun": "JUN",
+      "jul": "JUL",
+      "aug": "AUG",
+      "sep": "SEP",
+      "oct": "OKT",
+      "nov": "NOV",
+      "dec": "DES"
+    }
+  },
+  "userRoles": {
+    "admin": "Administrator",
+    "manager": "Leder",
+    "user": "Bruker",
+    "finance": "Finans"
+  },
+  "tableHeaders": {
+    "email": "E-post",
+    "displayName": "Visningsnavn",
+    "role": "Rolle",
+    "departments": "Avdelinger",
+    "status": "Status",
+    "fiscalYear": "Regnskapsår",
+    "month": "Måned",
+    "department": "Avdeling",
+    "createdBy": "Opprettet av",
+    "createdDate": "Opprettet dato",
+    "actions": "Handlinger",
+    "budgetCategory": "Budsjettkategori",
+    "budgetSubCategory": "Budsjettunderkategori",
+    "total": "Total",
+    "reason": "Årsak"
+  }
+}

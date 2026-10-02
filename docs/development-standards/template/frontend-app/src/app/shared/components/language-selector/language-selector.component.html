@@ -1,0 +1,16 @@
+<button mat-button [matMenuTriggerFor]="languageMenu" class="language-selector-btn">
+  <span class="language-flag" [class]="'flag-' + currentLanguage?.flag"></span>
+  <span class="language-code">{{ currentLanguage?.code?.toUpperCase() }}</span>
+</button>
+
+<mat-menu #languageMenu="matMenu" class="language-menu">
+  @for (language of availableLanguages; track language.code) {
+      <button 
+          mat-menu-item 
+          (click)="onLanguageSelect(language)"
+          [class.active]="language.code === currentLanguage?.code">
+          <span class="language-flag" [class]="'flag-' + language.flag"></span>
+          <span class="language-name">{{ language.name }}</span>
+      </button>
+  }
+</mat-menu>

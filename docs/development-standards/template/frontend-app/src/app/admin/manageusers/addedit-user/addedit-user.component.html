@@ -1,0 +1,37 @@
+<div class="p-3 ps-4 pe-4">
+    <div class="row">
+        <div class="col-12 pb-2">
+            <div class="system-model-title">
+                {{ pageButtonTitle | translate }}
+            </div>
+        </div>
+    </div>
+    <form class="example-form">
+        <div class="row mt-3 mb-2">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <mat-form-field class="w-100">
+                    <mat-label>{{ 'forms.user.email' | translate }}</mat-label>
+                    <input name="email" autocomplete="off" matInput [placeholder]="'placeholders.email' | translate" required
+                        [(ngModel)]="data.email" type="email">
+                </mat-form-field>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <mat-form-field class="w-100">
+                    <mat-label>{{ 'forms.user.displayName' | translate }}</mat-label>
+                    <input name="name" autocomplete="off" matInput [placeholder]="'placeholders.displayName' | translate" required
+                        [(ngModel)]="data.name">
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <div class="row mt-3 mb-2">
+        <div class="col-12">
+            <div style="margin-bottom: 10px;">
+                <button mat-flat-button class="primary-button" [disabled]="isFormValid" [mat-dialog-close]="data"
+                    color="accent">
+                    <span>{{ saveButtonTitle | translate }}</span> </button>
+                <button class="ms-2" mat-flat-button (click)="onNoClick()">{{ 'common.actions.cancel' | translate }}</button>
+            </div>
+        </div>
+    </div>
+</div>

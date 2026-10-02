@@ -1,0 +1,286 @@
+{
+  "common": {
+    "selectDepartment": "Select Department",
+    "selectYear": "Select Year",
+    "selectCategory": "Select Category",
+    "selectSubCategory": "Select Subcategory",
+    "actions": {
+      "save": "Save",
+      "update": "Update",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "delete": "Delete",
+      "add": "Add",
+      "search": "Search",
+      "filter": "Filter",
+      "generate": "Generate",
+      "close": "Close",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous",
+      "submit": "Submit",
+      "reset": "Reset",
+      "confirm": "Confirm",
+      "yes": "Yes",
+      "no": "No",
+      "login": "Login",
+      "remove": "Remove"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "draft": "Draft",
+      "completed": "Completed"
+    },
+    "messages": {
+      "loading": "Loading...",
+      "noRecordsFound": "No records found.",
+      "searching": "Searching...",
+      "error": "An error occurred",
+      "success": "Operation completed successfully",
+      "warning": "Warning",
+      "info": "Information"
+    },
+    "validation": {
+      "required": "This field is required",
+      "email": "Please enter a valid email address",
+      "minLength": "Minimum length is {{min}} characters",
+      "maxLength": "Maximum length is {{max}} characters",
+      "invalidFormat": "Invalid format"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "admin": "Administration",
+    "users": "Users",
+    "departments": "Departments",
+    "budgets": "Budgets",
+    "budgetCategories": "Budget Categories",
+    "budgetSubcategories": "Budget Subcategories",
+    "budgetRequests": "Budget Requests",
+    "budgetReport": "Budget Report",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "pages": {
+    "home": {
+      "title": "Welcome to Budget Management System",
+      "subtitle": "Manage your department budgets efficiently"
+    },
+    "userManagement": {
+      "title": "User Management",
+      "subtitle": "Manage system users",
+      "addUser": "Add new User",
+      "editUser": "Edit User",
+      "filterUsers": "Filter Users"
+    },
+    "departmentManagement": {
+      "title": "Department Management",
+      "subtitle": "Manage organizational departments",
+      "addDepartment": "Add new Department",
+      "editDepartment": "Edit Department"
+    },
+    "budgetManagement": {
+      "title": "Budget Management",
+      "subtitle": "Manage department budgets for financial years",
+      "generateBudgets": "Generate Budgets",
+      "generateMissingBudgets": "Generate Missing Budgets"
+    },
+    "budgetCategoryManagement": {
+      "title": "Budget Category Management",
+      "subtitle": "Manage budget categories",
+      "addCategory": "Add new Category",
+      "editCategory": "Edit Category"
+    },
+    "budgetSubcategoryManagement": {
+      "title": "Budget Subcategory Management",
+      "subtitle": "Manage budget subcategories",
+      "addSubcategory": "Add new Subcategory",
+      "editSubcategory": "Edit Subcategory"
+    },
+    "budgetRequests": {
+      "title": "Budget Request System",
+      "subtitle": "Create budget requests for departments",
+      "fiscalYear": "Fiscal Year",
+      "department": "Department",
+      "addBudgetSubCategory": "Add Budget Subcategory",
+      "saveBudgetRequest": "Save Budget Request",
+      "noBudgetSubCategories": "No budget subcategories added. Click 'Add Budget Subcategory' to get started.",
+      "noBudgetRecordsMessage": "No budget records found for the selected year and department. Budget requests can only be created when budget records exist."
+    }
+  },
+  "forms": {
+    "user": {
+      "email": "Email",
+      "displayName": "Display Name",
+      "role": "Role",
+      "isActive": "Active User",
+      "departmentAssignments": "Department Assignments",
+      "selectDepartment": "Select Department",
+      "primaryDepartment": "Primary Department",
+      "addDepartment": "Add Department",
+      "assignedDepartments": "Assigned Departments:",
+      "primary": "Primary",
+      "uncheckToDeactivate": "Uncheck to deactivate this user account",
+      "clickToSetPrimary": "Click on a department chip to set it as primary, or use the remove button to unassign",
+      "selectCategory": "-- Select a category --",
+      "selectDepartmentPlaceholder": "-- Select a department --",
+      "selectSubCategory": "-- Select a subcategory --"
+    },
+    "department": {
+      "code": "Code",
+      "name": "Name",
+      "isFinanceDepartment": "Finance Department",
+      "financeDepartmentHelp": "Check this if this department handles financial operations"
+    },
+    "budgetCategory": {
+      "name": "Name",
+      "code": "Code",
+      "accountCode": "Account Code",
+      "description": "Description",
+      "isActive": "Active Category",
+      "uncheckToDeactivate": "Uncheck to deactivate this budget category"
+    },
+    "budgetSubcategory": {
+      "name": "Name",
+      "code": "Code",
+      "category": "Category",
+      "accountCode": "Account Code",
+      "description": "Description",
+      "isActive": "Active Subcategory",
+      "uncheckToDeactivate": "Uncheck to deactivate this budget subcategory"
+    },
+    "budget": {
+      "fiscalYear": "Fiscal Year",
+      "month": "Month",
+      "department": "Department",
+      "status": "Status",
+      "createdBy": "Created By",
+      "createdDate": "Created Date",
+      "allDepartments": "All Departments",
+      "allYears": "All Years",
+      "allMonths": "All Months"
+    },
+    "budgetReport": {
+      "title": "Budget Report - Consolidated View",
+      "subtitle": "Comprehensive budget allocation report across all departments",
+      "departmentAccess": "Department Access:",
+      "departmentAccessInfo": "You can view budget information for all your assigned departments.",
+      "user": "User:",
+      "fiscalYear": "Fiscal Year",
+      "selectAll": "Select All",
+      "clearAll": "Clear All",
+      "export": "Export",
+      "print": "Print",
+      "departmentSelection": "Department Selection",
+      "loadingDepartments": "Loading departments...",
+      "reportSummary": "Report Summary",
+      "totalAllocation": "Total Allocation",
+      "departments": "Departments",
+      "categories": "Categories",
+      "records": "Records",
+      "departmentSummary": "Department Summary",
+      "categoriesLabel": "categories",
+      "loadingReport": "Loading budget report data...",
+      "noDataFound": "No budget allocation data found for the selected year and departments.",
+      "budgetAllocationsReport": "Budget Allocations Report",
+      "fiscalYearLabel": "Fiscal Year:",
+      "departmentsSelected": "Department(s) Selected",
+      "tableHeaders": {
+        "category": "Category",
+        "subcategory": "Subcategory",
+        "department": "Department",
+        "total": "Total"
+      },
+      "messages": {
+        "failedToLoadDepartments": "Failed to load departments",
+        "failedToLoadBudgetReport": "Failed to load budget report data",
+        "exportFunctionalityComingSoon": "Export functionality will be implemented soon"
+      }
+    }
+  },
+  "placeholders": {
+    "email": "Ex. john.doe@company.com",
+    "displayName": "Ex. John Doe",
+    "departmentCode": "Ex. HR",
+    "departmentName": "Ex. Human Resource Department",
+    "categoryName": "Ex. Office Supplies",
+    "categoryCode": "Ex. OFFICE_SUP",
+    "accountCode": "Ex. 5001",
+    "subcategoryName": "Ex. Paper Products",
+    "subcategoryCode": "Ex. PAPER_PROD",
+    "subcategoryAccountCode": "Ex. 5001-01",
+    "categoryDescription": "Enter category description",
+    "subcategoryDescription": "Enter subcategory description",
+    "budgetRequestReason": "Enter reason for budget request"
+  },
+  "budgetGeneration": {
+    "title": "Generate Budgets",
+    "budgetAnalysis": "Budget Analysis for {{year}}",
+    "totalPossibleBudgets": "Total Possible Budgets:",
+    "existingBudgets": "Existing Budgets:",
+    "missingBudgets": "Missing Budgets:",
+    "searchingBudgets": "Searching existing budgets...",
+    "missingBudgetsToCreate": "Missing Budgets to Create:",
+    "allBudgetsExist": "All budgets for {{year}} already exist!",
+    "warningMessage": "This will create {{count}} missing budget(s) for the selected fiscal year. Only missing budgets will be created (existing budgets will not be duplicated).",
+    "fiscalYearRequired": "Fiscal year is required",
+    "fiscalYearRange": "Fiscal year must be between 2000 and 2100",
+    "generateMissingBudgets": "Generate Missing Budgets"
+  },
+  "months": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December",
+    "short": {
+      "jan": "JAN",
+      "feb": "FEB",
+      "mar": "MAR",
+      "apr": "APR",
+      "may": "MAY",
+      "jun": "JUN",
+      "jul": "JUL",
+      "aug": "AUG",
+      "sep": "SEP",
+      "oct": "OCT",
+      "nov": "NOV",
+      "dec": "DEC"
+    }
+  },
+  "userRoles": {
+    "admin": "Administrator",
+    "manager": "Manager",
+    "user": "User",
+    "finance": "Finance"
+  },
+  "tableHeaders": {
+    "email": "Email",
+    "displayName": "Display Name",
+    "role": "Role",
+    "departments": "Departments",
+    "status": "Status",
+    "fiscalYear": "Fiscal Year",
+    "month": "Month",
+    "department": "Department",
+    "createdBy": "Created By",
+    "createdDate": "Created Date",
+    "actions": "Actions",
+    "budgetCategory": "Budget Category",
+    "budgetSubCategory": "Budget Subcategory",
+    "total": "Total",
+    "reason": "Reason"
+  }
+}

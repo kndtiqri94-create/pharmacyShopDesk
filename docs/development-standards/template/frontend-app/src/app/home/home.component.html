@@ -1,0 +1,46 @@
+<div class="row p-0 m-0">
+    <div class="col-12 p-3 ps-4">
+        <div class="row">
+            <div class="col-7">
+                <div class=" dashboard-card">
+                    @if (loggedInUserImage) {
+                    <img [src]="loggedInUserImage" aria-hidden="true" class="img-div">
+                    } @else {
+                    <div mat-card-avatar class="no-userimg-div">
+                        <div class="user-icon" [innerHTML]="userInitials"></div>
+                    </div>
+                    }
+                    <div class="detail-wrapper">
+                        <div class="row">
+                            <div class="col-11">
+                                <div class="headder-name">
+                                    {{this.loggedInUserDisplayName}}
+                                </div>
+                                <div class="headder-designation">
+                                    {{this.loggedInUserDesignation}}
+                                </div>
+                                <div class="headder-bio">
+                                    @if(this.loggedInUserDescription) {
+                                    <div>
+                                        {{this.loggedInUserDescription}}
+                                    </div>
+                                    } @else {
+                                    <div>
+                                        You have not set any profile description yet. Please set it by updating your
+                                        profile in TIQRIAN.
+                                    </div>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-5 ">
+                
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,159 @@
+.dashboard-card {
+  background: #903ab7;
+  background: rgb(103, 58, 183);
+  background: linear-gradient(
+    0deg,
+    rgba(103, 58, 183, 1) 0%,
+    rgba(122, 58, 183, 1) 15%,
+    rgba(144, 58, 183, 1) 100%
+  );
+
+  height: 200px;
+  border-radius: 10px;
+  padding-left: 0px;
+  display: flex;
+}
+.dashboard-card .img-div {
+  height: 200px;
+  width: 200px;
+  border-radius: 10px 50% 50% 10px;
+  filter: grayscale(100%);
+}
+.dashboard-card .no-userimg-div {
+  height: 200px;
+  width: 200px;
+  border-radius: 10px 50% 50% 10px;
+  background-color: #f1f1f1;
+}
+.dashboard-card .no-userimg-div .user-icon {
+  font-size: 5rem;
+  font-weight: 100;
+  color: #ccc;
+  line-height: 200px;
+  margin-left: 25px;
+}
+.detail-wrapper {
+  height: 30px;
+  color: #fff;
+  width: -webkit-fill-available;
+  padding-left: 25px;
+  padding-top: 30px;
+}
+.headder-name {
+  font-size: 2.2rem;
+  font-weight: 500;
+}
+.headder-designation {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+.headder-bio {
+  margin-top: 0px;
+  font-size: 0.85rem;
+  font-weight: 100;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* number of lines to show */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.stats-card {
+  margin-left: 10px;
+  margin-right: -20px;
+  background: #f1f1f1;
+  height: 180px;
+  border-radius: 10px;
+  padding-left: 0px;
+  display: flex;
+  width: 99%;
+  padding-top: 20px;
+  color: #676d7c;
+  overflow: auto;
+}
+.work-onpending-img {
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position-x: center;
+}
+.stats-title {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  line-height: 2rem;
+}
+.status-sub-title {
+  font-weight: 400;
+}
+.error-title {
+  color: #dc3b3b;
+}
+.success-title {
+  color: #00bf49;
+}
+.empty-data {
+  text-align: center;
+}
+.empty-projects-img {
+  height: 200px;
+  width: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-top: 25px;
+  margin-bottom: 5px;
+  background-position-x: center;
+}
+.empty-review-img {
+  height: 150px;
+  width: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-top: 25px;
+  margin-bottom: 0px;
+  background-position-x: center;
+}
+.update-profile-action {
+  position: relative;
+  right: -5px;
+}
+
+.stat-wrapper {
+  display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 220px;
+
+  .stat-value {
+    font-size: 3.5rem;
+    font-weight: 500;
+    color: #292929;
+  }
+
+  .stat-value-alt{
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #903ab7;
+  }
+
+  .stat-title{
+    text-align: center;
+    color: #817a7a;
+    max-width: 180px;
+  }
+}
+
+.inline-stat-title{
+  font-size: 1.2rem;
+  padding-left: 17px;
+  .title{
+    font-weight: 500;
+  }
+}
+.inline-stat-count{
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: right;
+}

@@ -1,0 +1,116 @@
+<div class="row p-0 m-0">
+    <div class="col-12 mb-5">
+        <mat-card appearance="outlined" class="pb-3">
+            <div class="row">
+                <div class="col-8">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <div class="system-page-title">{{pageTitle}}</div>
+                        </mat-card-title>
+                        <mat-card-subtitle>
+                            <div class="system-page-subtitle">Please enter all the required information marked with *.
+                            </div>
+                        </mat-card-subtitle>
+                    </mat-card-header>
+                </div>
+                <div class="col-4">
+                    <button mat-button class="mt-4" style="float: right;" (click)="navigateBackToList()">
+                        <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined" aria-label="add icon">
+                            arrow_back
+                        </mat-icon>Back to MRF List</button>
+                </div>
+            </div>
+            <mat-card-content>
+                <div class="data-entry-form">
+                    <div class="row m-0">
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <mat-form-field class="w-100">
+                                <mat-label>Title</mat-label>
+                                <input name="code" autocomplete="off" matInput placeholder="Ex. TFA Azure Developer" required
+                                    [(ngModel)]="sampleObject.Title">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row m-0">
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <mat-form-field class="w-100">
+                                <mat-label>Department</mat-label>
+                                <mat-select [(ngModel)]="sampleObject.DepartmentId">
+                                    <mat-option [value]="1">{{ 'Test' }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <mat-form-field class="w-100">
+                                <mat-label>Project/Account</mat-label>
+                                <mat-select [(ngModel)]="sampleObject.ProjectId">
+                                    <mat-option [value]="1">{{ 'Test' }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <mat-form-field class="w-100">
+                                <mat-label>Reason for vacancy</mat-label>
+                                <mat-select [(ngModel)]="sampleObject.VacancyReasonId">
+                                <mat-option [value]="1">{{ 'Test' }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row m-0">
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <mat-form-field class="w-100">
+                                <mat-label>Replacement Details</mat-label>
+                                <input name="ReplacementDetails" autocomplete="off" matInput
+                                    placeholder="If replacement, then replacement employee’s Name Designation" [(ngModel)]="sampleObject.ReplacementDetails">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <mat-form-field class="w-100">
+                                <mat-label>New position details</mat-label>
+                                <input name="NewPositionDetails" autocomplete="off" matInput
+                                    placeholder="If New Position, reason for creation"
+                                    [(ngModel)]="sampleObject.NewPositionDetails">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <mat-form-field class="w-100">
+                                <mat-label>Required Designation/Position</mat-label>
+                                <input name="RequiredPosition" autocomplete="off" matInput required=""
+                                    placeholder="Ex. Senior TechLead" [(ngModel)]="sampleObject.RequiredPosition">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-12">
+                            <div class="w-100 mt-3">
+                                <div class="ps-2 mb-2 bold">
+                                    <mat-label>Detailed Job description <i>(After confirmation from Interview panel) *</i></mat-label>
+                                </div>
+                                <div class="editor-container">
+                                    <quill-editor [(ngModel)]="sampleObject.JobDescription" [modules]="modulesBubble"></quill-editor>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-5 mb-2 ms-0">
+                        <div class="col-12 mb-3">
+                            <mat-label class="information-lable">Please enter all the required information marked with
+                                *.</mat-label>
+                        </div>
+                        <div class="col-12">
+                            <div style="margin-bottom: 10px;">
+                                <button mat-flat-button class="primary-button" [disabled]="isFormValid" color="accent" >
+                                    <span>Save</span>
+                                </button>
+                                @if(isOnEditMode) {
+                                    <button class="ms-2" mat-flat-button >Cancel MRF</button>
+                                }                                
+                                <button class="ms-2" mat-flat-button >Back to MRF List</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

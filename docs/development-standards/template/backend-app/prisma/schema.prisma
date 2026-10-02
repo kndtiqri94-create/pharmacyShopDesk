@@ -1,0 +1,60 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider          = "sqlserver"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Organization {
+  Id                         Int                          @id @default(autoincrement())
+  Code                       String                       @db.VarChar(255)
+  Name                       String                       @db.VarChar(500)
+  Email                      String?                      @db.VarChar(500)
+  UserAllowedDomain          String?                      @db.VarChar(500)
+  IsActive                   Boolean                      @default(false)
+  IsArchived                 Boolean                      @default(false)
+  CreatedAt                  DateTime                     @default(now())
+  CreatedBy                  String                       @db.VarChar(255)
+  UpdatedAt                  DateTime                     @updatedAt
+  UpdatedBy                  String                       @db.VarChar(255)
+  ArchivedAt                 DateTime?
+  ArchivedBy                 String?                      @db.VarChar(255)
+  OrganizationUserAllocation OrganizationUserAllocation[]
+}
+
+model SystemUser {
+  Id                         Int                          @id @default(autoincrement())
+  Name                       String                       @db.VarChar(500)
+  Email                      String                       @db.VarChar(500)
+  ProfileId                  String                       @db.VarChar(500)
+  IsActive                   Boolean                      @default(false)
+  IsArchived                 Boolean                      @default(false)
+  CreatedAt                  DateTime                     @default(now())
+  CreatedBy                  String                       @db.VarChar(255)
+  UpdatedAt                  DateTime                     @updatedAt
+  UpdatedBy                  String                       @db.VarChar(255)
+  ArchivedAt                 DateTime?
+  ArchivedBy                 String?                      @db.VarChar(255)
+  OrganizationUserAllocation OrganizationUserAllocation[]
+}
+
+model OrganizationUserAllocation {
+  Id             Int          @id @default(autoincrement())
+  OrganizationId Int
+  Organization   Organization @relation(fields: [OrganizationId], references: [Id], onUpdate: NoAction)
+  SystemUserId   Int
+  SystemUser     SystemUser   @relation(fields: [SystemUserId], references: [Id], onUpdate: NoAction)
+  AllocationKey  String       @db.VarChar(255)
+  IsActive       Boolean      @default(false)
+  IsArchived     Boolean      @default(false)
+  CreatedAt      DateTime     @default(now())
+  CreatedBy      String       @db.VarChar(255)
+  UpdatedAt      DateTime     @updatedAt
+  UpdatedBy      String       @db.VarChar(255)
+  ArchivedAt     DateTime?
+  ArchivedBy     String?      @db.VarChar(255)
+}

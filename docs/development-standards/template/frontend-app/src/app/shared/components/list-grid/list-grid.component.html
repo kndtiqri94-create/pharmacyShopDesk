@@ -1,0 +1,36 @@
+<div class="row m-0">
+    <div class="col-12">
+        <mat-form-field class="full-width mt-3">
+            <mat-label>Search</mat-label>
+            <span matPrefix>
+                <mat-icon aria-hidden="false" class="material-symbols-outlined" aria-label="add icon">
+                    search
+                </mat-icon>&nbsp;</span>
+            <input matInput placeholder="Initial Project Review" [(ngModel)]="this.filterText">
+        </mat-form-field>
+    </div>
+</div>
+<div class="row m-0">
+    <div class="col-12">
+        <mat-selection-list #records [multiple]="false">
+            @for (recordItem of listValues; track recordItem.code) {
+                <mat-list-option class="data-list-value py-1 mb-2" (click)="onSelectedItemChanged(recordItem)" [value]="recordItem.code">
+                    <div class="title">{{recordItem.code}}</div>
+                    <div [ngClass]="{'title': !recordItem.code, 'detail': recordItem.code}">{{recordItem.name}}</div>
+                    @if (showClientName) {
+                        <div class="detail">{{getClientName(recordItem)}}</div>
+                    }
+                    @if (showStatusCircle && recordItem.projectStatus) {
+                        <div class="status-dot" [ngClass]="{'dot-fail': recordItem.projectStatus === 'Closed', 'dot-success': recordItem.projectStatus !== 'Closed'}"></div>
+                    }
+                </mat-list-option>
+            }
+        </mat-selection-list>
+        @if (listValues.length === 0) {
+            <div class="empty-data">
+                <div style="background-image: url('../../../../assets/images/no-data.svg');" class="empty-data-img"></div>
+                No records found
+            </div>
+        }
+    </div>
+</div>

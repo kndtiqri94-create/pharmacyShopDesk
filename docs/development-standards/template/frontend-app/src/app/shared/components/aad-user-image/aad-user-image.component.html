@@ -1,0 +1,8 @@
+@if (isImageFound) {
+    <img mat-card-avatar class="user-image"
+        [src]="sanitize('data:image/jpg;base64, ' + arrayBufferToBase64(profilePic))" />
+} @else {
+    <div mat-card-avatar class="user-image-notfound">
+        <mat-icon aria-hidden="false" class="material-symbols-outlined user-icon" aria-label="add icon">person</mat-icon>
+    </div>
+}

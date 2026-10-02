@@ -1,0 +1,35 @@
+<div class="p-3 ps-4 pe-4">
+    <div class="row">
+        <div class="col-12 pb-2">
+            <div class="system-model-title">
+                {{ data.Title }}
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2 mb-5">
+        <div class="col-12">
+            {{data.Description}}
+        </div>
+    </div>
+    @if(data.ShowNotes) {
+    <div class="row mt-2 mb-5">
+        <div class="col-12">
+            <mat-form-field class="w-100">
+                <mat-label>{{ data.NotesTitle }}</mat-label>
+                <textarea name="notes" matInput rows="3" [(ngModel)]="data.Notes"></textarea>
+            </mat-form-field>
+        </div>
+    </div>
+    }
+    <div class="row mt-3 mb-2">
+        <div class="col-12">
+            <div style="margin-bottom: 10px;">
+                <button mat-flat-button class="primary-button" (click)="onConfirmClick()" color="accent">
+                    <span>{{ data.ConfirmTitle }}</span> </button>
+                @if(data.CancelTitle) {
+                <button class="ms-2" mat-flat-button (click)="onNoClick()">{{ data.CancelTitle }}</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

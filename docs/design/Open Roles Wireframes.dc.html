@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9;font-family:system-ui,sans-serif}
+a{color:#2a78d6}a:hover{color:#1b5aa8}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}
+</style></helmet>
+
+<section class="dv-turn" id="t1">
+  <div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Open roles — anatomy first, then page structure</span></div>
+  <p style="margin:-8px 0 20px;max-width:70ch;font:13px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.6);text-wrap:pretty">Grey bars are text, dashed boxes are inputs, dark bar is the primary action. No brand colour or type yet. Notes in the margin are behaviour, not styling.</p>
+
+  <div class="dv-opts">
+
+    <!-- 1a -->
+    <div class="dv-opt" id="1a">
+      <div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Role card anatomy — every element it has to carry</div>
+      <div class="dv-card" style="width:720px">
+        <div style="padding:40px;display:flex;flex-direction:column;gap:28px">
+
+          <div style="border:1.5px solid #b9b5ad;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;position:relative">
+
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px">
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+                <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">A · JOB TITLE</div>
+                <div style="width:62%;height:18px;border-radius:4px;background:#c4c0b8"></div>
+              </div>
+              <div style="flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+                <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">E · OPEN ROLE</div>
+                <div style="height:44px;width:112px;border-radius:6px;background:#4a4741;display:flex;align-items:center;justify-content:center">
+                  <div style="width:52px;height:9px;border-radius:3px;background:#f0eee9"></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">B · LOCATION · WORK TYPE · SENIORITY</div>
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+                <div style="height:10px;width:88px;border-radius:3px;background:#d8d5cf"></div>
+                <div style="width:3px;height:3px;border-radius:2px;background:#c4c0b8"></div>
+                <div style="height:10px;width:64px;border-radius:3px;background:#d8d5cf"></div>
+                <div style="width:3px;height:3px;border-radius:2px;background:#c4c0b8"></div>
+                <div style="height:10px;width:76px;border-radius:3px;background:#d8d5cf"></div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">C · ONE-LINE SUMMARY</div>
+              <div style="width:100%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+              <div style="width:46%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">D · SKILL TAGS</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <div style="height:24px;width:72px;border-radius:12px;background:#e6e3dd"></div>
+                <div style="height:24px;width:56px;border-radius:12px;background:#e6e3dd"></div>
+                <div style="height:24px;width:88px;border-radius:12px;background:#e6e3dd"></div>
+                <div style="height:24px;width:44px;border-radius:12px;background:#e6e3dd"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;font:12px/1.5 'Architects Daughter',cursive;color:#8a847a">
+            <div>A — one line, truncates with ellipsis at 360px. The whole card is the link to the role page.</div>
+            <div>B — plain text, middle dots between. Not chips, so they don't compete with the skill tags.</div>
+            <div>C — max 2 lines, clamped. Pulled from the first sentence of the role description.</div>
+            <div>D — up to 4 tags, then "+3". Tags are display only here; filtering comes later if you want it.</div>
+            <div>E — Apply goes straight to the form on the role page. On mobile it drops below the tags, full width.</div>
+          </div>
+
+        </div>
+      </div>
+      <p style="margin:0;max-width:720px;font:12px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.5)">Two ways in on purpose: the card body opens the role, the button skips to applying. Open question at the bottom of <a class="dv-oid" href="#1b">1b</a> about whether posted date and salary belong here too.</p>
+    </div>
+
+    <!-- 1b -->
+    <div class="dv-opt" id="1b">
+      <div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Page structure — desktop 1040px</div>
+      <div class="dv-card" style="width:1040px">
+        <div style="display:flex;flex-direction:column">
+
+          <div style="padding:20px 40px;border-bottom:1px dashed #cdc9c1;display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:24px;height:24px;border-radius:5px;background:#d8d5cf"></div>
+              <div style="width:88px;height:10px;border-radius:3px;background:#d8d5cf"></div>
+            </div>
+            <div style="width:104px;height:9px;border-radius:3px;background:#e6e3dd"></div>
+          </div>
+
+          <div style="padding:48px 40px 32px;border-bottom:1px dashed #cdc9c1;display:flex;justify-content:center">
+            <div style="width:880px;display:flex;flex-direction:column;gap:16px">
+              <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">1 · PAGE HEADING</div>
+              <div style="width:34%;height:26px;border-radius:5px;background:#c4c0b8"></div>
+              <div style="width:56%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+              <div style="display:flex;gap:16px;align-items:center;padding-top:8px">
+                <div style="flex:1;height:48px;border:1.5px dashed #b9b5ad;border-radius:6px;display:flex;align-items:center;gap:12px;padding:0 16px">
+                  <div style="width:16px;height:16px;border-radius:8px;border:1.5px dashed #b9b5ad"></div>
+                  <div style="width:196px;height:10px;border-radius:3px;background:#e6e3dd"></div>
+                </div>
+                <div style="width:120px;height:10px;border-radius:3px;background:#e6e3dd"></div>
+              </div>
+              <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">2 · search filters the list live as you type. Count of matching roles sits to the right.</div>
+            </div>
+          </div>
+
+          <div style="padding:40px 40px 56px;display:flex;justify-content:center">
+            <div style="width:880px;display:flex;flex-direction:column;gap:16px">
+              <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">3 · ROLE LIST — CARD FROM <a class="dv-oid" href="#1a" style="padding:1px 5px">1a</a>, STACKED</div>
+
+              <sc-for list="{{ rows }}" as="r" hint-placeholder-count="3">
+                <div style="border:1.5px solid #d3cfc7;border-radius:8px;padding:24px;display:flex;align-items:flex-start;justify-content:space-between;gap:32px">
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px">
+                    <div style="height:16px;border-radius:4px;background:#c4c0b8;width:{{ r.title }}"></div>
+                    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+                      <div style="height:9px;width:80px;border-radius:3px;background:#d8d5cf"></div>
+                      <div style="width:3px;height:3px;border-radius:2px;background:#c4c0b8"></div>
+                      <div style="height:9px;width:58px;border-radius:3px;background:#d8d5cf"></div>
+                      <div style="width:3px;height:3px;border-radius:2px;background:#c4c0b8"></div>
+                      <div style="height:9px;width:70px;border-radius:3px;background:#d8d5cf"></div>
+                    </div>
+                    <div style="height:9px;border-radius:3px;background:#d8d5cf;width:{{ r.summary }}"></div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;padding-top:2px">
+                      <div style="height:22px;width:68px;border-radius:11px;background:#e6e3dd"></div>
+                      <div style="height:22px;width:52px;border-radius:11px;background:#e6e3dd"></div>
+                      <div style="height:22px;width:84px;border-radius:11px;background:#e6e3dd"></div>
+                    </div>
+                  </div>
+                  <div style="flex:none;height:40px;width:104px;border-radius:6px;background:#4a4741;display:flex;align-items:center;justify-content:center">
+                    <div style="width:48px;height:9px;border-radius:3px;background:#f0eee9"></div>
+                  </div>
+                </div>
+              </sc-for>
+
+              <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a;padding-top:4px">16px between cards. No pagination until there are more than ~20 roles.</div>
+              <div style="border:1.5px dashed #b9b5ad;border-radius:8px;padding:32px;display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:16px">
+                <div style="width:180px;height:11px;border-radius:3px;background:#d8d5cf"></div>
+                <div style="width:264px;height:9px;border-radius:3px;background:#e6e3dd"></div>
+                <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">4 · empty state when search matches nothing — clear search, or register interest</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <p style="margin:0;max-width:520px;font:12px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.5)">Single column, full width, no side filters. Worth deciding: does the card also need posted date and salary, and should the list group by team once there are more roles?</p>
+    </div>
+
+    <!-- 1c -->
+    <div class="dv-opt" id="1c">
+      <div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Same page at 360px</div>
+      <div class="dv-card" style="width:360px">
+        <div style="display:flex;flex-direction:column">
+
+          <div style="padding:16px;border-bottom:1px dashed #cdc9c1;display:flex;align-items:center;gap:8px">
+            <div style="width:20px;height:20px;border-radius:4px;background:#d8d5cf"></div>
+            <div style="width:76px;height:9px;border-radius:3px;background:#d8d5cf"></div>
+          </div>
+
+          <div style="padding:24px 16px;border-bottom:1px dashed #cdc9c1;display:flex;flex-direction:column;gap:12px">
+            <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">1 · PAGE HEADING</div>
+            <div style="width:64%;height:22px;border-radius:4px;background:#c4c0b8"></div>
+            <div style="width:88%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="height:48px;border:1.5px dashed #b9b5ad;border-radius:6px;display:flex;align-items:center;gap:10px;padding:0 12px;margin-top:4px">
+              <div style="width:16px;height:16px;border-radius:8px;border:1.5px dashed #b9b5ad"></div>
+              <div style="width:150px;height:9px;border-radius:3px;background:#e6e3dd"></div>
+            </div>
+            <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">2 · search sticks to the top once the list scrolls</div>
+          </div>
+
+          <div style="padding:24px 16px;display:flex;flex-direction:column;gap:16px">
+            <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">3 · ROLE LIST</div>
+
+            <sc-for list="{{ rowsM }}" as="r" hint-placeholder-count="3">
+              <div style="border:1.5px solid #d3cfc7;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px">
+                <div style="height:14px;border-radius:4px;background:#c4c0b8;width:{{ r.title }}"></div>
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px">
+                  <div style="height:9px;width:66px;border-radius:3px;background:#d8d5cf"></div>
+                  <div style="width:3px;height:3px;border-radius:2px;background:#c4c0b8"></div>
+                  <div style="height:9px;width:50px;border-radius:3px;background:#d8d5cf"></div>
+                  <div style="width:3px;height:3px;border-radius:2px;background:#c4c0b8"></div>
+                  <div style="height:9px;width:58px;border-radius:3px;background:#d8d5cf"></div>
+                </div>
+                <div style="height:9px;width:100%;border-radius:3px;background:#d8d5cf"></div>
+                <div style="height:9px;border-radius:3px;background:#d8d5cf;width:{{ r.summary }}"></div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px">
+                  <div style="height:22px;width:64px;border-radius:11px;background:#e6e3dd"></div>
+                  <div style="height:22px;width:48px;border-radius:11px;background:#e6e3dd"></div>
+                  <div style="height:22px;width:76px;border-radius:11px;background:#e6e3dd"></div>
+                </div>
+                <div style="height:44px;border-radius:6px;background:#4a4741;display:flex;align-items:center;justify-content:center">
+                  <div style="width:48px;height:9px;border-radius:3px;background:#f0eee9"></div>
+                </div>
+              </div>
+            </sc-for>
+
+            <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">Apply becomes full width, 44px tall. Tapping anywhere else on the card opens the role.</div>
+          </div>
+
+        </div>
+      </div>
+      <p style="margin:0;max-width:360px;font:12px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.5)">Nothing is hidden or collapsed — the card just reflows to one column.</p>
+    </div>
+
+  </div>
+
+  <p class="dv-next">Try next: "anatomy is right, style <a class="dv-oid" href="#1b">1b</a> up" · "add salary and posted date to the card" · "show a filter row under the search"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      rows: [
+        {title:'42%', summary:'86%'},
+        {title:'32%', summary:'72%'},
+        {title:'38%', summary:'80%'}
+      ],
+      rowsM: [
+        {title:'78%', summary:'62%'},
+        {title:'62%', summary:'48%'},
+        {title:'70%', summary:'56%'}
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

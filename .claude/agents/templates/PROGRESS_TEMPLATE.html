@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Solution Progress</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --panel: #ffffff;
+    --text: #1a1d23;
+    --muted: #6b7280;
+    --border: #e3e6ea;
+    --accent: #2f6feb;
+    --done: #1a8a4a;
+    --pending: #d97706;
+    --track: #e9ecef;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --panel: #1d2025;
+      --text: #e7e9ec;
+      --muted: #9aa1ac;
+      --border: #2b2f36;
+      --accent: #6ea1ff;
+      --done: #3ecb7c;
+      --pending: #e8a33d;
+      --track: #2a2d33;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    padding: 24px;
+  }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: 0.85rem; margin-bottom: 20px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 22px; }
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat-card .label { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: .04em; }
+  .stat-card .value { font-size: 1.6rem; font-weight: 600; margin-top: 4px; }
+  .bar {
+    height: 8px;
+    background: var(--track);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .bar > div { height: 100%; background: var(--accent); }
+  .epics { margin-bottom: 22px; }
+  .epic-row { display: grid; grid-template-columns: 220px 1fr 60px; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+  .epic-row .bar { margin-top: 0; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+  .controls input[type="search"] {
+    flex: 1; min-width: 200px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+  .controls select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+  .count { color: var(--muted); font-size: 0.8rem; margin-left: auto; }
+  table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: 8px 10px; font-size: 0.82rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: .03em; }
+  tr:last-child td { border-bottom: none; }
+  .status-done { color: var(--done); font-weight: 600; }
+  .status-pending { color: var(--pending); font-weight: 600; }
+  .tag { display: inline-block; background: var(--track); border-radius: 5px; padding: 1px 6px; font-size: 0.72rem; margin-right: 3px; }
+  .weight-pill { display: inline-block; min-width: 22px; text-align: center; background: var(--track); border-radius: 999px; padding: 1px 7px; font-size: 0.75rem; }
+  .empty { padding: 30px; text-align: center; color: var(--muted); }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .table-wrap { overflow-x: auto; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Solution Progress</h1>
+  <div class="meta">Generated __GENERATED_AT__ from docs/SOLUTION_TASKS.md (__SOURCE_VERSION__)</div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="label">Completion (by weight)</div>
+      <div class="value" id="statWeightPct">–</div>
+      <div class="bar"><div id="statWeightBar" style="width:0%"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Completion (by task count)</div>
+      <div class="value" id="statCountPct">–</div>
+      <div class="bar"><div id="statCountBar" style="width:0%"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Tasks done / total</div>
+      <div class="value" id="statTasks">–</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Weight done / total</div>
+      <div class="value" id="statWeight">–</div>
+    </div>
+  </div>
+
+  <div class="epics" id="epicBreakdown"></div>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search by id, title, epic, feature, or surface…">
+    <select id="statusFilter">
+      <option value="all">All statuses</option>
+      <option value="done">Completed only</option>
+      <option value="pending">Not completed only</option>
+    </select>
+    <span class="count" id="resultCount"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>ID</th>
+          <th>Surface</th>
+          <th>Epic</th>
+          <th>Feature</th>
+          <th>Title</th>
+          <th>Weight</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="emptyState" style="display:none">No tasks match this filter.</div>
+  </div>
+</div>
+
+<script>
+/*__TASKS_DATA__*/
+
+function render() {
+  const search = document.getElementById('search').value.trim().toLowerCase();
+  const status = document.getElementById('statusFilter').value;
+
+  const filtered = TASKS.filter(t => {
+    if (status === 'done' && !t.completed) return false;
+    if (status === 'pending' && t.completed) return false;
+    if (!search) return true;
+    const hay = (t.id + ' ' + t.title + ' ' + t.epic + ' ' + t.feature + ' ' + t.surface).toLowerCase();
+    return hay.includes(search);
+  });
+
+  const rowsEl = document.getElementById('rows');
+  rowsEl.innerHTML = filtered.map(t => `
+    <tr>
+      <td class="${t.completed ? 'status-done' : 'status-pending'}">${t.completed ? '✓ Done' : '○ Pending'}</td>
+      <td>${t.id}</td>
+      <td>${t.surface.split('/').map(s => `<span class="tag">${s}</span>`).join('')}</td>
+      <td>${t.epic}</td>
+      <td>${t.feature}</td>
+      <td>${t.title}</td>
+      <td><span class="weight-pill">${t.weight}${t.weightDefaulted ? '*' : ''}</span></td>
+    </tr>
+  `).join('');
+
+  document.getElementById('emptyState').style.display = filtered.length ? 'none' : 'block';
+  document.getElementById('resultCount').textContent = filtered.length + ' of ' + TASKS.length + ' tasks';
+}
+
+function computeStats() {
+  const totalTasks = TASKS.length;
+  const doneTasks = TASKS.filter(t => t.completed).length;
+  const totalWeight = TASKS.reduce((s, t) => s + t.weight, 0);
+  const doneWeight = TASKS.filter(t => t.completed).reduce((s, t) => s + t.weight, 0);
+
+  const weightPct = totalWeight ? Math.round((doneWeight / totalWeight) * 100) : 0;
+  const countPct = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+  document.getElementById('statWeightPct').textContent = weightPct + '%';
+  document.getElementById('statWeightBar').style.width = weightPct + '%';
+  document.getElementById('statCountPct').textContent = countPct + '%';
+  document.getElementById('statCountBar').style.width = countPct + '%';
+  document.getElementById('statTasks').textContent = doneTasks + ' / ' + totalTasks;
+  document.getElementById('statWeight').textContent = doneWeight + ' / ' + totalWeight;
+
+  const epics = {};
+  TASKS.forEach(t => {
+    if (!epics[t.epic]) epics[t.epic] = { done: 0, total: 0 };
+    epics[t.epic].total += t.weight;
+    if (t.completed) epics[t.epic].done += t.weight;
+  });
+
+  const epicEl = document.getElementById('epicBreakdown');
+  epicEl.innerHTML = Object.keys(epics).map(name => {
+    const e = epics[name];
+    const pct = e.total ? Math.round((e.done / e.total) * 100) : 0;
+    return `<div class="epic-row">
+      <div>${name}</div>
+      <div class="bar"><div style="width:${pct}%"></div></div>
+      <div>${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('statusFilter').addEventListener('change', render);
+
+computeStats();
+render();
+</script>
+</body>
+</html>

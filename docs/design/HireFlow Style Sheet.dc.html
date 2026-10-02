@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FAF9F7;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1D4ED8}a:hover{color:#1E40AF}
+</style>
+</helmet>
+<div style="max-width:1120px;margin:0 auto;padding:56px 24px 96px;color:#1C1A17">
+
+  <header style="display:flex;flex-direction:column;gap:8px;padding-bottom:24px;border-bottom:1px solid #E7E5E0">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:24px;height:24px;border-radius:6px;background:#1D4ED8"></div>
+      <span style="font-size:14px;font-weight:600;letter-spacing:-0.01em;color:#1D4ED8">HireFlow</span>
+    </div>
+    <h1 style="margin:0;font-size:32px;line-height:1.2;font-weight:700;letter-spacing:-0.02em">Visual language</h1>
+    <p style="margin:0;max-width:56ch;font-size:16px;line-height:1.6;color:#57534B;text-wrap:pretty">Foundations and core components for review. Everything here uses the 8px grid and meets WCAG AA contrast on its intended background.</p>
+  </header>
+
+  <!-- COLOUR -->
+  <section style="padding-top:48px">
+    <h2 style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#78716A">01 · Colour</h2>
+    <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#57534B">Each colour has one job. Contrast ratios are against the surface the colour is used on.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:16px">
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#1D4ED8"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Primary</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#1D4ED8</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">Primary actions, links, focus rings. 7.0:1 on white.</span>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#1E40AF"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Primary hover</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#1E40AF</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">Hover and pressed state of primary surfaces.</span>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#EFF6FF;border-bottom:1px solid #E7E5E0"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Primary tint</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#EFF6FF</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">Selected rows, quiet badges, subtle emphasis.</span>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#1C1A17"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Text</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#1C1A17</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">Headings and body copy. 16.6:1 on white.</span>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#57534B"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Text muted</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#57534B</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">Secondary copy, helper text. 7.3:1 on white.</span>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#78716A"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Text subtle</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#78716A</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">Labels and captions only. 4.6:1 on white — never below 12px.</span>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#FFFFFF;border-bottom:1px solid #E7E5E0"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Surface</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#FFFFFF</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">Cards, inputs, menus, modals.</span>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#FAF9F7;border-bottom:1px solid #E7E5E0"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Background</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#FAF9F7</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">App canvas behind cards.</span>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#E7E5E0"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Border</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#E7E5E0</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">Dividers and card edges. 1px, never a shadow substitute.</span>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#D6D3CD"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Border strong</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#D6D3CD</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">Input outlines, so fields read as interactive.</span>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#B91C1C"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Error</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#B91C1C</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">Invalid fields and destructive intent. 6.4:1 on white.</span>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+        <div style="height:72px;background:#FEF2F2;border-bottom:1px solid #E7E5E0"></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:600">Error tint</span><code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">#FEF2F2</code></div>
+          <span style="font-size:13px;line-height:1.5;color:#57534B">Background for inline error messages.</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section style="padding-top:56px">
+    <h2 style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#78716A">02 · Type scale</h2>
+    <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#57534B">Inter throughout. Sizes hold on mobile except page title, which steps down to 28px below 480px.</p>
+    <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;overflow:hidden">
+      <sc-for list="{{ type }}" as="t" hint-placeholder-count="6">
+        <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 24px;padding:20px 24px;border-top:1px solid #F5F4F1">
+          <div style="flex:1 1 240px;min-width:0"><span style="{{ t.style }}">{{ t.sample }}</span></div>
+          <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:2px;min-width:168px">
+            <span style="font-size:13px;font-weight:600;color:#1C1A17">{{ t.name }}</span>
+            <code style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">{{ t.spec }}</code>
+          </div>
+          <div style="flex:0 0 auto;min-width:152px"><span style="font-size:12px;line-height:1.5;color:#78716A">{{ t.use }}</span></div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- SPACING -->
+  <section style="padding-top:56px">
+    <h2 style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#78716A">03 · Spacing</h2>
+    <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#57534B">Multiples of 8, with a single 4px half-step for tight pairings like a label above its field.</p>
+    <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;padding:8px 24px 24px">
+      <sc-for list="{{ space }}" as="s" hint-placeholder-count="7">
+        <div style="display:flex;align-items:center;gap:16px;padding:8px 0;border-top:1px solid #F5F4F1">
+          <code style="flex:0 0 40px;font-size:12px;font-family:ui-monospace,Menlo,monospace;font-weight:600;color:#1C1A17">{{ s.token }}</code>
+          <code style="flex:0 0 48px;font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#78716A">{{ s.px }}</code>
+          <div style="flex:0 0 auto;height:16px;border-radius:2px;background:#1D4ED8;width:{{ s.w }}"></div>
+          <span style="font-size:12px;line-height:1.5;color:#78716A">{{ s.use }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- BUTTON -->
+  <section style="padding-top:56px">
+    <h2 style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#78716A">04 · Button</h2>
+    <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#57534B">40px tall on desktop, 48px on touch. Hover states below are live — roll over them. Focus rings show a 2px offset ring in primary blue.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(288px,1fr));gap:16px">
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:14px;font-weight:600">Primary</span>
+          <span style="font-size:12px;line-height:1.5;color:#78716A">One per view. The action you want taken.</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+          <button type="button" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 16px;border:1px solid #1D4ED8;border-radius:6px;background:#1D4ED8;color:#fff;cursor:pointer;transition:background .12s" style-hover="background:#1E40AF;border-color:#1E40AF">Send offer</button>
+          <button type="button" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 16px;border:1px solid #1E40AF;border-radius:6px;background:#1E40AF;color:#fff;cursor:pointer;box-shadow:0 0 0 2px #fff,0 0 0 4px #1D4ED8">Send offer</button>
+          <button type="button" disabled="{{ true }}" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 16px;border:1px solid #E7E5E0;border-radius:6px;background:#E7E5E0;color:#78716A;cursor:not-allowed">Send offer</button>
+        </div>
+        <div style="display:flex;gap:16px;font-size:11px;line-height:1.4;color:#A8A29B"><span style="flex:1">default / hover</span><span style="flex:1">focus</span><span style="flex:1">disabled</span></div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:14px;font-weight:600">Secondary</span>
+          <span style="font-size:12px;line-height:1.5;color:#78716A">Supporting actions that sit beside a primary.</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+          <button type="button" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 16px;border:1px solid #D6D3CD;border-radius:6px;background:#fff;color:#1C1A17;cursor:pointer;transition:background .12s,border-color .12s" style-hover="background:#FAF9F7;border-color:#A8A29B">Save draft</button>
+          <button type="button" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 16px;border:1px solid #A8A29B;border-radius:6px;background:#FAF9F7;color:#1C1A17;cursor:pointer;box-shadow:0 0 0 2px #fff,0 0 0 4px #1D4ED8">Save draft</button>
+          <button type="button" disabled="{{ true }}" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 16px;border:1px solid #E7E5E0;border-radius:6px;background:#fff;color:#A8A29B;cursor:not-allowed">Save draft</button>
+        </div>
+        <div style="display:flex;gap:16px;font-size:11px;line-height:1.4;color:#A8A29B"><span style="flex:1">default / hover</span><span style="flex:1">focus</span><span style="flex:1">disabled</span></div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:14px;font-weight:600">Quiet</span>
+          <span style="font-size:12px;line-height:1.5;color:#78716A">Low-stakes actions inside dense lists and toolbars.</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+          <button type="button" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 12px;border:1px solid transparent;border-radius:6px;background:transparent;color:#1D4ED8;cursor:pointer;transition:background .12s" style-hover="background:#EFF6FF">Dismiss</button>
+          <button type="button" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 12px;border:1px solid transparent;border-radius:6px;background:#EFF6FF;color:#1D4ED8;cursor:pointer;box-shadow:0 0 0 2px #fff,0 0 0 4px #1D4ED8">Dismiss</button>
+          <button type="button" disabled="{{ true }}" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 12px;border:1px solid transparent;border-radius:6px;background:transparent;color:#A8A29B;cursor:not-allowed">Dismiss</button>
+        </div>
+        <div style="display:flex;gap:16px;font-size:11px;line-height:1.4;color:#A8A29B"><span style="flex:1">default / hover</span><span style="flex:1">focus</span><span style="flex:1">disabled</span></div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:14px;font-weight:600">Sizes</span>
+          <span style="font-size:12px;line-height:1.5;color:#78716A">Small for table rows, medium default, large for touch and empty states.</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+          <button type="button" style="font:600 13px/1 Inter,sans-serif;height:32px;padding:0 12px;border:1px solid #1D4ED8;border-radius:6px;background:#1D4ED8;color:#fff;cursor:pointer" style-hover="background:#1E40AF">Small</button>
+          <button type="button" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 16px;border:1px solid #1D4ED8;border-radius:6px;background:#1D4ED8;color:#fff;cursor:pointer" style-hover="background:#1E40AF">Medium</button>
+          <button type="button" style="font:600 16px/1 Inter,sans-serif;height:48px;padding:0 24px;border:1px solid #1D4ED8;border-radius:6px;background:#1D4ED8;color:#fff;cursor:pointer" style-hover="background:#1E40AF">Large</button>
+        </div>
+        <div style="display:flex;gap:16px;font-size:11px;line-height:1.4;color:#A8A29B"><span>32px</span><span>40px</span><span>48px · touch minimum</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- INPUT -->
+  <section style="padding-top:56px">
+    <h2 style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#78716A">05 · Text input</h2>
+    <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#57534B">Label always visible, 4px above the field. Helper and error text share one slot, so the field never shifts. Focus doubles the border weight and adds a 3px blue halo, visible on white and on the canvas. Click into the fields below.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(288px,1fr));gap:16px">
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:13px;font-weight:500;color:#1C1A17">Candidate email</label>
+          <input type="email" placeholder="name@company.com" style="font:400 14px/1 Inter,sans-serif;height:40px;padding:0 12px;border:1px solid #D6D3CD;border-radius:6px;background:#fff;color:#1C1A17;outline:none;transition:border-color .12s" style-hover="border-color:#A8A29B" style-focus="border-color:#1D4ED8;box-shadow:inset 0 0 0 1px #1D4ED8, 0 0 0 3px rgba(29,78,216,0.32)">
+          <span style="font-size:12px;line-height:1.5;color:#78716A">We only use this for interview scheduling.</span>
+        </div>
+        <span style="font-size:11px;color:#A8A29B">default · hover · focus</span>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:13px;font-weight:500;color:#1C1A17">Candidate email</label>
+          <input type="email" defaultValue="name@company" aria-invalid="true" style="font:400 14px/1 Inter,sans-serif;height:40px;padding:0 12px;border:1px solid #B91C1C;border-radius:6px;background:#fff;color:#1C1A17;outline:none" style-focus="box-shadow:inset 0 0 0 1px #B91C1C, 0 0 0 3px rgba(185,28,28,0.28)">
+          <span style="font-size:12px;line-height:1.5;color:#B91C1C">Add a domain, like name@company.com.</span>
+        </div>
+        <span style="font-size:11px;color:#A8A29B">error</span>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:13px;font-weight:500;color:#78716A">Candidate email</label>
+          <input type="email" defaultValue="ravi@northgate.io" disabled="{{ true }}" style="font:400 14px/1 Inter,sans-serif;height:40px;padding:0 12px;border:1px solid #E7E5E0;border-radius:6px;background:#FAF9F7;color:#78716A;cursor:not-allowed">
+          <span style="font-size:12px;line-height:1.5;color:#78716A">Locked once the offer is sent.</span>
+        </div>
+        <span style="font-size:11px;color:#A8A29B">disabled</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CARD -->
+  <section style="padding-top:56px">
+    <h2 style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#78716A">06 · Card</h2>
+    <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#57534B">White surface, 1px border, 8px radius, 24px padding. Interactive cards lift by border and tint only — no shadow. Static cards have no hover at all.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(288px,1fr));gap:16px;align-items:start">
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;cursor:pointer;transition:border-color .12s,background .12s" style-hover="border-color:#1D4ED8;background:#FAF9F7">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:40px;height:40px;border-radius:20px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#1D4ED8">RS</div>
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:16px;font-weight:600;letter-spacing:-0.01em">Ravi Shah</span>
+                <span style="font-size:13px;color:#57534B">Senior Backend Engineer</span>
+              </div>
+            </div>
+            <span style="font-size:12px;font-weight:600;padding:4px 8px;border-radius:4px;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">Interview</span>
+          </div>
+          <p style="margin:0;font-size:14px;line-height:1.6;color:#57534B;text-wrap:pretty">Eight years in distributed systems. Referred by Dana in Platform.</p>
+          <div style="display:flex;gap:8px">
+            <button type="button" style="font:600 13px/1 Inter,sans-serif;height:32px;padding:0 12px;border:1px solid #1D4ED8;border-radius:6px;background:#1D4ED8;color:#fff;cursor:pointer" style-hover="background:#1E40AF">Advance</button>
+            <button type="button" style="font:600 13px/1 Inter,sans-serif;height:32px;padding:0 12px;border:1px solid #D6D3CD;border-radius:6px;background:#fff;color:#1C1A17;cursor:pointer" style-hover="background:#FAF9F7">Notes</button>
+          </div>
+        </div>
+        <span style="font-size:11px;color:#A8A29B">interactive · default and hover</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:#fff;border:1px solid #1D4ED8;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 0 0 2px #fff,0 0 0 4px #1D4ED8">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:40px;height:40px;border-radius:20px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#1D4ED8">MO</div>
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:16px;font-weight:600;letter-spacing:-0.01em">Maya Okafor</span>
+                <span style="font-size:13px;color:#57534B">Product Designer</span>
+              </div>
+            </div>
+            <span style="font-size:12px;font-weight:600;padding:4px 8px;border-radius:4px;background:#EFF6FF;color:#1D4ED8;white-space:nowrap">Screening</span>
+          </div>
+          <p style="margin:0;font-size:14px;line-height:1.6;color:#57534B;text-wrap:pretty">Portfolio focused on complex B2B tooling. Available from September.</p>
+          <div style="display:flex;gap:8px">
+            <button type="button" style="font:600 13px/1 Inter,sans-serif;height:32px;padding:0 12px;border:1px solid #1D4ED8;border-radius:6px;background:#1D4ED8;color:#fff;cursor:pointer" style-hover="background:#1E40AF">Advance</button>
+            <button type="button" style="font:600 13px/1 Inter,sans-serif;height:32px;padding:0 12px;border:1px solid #D6D3CD;border-radius:6px;background:#fff;color:#1C1A17;cursor:pointer" style-hover="background:#FAF9F7">Notes</button>
+          </div>
+        </div>
+        <span style="font-size:11px;color:#A8A29B">focus · keyboard selection</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:#FAF9F7;border:1px solid #E7E5E0;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:40px;height:40px;border-radius:20px;background:#E7E5E0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#78716A">JL</div>
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:16px;font-weight:600;letter-spacing:-0.01em;color:#78716A">Jonas Lind</span>
+                <span style="font-size:13px;color:#78716A">Data Analyst</span>
+              </div>
+            </div>
+            <span style="font-size:12px;font-weight:600;padding:4px 8px;border-radius:4px;background:#E7E5E0;color:#57534B;white-space:nowrap">Withdrawn</span>
+          </div>
+          <p style="margin:0;font-size:14px;line-height:1.6;color:#78716A;text-wrap:pretty">Withdrew on 21 July. Kept for reporting until the role closes.</p>
+          <div style="display:flex;gap:8px">
+            <button type="button" disabled="{{ true }}" style="font:600 13px/1 Inter,sans-serif;height:32px;padding:0 12px;border:1px solid #E7E5E0;border-radius:6px;background:#E7E5E0;color:#78716A;cursor:not-allowed">Advance</button>
+            <button type="button" disabled="{{ true }}" style="font:600 13px/1 Inter,sans-serif;height:32px;padding:0 12px;border:1px solid #E7E5E0;border-radius:6px;background:#fff;color:#A8A29B;cursor:not-allowed">Notes</button>
+          </div>
+        </div>
+        <span style="font-size:11px;color:#A8A29B">disabled · read-only record</span>
+      </div>
+
+    </div>
+  </section>
+
+  <footer style="margin-top:64px;padding-top:24px;border-top:1px solid #E7E5E0;display:flex;flex-direction:column;gap:8px">
+    <span style="font-size:13px;font-weight:600;color:#1C1A17">Open questions for you</span>
+    <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;font-size:13px;line-height:1.6;color:#57534B">
+      <li>Do you want a success/green and warning/amber role, or is blue + red + greys enough for now?</li>
+      <li>Pipeline stages will need colour coding. I've used the blue tint for all of them here — worth deciding whether stages get distinct hues.</li>
+      <li>Confirm the 6px corner radius on controls and 8px on cards, or I can flatten both to 8px.</li>
+    </ul>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1120}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      type: [
+        {name:'Page title', spec:'32 / 38 · 700 · -0.02em', use:'One per screen', sample:'Open roles', style:'font-size:32px;line-height:1.2;font-weight:700;letter-spacing:-0.02em;color:#1C1A17'},
+        {name:'Section title', spec:'24 / 32 · 600 · -0.01em', use:'Groups within a page', sample:'Candidate pipeline', style:'font-size:24px;line-height:1.33;font-weight:600;letter-spacing:-0.01em;color:#1C1A17'},
+        {name:'Subtitle', spec:'18 / 28 · 600', use:'Card and modal headings', sample:'Senior Backend Engineer', style:'font-size:18px;line-height:1.55;font-weight:600;color:#1C1A17'},
+        {name:'Body', spec:'16 / 26 · 400', use:'Default reading size', sample:'Eight years in distributed systems.', style:'font-size:16px;line-height:1.6;font-weight:400;color:#1C1A17'},
+        {name:'Body small', spec:'14 / 22 · 400', use:'Dense UI, table cells', sample:'Applied 14 July · Referred by Dana', style:'font-size:14px;line-height:1.6;font-weight:400;color:#57534B'},
+        {name:'Label', spec:'13 / 20 · 500', use:'Form labels, buttons', sample:'Candidate email', style:'font-size:13px;line-height:1.55;font-weight:500;color:#1C1A17'},
+        {name:'Caption', spec:'12 / 18 · 400', use:'Helper text, timestamps', sample:'We only use this for scheduling.', style:'font-size:12px;line-height:1.5;font-weight:400;color:#78716A'}
+      ],
+      space: [
+        {token:'1', px:'4px',  w:'4px',  use:'Label to field'},
+        {token:'2', px:'8px',  w:'8px',  use:'Base unit · icon to text, button gaps'},
+        {token:'3', px:'16px', w:'16px', use:'Between fields, card grid gap'},
+        {token:'4', px:'24px', w:'24px', use:'Card padding, page gutter on mobile'},
+        {token:'5', px:'32px', w:'32px', use:'Between content blocks'},
+        {token:'6', px:'48px', w:'48px', use:'Section spacing'},
+        {token:'7', px:'64px', w:'64px', use:'Page top and bottom'}
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+.department-info {
+  max-width: 200px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: help;
+  
+  &:hover {
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 300px;
+  }
+}

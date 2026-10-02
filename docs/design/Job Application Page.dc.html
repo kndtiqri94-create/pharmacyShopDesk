@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FAF9F7;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#1C1A17}
+a{color:#1D4ED8}a:hover{color:#1E40AF}
+*{box-sizing:border-box}
+@media (max-width:420px){
+  [data-page]{padding-left:16px !important;padding-right:16px !important}
+  [data-title]{font-size:28px !important}
+  [data-card]{padding:20px 16px !important}
+}
+@media (min-width:900px){
+  [data-cols]{display:grid !important;grid-template-columns:minmax(0,1fr) 280px !important;column-gap:56px !important;row-gap:0 !important}
+  [data-main]{grid-column:1 !important;grid-row:1 !important}
+  [data-facts]{grid-column:2 !important;grid-row:1 !important;position:sticky !important;top:32px !important;align-self:start !important}
+  [data-title]{font-size:40px !important}
+  [data-pair]{display:grid !important;grid-template-columns:1fr 1fr !important;gap:16px !important}
+}
+</style>
+</helmet>
+<div style="min-height:100%;display:flex;flex-direction:column">
+
+  <header style="background:#fff;border-bottom:1px solid #E7E5E0">
+    <div style="max-width:1040px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:24px;height:24px;border-radius:6px;background:#1D4ED8"></div>
+        <span style="font-size:15px;font-weight:600;letter-spacing:-0.01em;color:#1D4ED8">HireFlow</span>
+      </div>
+      <a href="#" style="font-size:14px;font-weight:500;text-decoration:none">All open roles</a>
+    </div>
+  </header>
+
+  <main data-page="1" style="flex:1;max-width:1040px;width:100%;margin:0 auto;padding:40px 24px 80px">
+
+    <div style="display:flex;flex-direction:column;gap:8px;padding-bottom:32px">
+      <span style="font-size:13px;font-weight:500;color:#57534B">Northgate Labs · Platform</span>
+      <h1 data-title="1" style="margin:0;font-size:32px;line-height:1.15;font-weight:700;letter-spacing:-0.02em;text-wrap:pretty">Senior .NET Engineer (Remote, UK)</h1>
+      <p style="margin:0;font-size:16px;line-height:1.6;color:#57534B;text-wrap:pretty">Own the .NET services behind our scheduling and messaging products.</p>
+    </div>
+
+    <div data-cols="1" style="display:flex;flex-direction:column;gap:32px">
+
+      <aside data-facts="1" data-card="1" style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:12px;font-weight:500;color:#78716A">Salary</span>
+          <span style="font-size:15px;font-weight:600">£78,000 – £92,000</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:12px;font-weight:500;color:#78716A">Location</span>
+          <span style="font-size:15px;font-weight:600">Remote, UK</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:12px;font-weight:500;color:#78716A">Contract</span>
+          <span style="font-size:15px;font-weight:600">Permanent, full time</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:12px;font-weight:500;color:#78716A">Team</span>
+          <span style="font-size:15px;font-weight:600">Platform, 9 people</span>
+        </div>
+        <div style="height:1px;background:#E7E5E0"></div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:12px;font-weight:500;color:#78716A">Applications close</span>
+          <span style="font-size:15px;font-weight:600">29 August 2026</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:32px;height:32px;border-radius:16px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#1D4ED8">DK</div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <span style="font-size:13px;font-weight:600">Dana Kowalski</span>
+            <span style="font-size:12px;color:#78716A">Hiring manager</span>
+          </div>
+        </div>
+      </aside>
+
+      <div data-main="1" style="display:flex;flex-direction:column;gap:40px;min-width:0">
+
+        <section style="display:flex;flex-direction:column;gap:16px">
+          <p style="margin:0;font-size:16px;line-height:1.7;color:#1C1A17;text-wrap:pretty">Northgate Labs builds scheduling and messaging software for healthcare providers. The Platform team owns the .NET services that everything else in the product depends on, from appointment booking through to the notification pipeline that sends around 40 million messages a month. We are hiring a senior engineer to help us take those services through their next stage of growth.</p>
+          <p style="margin:0;font-size:16px;line-height:1.7;color:#1C1A17;text-wrap:pretty">You would join a team of nine engineers working in C# on .NET 8, with SQL Server and Azure Service Bus behind the busiest paths. Most of the codebase is well tested and actively maintained; some of it is a 2017 monolith we are decomposing service by service. You would work across both, and have a real say in the order we do it.</p>
+          <h2 style="margin:8px 0 0;font-size:18px;line-height:1.5;font-weight:600">What you'll do</h2>
+          <p style="margin:0;font-size:16px;line-height:1.7;color:#1C1A17;text-wrap:pretty">Design, build and run production services end to end, including the parts that are not writing code: shaping the problem with product, writing the design note, and staying with the work after release. You would also improve how we see the system, since our tracing and alerting have not kept pace with the last two years of growth, and support two mid-level engineers through code review and pairing.</p>
+          <h2 style="margin:8px 0 0;font-size:18px;line-height:1.5;font-weight:600">What we're looking for</h2>
+          <p style="margin:0;font-size:16px;line-height:1.7;color:#1C1A17;text-wrap:pretty">Several years building and operating production backend systems in C# and .NET, comfort with the trade-offs that come with distributed systems, and clear written communication, because we are a remote team and most decisions get made in writing. Experience with regulated or clinical data is useful but not required. We care more about how you reason through a problem than the exact stack you have used.</p>
+          <h2 style="margin:8px 0 0;font-size:18px;line-height:1.5;font-weight:600">How we hire</h2>
+          <p style="margin:0;font-size:16px;line-height:1.7;color:#1C1A17;text-wrap:pretty">Four stages: a 30-minute call with Dana, a 90-minute technical conversation about a system you have built, a paid half-day working session with the team, and a final chat with our VP of Engineering. We aim to finish within three weeks of your first call, and we give feedback at every stage whether or not you move forward.</p>
+        </section>
+
+        <sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}">
+        <section data-card="1" style="background:#fff;border:1px solid #E7E5E0;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h2 style="margin:0;font-size:24px;line-height:1.33;font-weight:600;letter-spacing:-0.01em">Apply for this role</h2>
+            <p style="margin:0;font-size:14px;line-height:1.6;color:#57534B">Takes about five minutes. We reply to every application.</p>
+          </div>
+
+          <sc-if value="{{ hasErrors }}" hint-placeholder-val="{{ false }}">
+            <div role="alert" style="background:#FEF2F2;border:1px solid #B91C1C;border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:4px">
+              <span style="font-size:14px;font-weight:600;color:#B91C1C">{{ errorSummary }}</span>
+              <span style="font-size:14px;line-height:1.6;color:#57534B">Check the highlighted fields below.</span>
+            </div>
+          </sc-if>
+
+          <div data-pair="1" style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <label for="ap-name" style="font-size:13px;font-weight:500">Full name</label>
+              <input id="ap-name" type="text" value="{{ name }}" onChange="{{ onName }}" placeholder="Ravi Shah" style="font:400 16px/1 Inter,sans-serif;height:48px;padding:0 12px;border:1px solid {{ nameBorder }};border-radius:6px;background:#fff;color:#1C1A17;outline:none;width:100%;transition:border-color .12s" style-hover="border-color:#A8A29B" style-focus="border-color:#1D4ED8;box-shadow:inset 0 0 0 1px #1D4ED8, 0 0 0 3px rgba(29,78,216,0.32)">
+              <span style="font-size:12px;line-height:1.5;color:{{ nameHintColor }}">{{ nameHint }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <label for="ap-email" style="font-size:13px;font-weight:500">Email</label>
+              <input id="ap-email" type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="name@company.com" style="font:400 16px/1 Inter,sans-serif;height:48px;padding:0 12px;border:1px solid {{ emailBorder }};border-radius:6px;background:#fff;color:#1C1A17;outline:none;width:100%;transition:border-color .12s" style-hover="border-color:#A8A29B" style-focus="border-color:#1D4ED8;box-shadow:inset 0 0 0 1px #1D4ED8, 0 0 0 3px rgba(29,78,216,0.32)">
+              <span style="font-size:12px;line-height:1.5;color:{{ emailHintColor }}">{{ emailHint }}</span>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:13px;font-weight:500">CV</span>
+            <sc-if value="{{ noFile }}" hint-placeholder-val="{{ true }}">
+              <div onClick="{{ browse }}" onDragOver="{{ onDragOver }}" onDragLeave="{{ onDragLeave }}" onDrop="{{ onDrop }}" style="border:1.5px dashed {{ dropBorder }};background:{{ dropBg }};border-radius:6px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:border-color .12s,background .12s" style-hover="border-color:#1D4ED8;background:#EFF6FF">
+                <span style="font-size:15px;font-weight:600;color:#1D4ED8">Choose a file</span>
+                <span style="font-size:13px;line-height:1.5;color:#57534B;text-align:center">or drag it here · PDF, DOC or DOCX up to 10MB</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ hasFile }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px solid #D6D3CD;border-radius:6px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+                <div style="display:flex;align-items:center;gap:8px;min-width:0">
+                  <div style="width:32px;height:32px;flex:none;border-radius:6px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#1D4ED8">PDF</div>
+                  <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                    <span style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ fileName }}</span>
+                    <span style="font-size:12px;color:#78716A">{{ fileSize }}</span>
+                  </div>
+                </div>
+                <button type="button" onClick="{{ clearFile }}" style="font:600 13px/1 Inter,sans-serif;height:32px;padding:0 12px;border:1px solid transparent;border-radius:6px;background:transparent;color:#1D4ED8;cursor:pointer;flex:none" style-hover="background:#EFF6FF">Remove</button>
+              </div>
+            </sc-if>
+            <input ref="{{ fileRef }}" type="file" accept=".pdf,.doc,.docx" onChange="{{ onFile }}" style="display:none">
+            <span style="font-size:12px;line-height:1.5;color:{{ cvHintColor }}">{{ cvHint }}</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label for="ap-note" style="font-size:13px;font-weight:500">Cover note <span style="font-weight:400;color:#78716A">(optional)</span></label>
+            <textarea id="ap-note" value="{{ note }}" onChange="{{ onNote }}" rows="5" placeholder="Anything you'd like Dana to know before reading your CV." style="font:400 16px/1.6 Inter,sans-serif;padding:12px;border:1px solid #D6D3CD;border-radius:6px;background:#fff;color:#1C1A17;outline:none;width:100%;resize:vertical;transition:border-color .12s" style-hover="border-color:#A8A29B" style-focus="border-color:#1D4ED8;box-shadow:inset 0 0 0 1px #1D4ED8, 0 0 0 3px rgba(29,78,216,0.32)"></textarea>
+            <span style="font-size:12px;line-height:1.5;color:#78716A">{{ noteCount }}</span>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+            <button type="button" onClick="{{ submit }}" style="font:600 16px/1 Inter,sans-serif;height:48px;padding:0 24px;border:1px solid #1D4ED8;border-radius:6px;background:#1D4ED8;color:#fff;cursor:pointer;transition:background .12s;flex:1 1 auto;min-width:176px" style-hover="background:#1E40AF;border-color:#1E40AF">Send application</button>
+            <span style="flex:1 1 200px;font-size:12px;line-height:1.6;color:#78716A">Your details go to Northgate Labs only. We delete applications six months after the role closes.</span>
+          </div>
+        </section>
+        </sc-if>
+
+        <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">
+          <section data-card="1" style="background:#fff;border:1px solid #1D4ED8;border-radius:8px;padding:32px;display:flex;flex-direction:column;gap:16px">
+            <div style="width:40px;height:40px;border-radius:20px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#1D4ED8">✓</div>
+            <h2 style="margin:0;font-size:24px;line-height:1.33;font-weight:600;letter-spacing:-0.01em">Application sent</h2>
+            <p style="margin:0;font-size:16px;line-height:1.7;color:#57534B;text-wrap:pretty">Thanks {{ firstName }}. Dana and the Platform team review applications every Thursday, and you'll hear from us either way by 5 September. We've sent a copy to {{ email }}.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <a href="#" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 16px;border:1px solid #1D4ED8;border-radius:6px;background:#1D4ED8;color:#fff;text-decoration:none;display:inline-flex;align-items:center" style-hover="background:#1E40AF;border-color:#1E40AF">Browse other roles</a>
+              <button type="button" onClick="{{ reset }}" style="font:600 14px/1 Inter,sans-serif;height:40px;padding:0 16px;border:1px solid #D6D3CD;border-radius:6px;background:#fff;color:#1C1A17;cursor:pointer" style-hover="background:#FAF9F7;border-color:#A8A29B">Start again</button>
+            </div>
+          </section>
+        </sc-if>
+
+      </div>
+    </div>
+  </main>
+
+  <footer style="border-top:1px solid #E7E5E0;background:#fff">
+    <div style="max-width:1040px;margin:0 auto;padding:24px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between">
+      <span style="font-size:12px;color:#78716A">Powered by HireFlow</span>
+      <div style="display:flex;gap:16px">
+        <a href="#" style="font-size:12px;text-decoration:none">Privacy</a>
+        <a href="#" style="font-size:12px;text-decoration:none">Accessibility</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1040}}">
+class Component extends DCLogic {
+  state = { name:'', email:'', note:'', file:null, errors:{}, tried:false, submitted:false, dragging:false };
+  fileRef = React.createRef();
+
+  validate(s) {
+    const e = {};
+    if (!s.name.trim()) e.name = 'Enter your name.';
+    if (!s.email.trim()) e.email = 'Enter your email address.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email.trim())) e.email = 'Add a domain, like name@company.com.';
+    if (!s.file) e.file = 'Attach your CV to apply.';
+    return e;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const err = s.tried ? this.validate(s) : {};
+    const count = s.note.length;
+    const set = (k) => (ev) => {
+      const v = ev.target.value;
+      this.setState(st => {
+        const next = { ...st, [k]: v };
+        return { [k]: v, errors: st.tried ? this.validate(next) : {} };
+      });
+    };
+    const take = (f) => {
+      if (!f) return;
+      this.setState(st => {
+        const next = { ...st, file: { name: f.name, size: f.size } };
+        return { file: next.file, dragging: false, errors: st.tried ? this.validate(next) : {} };
+      });
+    };
+    const kb = s.file ? (s.file.size > 1024*1024
+      ? (s.file.size/1048576).toFixed(1) + ' MB'
+      : Math.max(1, Math.round(s.file.size/1024)) + ' KB') : '';
+
+    return {
+      name: s.name, email: s.email, note: s.note,
+      firstName: (s.name.trim().split(/\s+/)[0]) || 'there',
+      notSubmitted: !s.submitted, submitted: s.submitted,
+      hasErrors: Object.keys(err).length > 0,
+      errorSummary: Object.keys(err).length === 1 ? 'One thing needs fixing before you can send this.' : 'A few things need fixing before you can send this.',
+      nameBorder: err.name ? '#B91C1C' : '#D6D3CD',
+      emailBorder: err.email ? '#B91C1C' : '#D6D3CD',
+      nameHint: err.name || 'As it appears on your CV.',
+      emailHint: err.email || "We'll only use this about your application.",
+      nameHintColor: err.name ? '#B91C1C' : '#78716A',
+      emailHintColor: err.email ? '#B91C1C' : '#78716A',
+      cvHint: err.file || 'PDF, DOC or DOCX, up to 10MB.',
+      cvHintColor: err.file ? '#B91C1C' : '#78716A',
+      dropBorder: err.file ? '#B91C1C' : (s.dragging ? '#1D4ED8' : '#D6D3CD'),
+      dropBg: s.dragging ? '#EFF6FF' : '#FAF9F7',
+      noFile: !s.file, hasFile: !!s.file,
+      fileName: s.file ? s.file.name : '', fileSize: kb,
+      noteCount: count === 0 ? 'Up to 500 characters.' : count + ' / 500 characters',
+      onName: set('name'), onEmail: set('email'),
+      onNote: (ev) => { const v = ev.target.value.slice(0,500); this.setState({ note: v }); },
+      fileRef: this.fileRef,
+      browse: () => this.fileRef.current && this.fileRef.current.click(),
+      onFile: (ev) => take(ev.target.files && ev.target.files[0]),
+      onDragOver: (ev) => { ev.preventDefault(); if (!this.state.dragging) this.setState({ dragging:true }); },
+      onDragLeave: () => this.setState({ dragging:false }),
+      onDrop: (ev) => { ev.preventDefault(); take(ev.dataTransfer.files && ev.dataTransfer.files[0]); },
+      clearFile: () => this.setState(st => ({ file:null, errors: st.tried ? { ...st.errors, file:'Attach your CV to apply.' } : {} })),
+      submit: () => {
+        const e = this.validate(this.state);
+        if (Object.keys(e).length) { this.setState({ tried:true, errors:e }); return; }
+        this.setState({ submitted:true });
+      },
+      reset: () => this.setState({ name:'', email:'', note:'', file:null, errors:{}, tried:false, submitted:false })
+    };
+  }
+}
+</script>
+</body>
+</html>

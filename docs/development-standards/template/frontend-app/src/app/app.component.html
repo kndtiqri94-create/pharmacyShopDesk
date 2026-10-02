@@ -1,0 +1,139 @@
+@if (loginDisplay) {
+@if(userOrganizationInitlized) {
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav mode="side" class="sidenav" [opened]="sidenavOpened" (openedChange)="onSidenavToggle($event)">
+    <a href="../">
+      <div style="background-image: url('../logo-full.jpg');" class="logo"></div>
+    </a>
+    <!-- Side Navigation Content -->
+    <mat-nav-list class="side-menu-list">
+      <mat-list-item routerLink="/home" class="menu-item" [ngClass]="{'menu-selected': isCurrentRout(['/','/home'])}">
+        <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined" aria-label="add icon">home
+        </mat-icon>
+        <span class="menu-item-text">{{ 'navigation.home' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/departments" class="menu-item"
+        [ngClass]="{'menu-selected': isCurrentRout(['/departments'])}">
+        <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined" aria-label="departments icon">business
+        </mat-icon>
+        <span class="menu-item-text">{{ 'navigation.departments' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/users" class="menu-item"
+        [ngClass]="{'menu-selected': isCurrentRout(['/users'])}">
+        <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined" aria-label="users icon">people
+        </mat-icon>
+        <span class="menu-item-text">{{ 'navigation.users' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/budget-categories" class="menu-item"
+        [ngClass]="{'menu-selected': isCurrentRout(['/budget-categories'])}">
+        <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined" aria-label="budget categories icon">category
+        </mat-icon>
+        <span class="menu-item-text">{{ 'navigation.budgetCategories' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/budget-subcategories" class="menu-item"
+        [ngClass]="{'menu-selected': isCurrentRout(['/budget-subcategories'])}">
+        <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined" aria-label="budget subcategories icon">subdirectory_arrow_right
+        </mat-icon>
+        <span class="menu-item-text">{{ 'navigation.budgetSubcategories' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/budgets" class="menu-item"
+        [ngClass]="{'menu-selected': isCurrentRout(['/budgets'])}">
+        <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined" aria-label="budgets icon">account_balance_wallet
+        </mat-icon>
+        <span class="menu-item-text">{{ 'navigation.budgets' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/budget-requests" class="menu-item"
+        [ngClass]="{'menu-selected': isCurrentRout(['/budget-requests'])}">
+        <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined" aria-label="budget requests icon">request_quote
+        </mat-icon>
+        <span class="menu-item-text">{{ 'navigation.budgetRequests' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/finance-approval" class="menu-item"
+        [ngClass]="{'menu-selected': isCurrentRout(['/finance-approval'])}">
+        <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined" aria-label="finance approval icon">approval
+        </mat-icon>
+        <span class="menu-item-text">Finance Approval</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/budget-report" class="menu-item"
+        [ngClass]="{'menu-selected': isCurrentRout(['/budget-report'])}">
+        <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined" aria-label="budget report icon">analytics
+        </mat-icon>
+        <span class="menu-item-text">{{ 'navigation.budgetReport' | translate }}</span>
+      </mat-list-item>
+
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="app-toolbar">
+      <button mat-icon-button (click)="toggleSidenav()" aria-label="Toggle navigation menu">
+        <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined">menu</mat-icon>
+      </button>
+      <span class="title-mat-primary" href="/"></span>
+      <div class="toolbar-spacer"></div>
+      <app-language-selector></app-language-selector>
+      <app-theme-toggle></app-theme-toggle>
+      
+      <!-- Optimized User Display Section -->
+      <div class="user-display-container">
+        <button mat-button class="user-info-button" 
+                [attr.aria-label]="'User profile: ' + (loggedInUserDisplayName || 'User')"
+                (click)="onUserProfileClick()">
+          <div class="user-info-content">
+            <div class="user-info-text">
+              <div class="username" [title]="loggedInUserDisplayName || 'Loading...'">
+                {{ loggedInUserDisplayName || 'Loading...' }}
+              </div>
+              <div class="designation" [title]="loggedInUserDesignation || 'Loading...'">
+                {{ loggedInUserDesignation || 'Loading...' }}
+              </div>
+            </div>
+            <div class="user-avatar-container">
+              @if (loggedInUserImage) {
+                  <img [src]="loggedInUserImage" 
+                       [alt]="'Profile picture of ' + (loggedInUserDisplayName || 'User')"
+                       class="user-avatar"
+                       loading="lazy">
+              } @else {
+                  <div class="user-avatar user-avatar-fallback"
+                       [attr.aria-label]="'User initials: ' + userInitials">
+                      {{ userInitials || 'U' }}
+                  </div>
+              }
+            </div>
+          </div>
+        </button>
+      </div>
+    </mat-toolbar>
+    <div class="p-0">
+      @if (!isIframe) {
+      <div class="ps-4 pe-4 pt-4 pb-0" [style.height.px]="innerWindowHeight" style="overflow: auto;">
+        <router-outlet></router-outlet>
+      </div>
+      }
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+} @else {
+@if(userNotAuthorized) {
+<div>{{ 'common.messages.error' | translate }}</div>
+} @else {
+<div class="user-auth-waiting">
+  <div class="w-100">
+    <div style="background-image: url('../logo-full.jpg'); margin: auto; background-position: center; height: 80px;"
+      class="logo"></div>
+  </div>
+  <div class="mt-5">
+    <mat-progress-spinner mode="indeterminate" [diameter]="40" style="margin: auto;">
+    </mat-progress-spinner>
+  </div>
+  <div class="mt-2">
+    {{ 'common.messages.loading' | translate }}
+  </div>
+</div>
+}
+}
+}
+@if (!loginDisplay) {
+<button mat-raised-button (click)="loginRedirect()">{{ 'common.actions.login' | translate }}</button>
+}
+<app-system-progress></app-system-progress>

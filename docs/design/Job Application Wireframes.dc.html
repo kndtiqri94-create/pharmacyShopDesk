@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9;font-family:system-ui,sans-serif}
+a{color:#2a78d6}a:hover{color:#1b5aa8}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}
+</style></helmet>
+
+<section class="dv-turn" id="t2">
+  <div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Desktop layout for <a class="dv-oid" href="#1a">1a</a></span></div>
+  <p style="margin:-8px 0 20px;max-width:70ch;font:13px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.6);text-wrap:pretty">Same block order as <a class="dv-oid" href="#1a">1a</a>. The only question desktop adds is how much width the reading column gets and whether the role facts stay inline or move beside the text.</p>
+
+  <div class="dv-opts">
+
+    <!-- 2a -->
+    <div class="dv-opt" id="2a">
+      <div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>One centred column — direct scale-up</div>
+      <div class="dv-card" style="width:960px">
+        <div style="display:flex;flex-direction:column">
+
+          <div style="padding:20px 40px;border-bottom:1px dashed #cdc9c1;display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:24px;height:24px;border-radius:5px;background:#d8d5cf"></div>
+              <div style="width:88px;height:10px;border-radius:3px;background:#d8d5cf"></div>
+            </div>
+            <div style="width:104px;height:9px;border-radius:3px;background:#e6e3dd"></div>
+          </div>
+
+          <div style="padding:48px 40px 32px;border-bottom:1px dashed #cdc9c1;display:flex;justify-content:center">
+            <div style="width:640px;display:flex;flex-direction:column;gap:16px">
+              <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">1 · ROLE HEADER</div>
+              <div style="width:78%;height:28px;border-radius:5px;background:#c4c0b8"></div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <div style="height:24px;width:96px;border-radius:12px;background:#e6e3dd"></div>
+                <div style="height:24px;width:72px;border-radius:12px;background:#e6e3dd"></div>
+                <div style="height:24px;width:112px;border-radius:12px;background:#e6e3dd"></div>
+                <div style="height:24px;width:80px;border-radius:12px;background:#e6e3dd"></div>
+              </div>
+              <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">location · type · salary · team — same chips as mobile, one row</div>
+            </div>
+          </div>
+
+          <div style="padding:40px;border-bottom:1px dashed #cdc9c1;display:flex;justify-content:center">
+            <div style="width:640px;display:flex;flex-direction:column;gap:8px">
+              <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">2 · WHAT THE ROLE IS</div>
+              <div style="width:100%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+              <div style="width:100%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+              <div style="width:96%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+              <div style="width:62%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+              <div style="height:12px"></div>
+              <div style="width:32%;height:12px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="width:100%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+              <div style="width:100%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+              <div style="width:74%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+              <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a;padding-top:4px">640px measure, ~75 characters. Never full-bleed.</div>
+            </div>
+          </div>
+
+          <div style="padding:40px 40px 56px;display:flex;justify-content:center">
+            <div style="width:640px;display:flex;flex-direction:column;gap:24px">
+              <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">3 · APPLICATION FORM</div>
+              <div style="display:flex;gap:16px">
+                <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+                  <div style="width:44px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+                  <div style="height:40px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+                  <div style="width:36px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+                  <div style="height:40px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+                </div>
+              </div>
+              <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a;margin-top:-16px">name + email pair up above 640px, stack below</div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <div style="width:28px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+                <div style="height:88px;border:1.5px dashed #b9b5ad;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+                  <div style="width:24px;height:24px;border-radius:12px;background:#e6e3dd"></div>
+                  <div style="font:12px/1 'Architects Daughter',cursive;color:#8a847a">drop CV here or browse</div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <div style="width:72px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+                <div style="height:112px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+                <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">optional · 500 char limit</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:16px">
+                <div style="width:176px;height:48px;border-radius:6px;background:#4a4741;display:flex;align-items:center;justify-content:center">
+                  <div style="width:96px;height:10px;border-radius:3px;background:#f0eee9"></div>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+                  <div style="width:100%;height:8px;border-radius:3px;background:#e6e3dd"></div>
+                  <div style="width:56%;height:8px;border-radius:3px;background:#e6e3dd"></div>
+                </div>
+              </div>
+              <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a;margin-top:-12px">4 · submit sits left, privacy + what happens next beside it</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <p style="margin:0;max-width:640px;font:12px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.5)">Nothing moves except the measure and the name/email pairing. Cheapest to build and identical to mobile in order.</p>
+    </div>
+
+    <!-- 2b -->
+    <div class="dv-opt" id="2b">
+      <div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Facts in a side column</div>
+      <div class="dv-card" style="width:1040px">
+        <div style="display:flex;flex-direction:column">
+
+          <div style="padding:20px 40px;border-bottom:1px dashed #cdc9c1;display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:24px;height:24px;border-radius:5px;background:#d8d5cf"></div>
+              <div style="width:88px;height:10px;border-radius:3px;background:#d8d5cf"></div>
+            </div>
+            <div style="width:104px;height:9px;border-radius:3px;background:#e6e3dd"></div>
+          </div>
+
+          <div style="padding:48px 40px 32px;border-bottom:1px dashed #cdc9c1;display:flex;justify-content:center">
+            <div style="width:880px;display:flex;flex-direction:column;gap:12px">
+              <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">1 · ROLE HEADER</div>
+              <div style="width:56%;height:28px;border-radius:5px;background:#c4c0b8"></div>
+              <div style="width:34%;height:11px;border-radius:3px;background:#d8d5cf"></div>
+            </div>
+          </div>
+
+          <div style="padding:40px;display:flex;justify-content:center">
+            <div style="width:880px;display:flex;gap:56px;align-items:flex-start">
+
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:40px">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">2 · WHAT THE ROLE IS</div>
+                  <div style="width:100%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+                  <div style="width:100%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+                  <div style="width:94%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+                  <div style="width:58%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+                  <div style="height:12px"></div>
+                  <div style="width:34%;height:12px;border-radius:3px;background:#c4c0b8"></div>
+                  <div style="width:100%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+                  <div style="width:88%;height:10px;border-radius:3px;background:#d8d5cf"></div>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:24px;padding-top:32px;border-top:1px dashed #cdc9c1">
+                  <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">3 · APPLICATION FORM</div>
+                  <div style="display:flex;gap:16px">
+                    <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+                      <div style="width:44px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+                      <div style="height:40px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+                    </div>
+                    <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+                      <div style="width:36px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+                      <div style="height:40px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:4px">
+                    <div style="width:28px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+                    <div style="height:88px;border:1.5px dashed #b9b5ad;border-radius:5px;display:flex;align-items:center;justify-content:center">
+                      <div style="font:12px/1 'Architects Daughter',cursive;color:#8a847a">drop CV here or browse</div>
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:4px">
+                    <div style="width:72px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+                    <div style="height:112px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:16px">
+                    <div style="width:176px;height:48px;border-radius:6px;background:#4a4741;display:flex;align-items:center;justify-content:center">
+                      <div style="width:96px;height:10px;border-radius:3px;background:#f0eee9"></div>
+                    </div>
+                    <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+                      <div style="width:100%;height:8px;border-radius:3px;background:#e6e3dd"></div>
+                      <div style="width:52%;height:8px;border-radius:3px;background:#e6e3dd"></div>
+                    </div>
+                  </div>
+                  <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a;margin-top:-12px">4 · privacy + what happens next</div>
+                </div>
+              </div>
+
+              <div style="width:280px;flex:none;border:1.5px dashed #b9b5ad;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:20px">
+                <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">ROLE FACTS</div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="width:52px;height:8px;border-radius:3px;background:#e6e3dd"></div>
+                  <div style="width:78%;height:11px;border-radius:3px;background:#c4c0b8"></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="width:40px;height:8px;border-radius:3px;background:#e6e3dd"></div>
+                  <div style="width:56%;height:11px;border-radius:3px;background:#c4c0b8"></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="width:60px;height:8px;border-radius:3px;background:#e6e3dd"></div>
+                  <div style="width:84%;height:11px;border-radius:3px;background:#c4c0b8"></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="width:44px;height:8px;border-radius:3px;background:#e6e3dd"></div>
+                  <div style="width:64%;height:11px;border-radius:3px;background:#c4c0b8"></div>
+                </div>
+                <div style="height:1px;background:#e6e3dd"></div>
+                <div style="width:100%;height:8px;border-radius:3px;background:#e6e3dd"></div>
+                <div style="width:70%;height:8px;border-radius:3px;background:#e6e3dd"></div>
+                <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">closing date · hiring manager</div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <p style="margin:0;max-width:520px;font:12px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.5)">Chips become a labelled facts panel that stays visible while reading. Below 900px it collapses back to the chip row from <a class="dv-oid" href="#1a">1a</a>, so mobile is unchanged.</p>
+    </div>
+
+  </div>
+
+  <p class="dv-next">Try next: "approve <a class="dv-oid" href="#2a">2a</a>, style it up" · "use <a class="dv-oid" href="#2b">2b</a> but keep the facts panel sticky on scroll" · "show me the success state after submit"</p>
+</section>
+
+<section class="dv-turn" id="t1">
+  <div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Job application page — structure only, mobile 360px</span></div>
+  <p style="margin:-8px 0 20px;max-width:70ch;font:13px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.6);text-wrap:pretty">Same five content blocks in all three, ordered differently. Grey bars are text, dashed boxes are inputs, dark bar is the submit action. No brand colour or type yet. Notes in the margin are behaviour, not styling.</p>
+
+  <div class="dv-opts">
+
+    <!-- 1a -->
+    <div class="dv-opt" id="1a">
+      <div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Straight read-then-apply</div>
+      <div class="dv-card" style="width:360px">
+        <div style="display:flex;flex-direction:column">
+
+          <div style="padding:16px;border-bottom:1px dashed #cdc9c1;display:flex;align-items:center;gap:8px">
+            <div style="width:20px;height:20px;border-radius:4px;background:#d8d5cf"></div>
+            <div style="width:76px;height:9px;border-radius:3px;background:#d8d5cf"></div>
+          </div>
+
+          <div style="padding:24px 16px;border-bottom:1px dashed #cdc9c1;display:flex;flex-direction:column;gap:12px">
+            <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">1 · ROLE HEADER</div>
+            <div style="width:88%;height:20px;border-radius:4px;background:#c4c0b8"></div>
+            <div style="width:60%;height:20px;border-radius:4px;background:#c4c0b8"></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;padding-top:4px">
+              <div style="height:22px;width:84px;border-radius:11px;background:#e6e3dd"></div>
+              <div style="height:22px;width:64px;border-radius:11px;background:#e6e3dd"></div>
+              <div style="height:22px;width:96px;border-radius:11px;background:#e6e3dd"></div>
+              <div style="height:22px;width:72px;border-radius:11px;background:#e6e3dd"></div>
+            </div>
+            <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">location · type · salary · team</div>
+          </div>
+
+          <div style="padding:24px 16px;border-bottom:1px dashed #cdc9c1;display:flex;flex-direction:column;gap:8px">
+            <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">2 · WHAT THE ROLE IS</div>
+            <div style="width:100%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="width:100%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="width:92%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="width:70%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="height:8px"></div>
+            <div style="width:40%;height:11px;border-radius:3px;background:#c4c0b8"></div>
+            <div style="width:100%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="width:84%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a;padding-top:4px">~150 words. Truncate past 6 lines with "read more"?</div>
+          </div>
+
+          <div style="padding:24px 16px;display:flex;flex-direction:column;gap:16px">
+            <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">3 · APPLICATION FORM</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:44px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:40px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:36px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:40px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:28px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:72px;border:1.5px dashed #b9b5ad;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px">
+                <div style="width:24px;height:24px;border-radius:12px;background:#e6e3dd"></div>
+                <div style="font:12px/1 'Architects Daughter',cursive;color:#8a847a">drop CV or browse</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:72px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:96px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+              <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">optional · 500 char limit</div>
+            </div>
+            <div style="height:48px;border-radius:6px;background:#4a4741;display:flex;align-items:center;justify-content:center">
+              <div style="width:96px;height:10px;border-radius:3px;background:#f0eee9"></div>
+            </div>
+            <div style="width:100%;height:8px;border-radius:3px;background:#e6e3dd"></div>
+            <div style="width:64%;height:8px;border-radius:3px;background:#e6e3dd"></div>
+            <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">4 · privacy line + what happens next</div>
+          </div>
+
+        </div>
+      </div>
+      <p style="margin:0;max-width:360px;font:12px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.5)">One column, top to bottom. Nothing hidden, nothing sticky. Longest scroll to reach the form.</p>
+    </div>
+
+    <!-- 1b -->
+    <div class="dv-opt" id="1b">
+      <div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Persistent apply bar</div>
+      <div class="dv-card" style="width:360px;position:relative">
+        <div style="display:flex;flex-direction:column">
+
+          <div style="padding:16px;border-bottom:1px dashed #cdc9c1;display:flex;align-items:center;gap:8px">
+            <div style="width:20px;height:20px;border-radius:4px;background:#d8d5cf"></div>
+            <div style="width:76px;height:9px;border-radius:3px;background:#d8d5cf"></div>
+          </div>
+
+          <div style="padding:24px 16px;border-bottom:1px dashed #cdc9c1;display:flex;flex-direction:column;gap:12px">
+            <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">1 · ROLE HEADER</div>
+            <div style="width:88%;height:20px;border-radius:4px;background:#c4c0b8"></div>
+            <div style="width:60%;height:20px;border-radius:4px;background:#c4c0b8"></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;padding-top:4px">
+              <div style="height:22px;width:84px;border-radius:11px;background:#e6e3dd"></div>
+              <div style="height:22px;width:64px;border-radius:11px;background:#e6e3dd"></div>
+              <div style="height:22px;width:96px;border-radius:11px;background:#e6e3dd"></div>
+            </div>
+          </div>
+
+          <div style="padding:24px 16px;border-bottom:1px dashed #cdc9c1;display:flex;flex-direction:column;gap:8px">
+            <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">2 · WHAT THE ROLE IS</div>
+            <div style="width:100%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="width:100%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="width:92%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="width:100%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="width:76%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="height:8px"></div>
+            <div style="width:40%;height:11px;border-radius:3px;background:#c4c0b8"></div>
+            <div style="width:100%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="width:88%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="width:64%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+          </div>
+
+          <div style="padding:24px 16px 88px;display:flex;flex-direction:column;gap:16px">
+            <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">3 · APPLICATION FORM</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:44px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:40px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:36px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:40px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:28px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:72px;border:1.5px dashed #b9b5ad;border-radius:5px;display:flex;align-items:center;justify-content:center">
+                <div style="font:12px/1 'Architects Daughter',cursive;color:#8a847a">drop CV or browse</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:72px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:96px;border:1.5px dashed #b9b5ad;border-radius:5px"></div>
+            </div>
+            <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">4 · privacy line + what happens next</div>
+          </div>
+
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;padding:12px 16px;background:#fff;border-top:1.5px solid #cdc9c1;display:flex;align-items:center;gap:12px">
+          <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+            <div style="width:80%;height:9px;border-radius:3px;background:#c4c0b8"></div>
+            <div style="width:52%;height:7px;border-radius:3px;background:#e6e3dd"></div>
+          </div>
+          <div style="width:104px;height:44px;border-radius:6px;background:#4a4741"></div>
+        </div>
+      </div>
+      <p style="margin:0;max-width:360px;font:12px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.5)">Same order as <a class="dv-oid" href="#1a">1a</a>, plus a docked bar carrying role name and Apply. Tapping it jumps to the form. On desktop the bar becomes a right-hand rail beside the description.</p>
+    </div>
+
+    <!-- 1c -->
+    <div class="dv-opt" id="1c">
+      <div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Apply first, detail on demand</div>
+      <div class="dv-card" style="width:360px">
+        <div style="display:flex;flex-direction:column">
+
+          <div style="padding:16px;border-bottom:1px dashed #cdc9c1;display:flex;align-items:center;gap:8px">
+            <div style="width:20px;height:20px;border-radius:4px;background:#d8d5cf"></div>
+            <div style="width:76px;height:9px;border-radius:3px;background:#d8d5cf"></div>
+          </div>
+
+          <div style="padding:24px 16px;border-bottom:1px dashed #cdc9c1;display:flex;flex-direction:column;gap:12px">
+            <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">1 · ROLE HEADER</div>
+            <div style="width:88%;height:20px;border-radius:4px;background:#c4c0b8"></div>
+            <div style="width:52%;height:20px;border-radius:4px;background:#c4c0b8"></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;padding-top:4px">
+              <div style="height:22px;width:84px;border-radius:11px;background:#e6e3dd"></div>
+              <div style="height:22px;width:64px;border-radius:11px;background:#e6e3dd"></div>
+              <div style="height:22px;width:96px;border-radius:11px;background:#e6e3dd"></div>
+            </div>
+            <div style="width:100%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="width:84%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">2-line summary only</div>
+          </div>
+
+          <div style="padding:24px 16px;border-bottom:1px dashed #cdc9c1;display:flex;flex-direction:column;gap:16px;background:#faf9f7">
+            <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">2 · APPLICATION FORM</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:44px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:40px;border:1.5px dashed #b9b5ad;border-radius:5px;background:#fff"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:36px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:40px;border:1.5px dashed #b9b5ad;border-radius:5px;background:#fff"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:28px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:72px;border:1.5px dashed #b9b5ad;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center">
+                <div style="font:12px/1 'Architects Daughter',cursive;color:#8a847a">drop CV or browse</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="width:72px;height:8px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="height:80px;border:1.5px dashed #b9b5ad;border-radius:5px;background:#fff"></div>
+              <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">optional</div>
+            </div>
+            <div style="height:48px;border-radius:6px;background:#4a4741;display:flex;align-items:center;justify-content:center">
+              <div style="width:96px;height:10px;border-radius:3px;background:#f0eee9"></div>
+            </div>
+            <div style="width:100%;height:8px;border-radius:3px;background:#e6e3dd"></div>
+          </div>
+
+          <div style="padding:24px 16px;display:flex;flex-direction:column;gap:12px">
+            <div style="font:10px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#a09a90">3 · FULL DESCRIPTION</div>
+            <div style="border:1.5px dashed #b9b5ad;border-radius:6px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+              <div style="width:132px;height:10px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="width:12px;height:12px;border-radius:2px;background:#c4c0b8"></div>
+            </div>
+            <div style="border:1.5px dashed #b9b5ad;border-radius:6px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+              <div style="width:108px;height:10px;border-radius:3px;background:#c4c0b8"></div>
+              <div style="width:12px;height:12px;border-radius:2px;background:#c4c0b8"></div>
+            </div>
+            <div style="border:1.5px dashed #b9b5ad;border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                <div style="width:96px;height:10px;border-radius:3px;background:#c4c0b8"></div>
+                <div style="width:12px;height:12px;border-radius:2px;background:#8a847a"></div>
+              </div>
+              <div style="width:100%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+              <div style="width:100%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+              <div style="width:68%;height:9px;border-radius:3px;background:#d8d5cf"></div>
+            </div>
+            <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">accordion: about the role · what you'll do · how we hire</div>
+            <div style="width:100%;height:8px;border-radius:3px;background:#e6e3dd"></div>
+            <div style="font:12px/1.4 'Architects Daughter',cursive;color:#8a847a">4 · privacy + what happens next</div>
+          </div>
+
+        </div>
+      </div>
+      <p style="margin:0;max-width:360px;font:12px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.5)">For candidates who already know the role, usually arriving from a referral or job board. Detail moves below the form into accordions.</p>
+    </div>
+
+  </div>
+
+  <p class="dv-next">Try next: "go with <a class="dv-oid" href="#1a">1a</a> and show me the desktop layout" · "combine <a class="dv-oid" href="#1a">1a</a> with the sticky bar from <a class="dv-oid" href="#1b">1b</a>" · "add a multi-step version"</p>
+</section>
+</x-dc>
+</body>
+</html>

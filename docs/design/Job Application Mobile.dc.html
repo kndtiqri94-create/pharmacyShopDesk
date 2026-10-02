@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EFEDE9;font-family:Inter,system-ui,sans-serif;color:#1C1A17}
+a{color:#1D4ED8}a:hover{color:#1E40AF}
+</style></helmet>
+
+<div style="padding:40px 44px 64px;display:flex;flex-direction:column;gap:32px">
+
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:70ch">
+    <h1 style="margin:0;font-size:24px;line-height:1.3;font-weight:600;letter-spacing:-0.01em">Mobile — Senior .NET Engineer</h1>
+    <p style="margin:0;font-size:14px;line-height:1.6;color:#57534B;text-wrap:pretty">The same page at 375px, running live in the frames below. Scroll inside any frame; the middle one is scrolled to the form. Below 420px the gutter tightens to 16px, the title steps down to 28px, and card padding drops to 20/16. Everything else comes straight from the shared components.</p>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#78716A">Top of page</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" title="Apply" hint-size="393px,852px">
+        <iframe src="Job Application Page.dc.html" title="Job application, top of page" style="width:100%;height:100%;border:0;background:#FAF9F7"></iframe>
+      </x-import>
+      <p style="margin:0;max-width:340px;font-size:12px;line-height:1.6;color:#57534B">Role header, then the facts card, then the description. Facts sit above the reading copy so salary and location are answered before the scroll starts.</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#78716A">Form</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" title="Apply" hint-size="393px,852px">
+        <iframe ref="{{ formFrame }}" src="Job Application Page.dc.html" title="Job application form" style="width:100%;height:100%;border:0;background:#FAF9F7"></iframe>
+      </x-import>
+      <p style="margin:0;max-width:340px;font-size:12px;line-height:1.6;color:#57534B">Fields stack full width at 48px tall, above the 44px touch minimum. Inputs are 16px so iOS does not zoom on focus. Submit is full width with the privacy line beneath it.</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#78716A">Errors and confirmation</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" title="Apply" hint-size="393px,852px">
+        <iframe ref="{{ errFrame }}" src="Job Application Page.dc.html" title="Job application with validation errors" style="width:100%;height:100%;border:0;background:#FAF9F7"></iframe>
+      </x-import>
+      <p style="margin:0;max-width:340px;font-size:12px;line-height:1.6;color:#57534B">Submitting an incomplete form puts a summary above the fields and marks each one in red. Try it in the frame — fill it in and send to reach the confirmation card.</p>
+    </div>
+
+  </div>
+
+  <div style="max-width:70ch;display:flex;flex-direction:column;gap:8px;padding-top:8px;border-top:1px solid #DEDBD5">
+    <span style="font-size:13px;font-weight:600">Worth deciding</span>
+    <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;font-size:13px;line-height:1.6;color:#57534B">
+      <li>On a phone the CV step is where people drop off. Do we want an "apply with LinkedIn" or email-me-this-role fallback?</li>
+      <li>The description runs long on mobile. I can clamp it to six lines with a "read more" if you'd rather get people to the form sooner.</li>
+    </ul>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  formFrame = React.createRef();
+  errFrame = React.createRef();
+
+  componentDidMount() {
+    const run = (ref, fn) => {
+      const el = ref.current;
+      if (!el) return;
+      const go = () => setTimeout(() => { try { fn(el.contentDocument, el.contentWindow); } catch (e) {} }, 500);
+      el.addEventListener('load', go);
+      try { if (el.contentDocument && el.contentDocument.readyState === 'complete') go(); } catch (e) {}
+    };
+    run(this.formFrame, (doc, win) => {
+      const form = [...doc.querySelectorAll('h2')].find(n => n.textContent.indexOf('Apply for this role') === 0);
+      if (form) win.scrollTo(0, form.getBoundingClientRect().top + win.scrollY - 24);
+    });
+    run(this.errFrame, (doc, win) => {
+      const btn = [...doc.querySelectorAll('button')].find(b => b.textContent.indexOf('Send application') === 0);
+      if (btn) {
+        btn.click();
+        setTimeout(() => {
+          const alert = doc.querySelector('[role="alert"]');
+          if (alert) win.scrollTo(0, alert.getBoundingClientRect().top + win.scrollY - 24);
+        }, 200);
+      }
+    });
+  }
+
+  renderVals() {
+    return { formFrame: this.formFrame, errFrame: this.errFrame };
+  }
+}
+</script>
+</body>
+</html>

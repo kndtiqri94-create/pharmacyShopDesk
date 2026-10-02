@@ -1,0 +1,228 @@
+markdownExploder: true
+qa:
+  qaLocation: docs/qa
+prd:
+  prdFile: docs/SOLUTION_PRD.md
+  prdVersion: v1
+  epicFilePattern: epic-{n}*.md
+architecture:
+  architectureFile: docs/architecture.md
+  architectureVersion: v4
+  architectureSharded: true
+  architectureShardedLocation: docs/architecture
+customTechnicalDocuments: null
+devLoadAlwaysFiles:
+  - docs/development-standards/INDEX.md
+devStandardsMonoliths:
+  backend: docs/development-standards/BACKEND_STANDARDS.md
+  frontend: docs/development-standards/FRONTEND_STANDARDS.md
+devStandardsIndex: docs/development-standards/INDEX.md
+templates:
+  prd: .claude/agents/templates/PRD_TEMPLATE.md
+  tasks: .claude/agents/templates/TASKS_TEMPLATE.md
+  userStory: .claude/agents/templates/USER_STORY_TEMPLATE.md
+  plan: .claude/agents/templates/PLAN_TEMPLATE.md
+  apiDoc: .claude/agents/templates/API_DOC_TEMPLATE.md
+  review: .claude/agents/templates/REVIEW_TEMPLATE.md
+  storyDoR: .claude/agents/templates/STORY_DOR_TEMPLATE.md
+  storyDoD: .claude/agents/templates/STORY_DOD_TEMPLATE.md
+  progress: .claude/agents/templates/PROGRESS_TEMPLATE.html
+
+taskWeight:
+  # Fibonacci-style complexity weight required on every SOLUTION_TASKS.md story line
+  # (— _Weight: N_). Used to compute weighted completion % on the progress page.
+  scale: [1, 2, 3, 5, 8, 13]
+  meaning:
+    1: trivial (config/flag flip, no new logic)
+    2: small (single endpoint/component, no new schema)
+    3: medium (typical CRUD slice, one schema change, some tests)
+    5: large (multi-step flow, schema + API + UI, non-trivial tests)
+    8: very large (cross-cutting or multi-surface feature)
+    13: epic-sized (should usually be split into smaller stories instead)
+  defaultIfMissing: 3
+  progressOutput: docs/SOLUTION_PROGRESS.html
+checklists:
+  # Per-workstream instances are created by copying the templates above.
+  # {n} is <TASKS_NUMBER>.<SUB_TASKS_NUMBER>_<FEATURE> (same convention as user-stories / plans / api-docs).
+  storyDoRPattern: docs/checklists/{n}_STORY_DOR.md
+  storyDoDPattern: docs/checklists/{n}_STORY_DOD.md
+  storyDoRTemplate: .claude/agents/templates/STORY_DOR_TEMPLATE.md
+  storyDoDTemplate: .claude/agents/templates/STORY_DOD_TEMPLATE.md
+devDebugLog: .ai/debug-log.md
+devStoryLocation: docs/user-stories
+
+# ---------------------------------------------------------------------------
+# PyTIQ Data Engineering delivery team (additive — does not replace the
+# TIQRIDemo backend/frontend/DevOps config above, which remains unchanged for
+# that application's workstreams).
+#
+# ONE SHARED SOLUTION BACKLOG (IMPORTANT): PyTIQ DE workstreams are NOT a
+# separate product line with their own backlog. Shiham (Product Owner) remains
+# the single Product Owner for the whole solution, and there is exactly one
+# docs/SOLUTION_PRD.md, docs/SOLUTION_TASKS.md, and docs/SOLUTION_PROGRESS.html
+# — shared by TIQRIDemo application workstreams and PyTIQ DE workstreams alike.
+# DE Requirements, the SDD, and the DE Plan are downstream artifacts under
+# that same backlog, not a parallel PYTIQ_PRD/PYTIQ_TASKS chain. Never create
+# a second PRD/task/progress file for PyTIQ.
+# ---------------------------------------------------------------------------
+dataEngineering:
+  # Standards library this team loads (see docs/development-standards/INDEX.md
+  # Part B). NOT the legacy BACKEND_STANDARDS.md / FRONTEND_STANDARDS.md.
+  standardsIndex: docs/development-standards/INDEX.md
+  standardsRoots:
+    engineering: docs/development-standards/ENGINEERING_STANDARDS.md
+    python: docs/development-standards/PYTHON_STANDARDS.md
+    dataEngineering: docs/development-standards/DATA_ENGINEERING_STANDARDS.md
+    sourceConnector: docs/development-standards/SOURCE_CONNECTOR_STANDARDS.md
+    sinkConnector: docs/development-standards/SINK_CONNECTOR_STANDARDS.md
+    transformation: docs/development-standards/TRANSFORMATION_STANDARDS.md
+    dataQuality: docs/development-standards/DATA_QUALITY_STANDARDS.md
+    dataContract: docs/development-standards/DATA_CONTRACT_STANDARDS.md
+    security: docs/development-standards/SECURITY_AND_PII_STANDARDS.md
+    testing: docs/development-standards/TESTING_STANDARDS.md
+    observability: docs/development-standards/OBSERVABILITY_STANDARDS.md
+    configuration: docs/development-standards/CONFIGURATION_STANDARDS.md
+    performance: docs/development-standards/PERFORMANCE_AND_SCALE_STANDARDS.md
+    deployment: docs/development-standards/DEPLOYMENT_STANDARDS.md
+
+  # Standards each specialist loads by default (in addition to INDEX.md and the
+  # task/story/SDD/plan). Specialists still consult INDEX.md to narrow further
+  # per-task; this list is the outer bound, not a mandate to load all of it
+  # for every task.
+  standardsMapping:
+    dataEngineeringPm: [engineering]
+    dataArchitect: [engineering, dataEngineering, sourceConnector, sinkConnector, transformation, dataQuality, dataContract, security, performance, configuration]
+    sourceConnectorDeveloper: [engineering, python, dataEngineering, sourceConnector, security, testing, observability, configuration, performance]
+    sinkConnectorDeveloper: [sinkConnector, dataEngineering, python, security, testing, observability, configuration, performance]
+    transformationDeveloper: [transformation, dataEngineering, python, testing, dataContract, performance]
+    dataQualityDeveloper: [dataQuality, dataContract, dataEngineering, python, testing, observability, security]
+    devopsDeveloper: [deployment, security, configuration, observability, performance]
+    dataEngineeringReviewer: all   # exception — loads every standard needed for a complete review, like the Code Reviewer
+
+  # Artifact path/naming conventions.
+  requirementsLocation: docs/data-engineering-requirements
+  requirementsPattern: docs/data-engineering-requirements/{n}_{FEATURE}_DE_REQUIREMENTS.md
+  # SDD location is FIXED at docs/data-engineering-design/ — deliberately NOT
+  # docs/design/, which already holds UI/mockup/Figma assets for the frontend
+  # track. Keep DE SDDs isolated from that directory; do not consolidate them.
+  designLocation: docs/data-engineering-design
+  sddPattern: docs/data-engineering-design/{n}_{FEATURE}_SDD.md
+  dePlanPattern: docs/features/{n}_{FEATURE}_DE_PLAN.md
+  deReviewPattern: docs/features/{n}_{FEATURE}_DE_REVIEW.md
+
+  templates:
+    deRequirements: .claude/agents/templates/DE_REQUIREMENTS_TEMPLATE.md
+    sdd: .claude/agents/templates/SDD_TEMPLATE.md
+    dePlan: .claude/agents/templates/DE_PLAN_TEMPLATE.md
+    deStoryDoR: .claude/agents/templates/DE_STORY_DOR_TEMPLATE.md
+    deStoryDoD: .claude/agents/templates/DE_STORY_DOD_TEMPLATE.md
+    deReview: .claude/agents/templates/DE_REVIEW_TEMPLATE.md
+
+  checklists:
+    deStoryDoRPattern: docs/checklists/{n}_DE_STORY_DOR.md
+    deStoryDoDPattern: docs/checklists/{n}_DE_STORY_DOD.md
+    deStoryDoRTemplate: .claude/agents/templates/DE_STORY_DOR_TEMPLATE.md
+    deStoryDoDTemplate: .claude/agents/templates/DE_STORY_DOD_TEMPLATE.md
+
+  # INTENDED / PROVISIONAL IMPLEMENTATION ROOTS — NOT YET VALIDATED.
+  # These paths define intended specialist ownership boundaries. They must be
+  # validated against the actual PyTIQ package structure when runtime
+  # implementation begins — the production PyTIQ package has not been built
+  # yet, and these directories do NOT exist in this repository.
+  #
+  # MANDATORY before creating any of these on disk: Sanjeewa (Team Lead) and
+  # Salinda (Data Architect) MUST first check whether an existing, suitable
+  # root already exists in the actual PyTIQ codebase (once one exists) and
+  # reuse it. A specialist MUST NOT blindly create a new root merely because
+  # it appears below — this list is a placeholder ownership convention, not
+  # an instruction to scaffold directories. Do not create these paths, or any
+  # placeholder files under them, to satisfy this configuration.
+  implementationRoots:
+    sourceConnectors: src/pytiq/connectors/source
+    sinkConnectors: src/pytiq/connectors/sink
+    transformations: src/pytiq/transformations
+    dataQuality: src/pytiq/data_quality
+    pipelines: src/pytiq/pipelines
+    sharedLib: src/pytiq/shared
+    infra: infra
+    pipelinesCi: ci   # project/SDD-selected; may become .azuredevops/pipelines, .github/workflows, etc.
+
+  # Canonical ids/names — single source of truth referenced by every agent
+  # file instead of repeating name/id pairs.
+  agents:
+    productOwner: { id: product-owner, name: Shiham, userFacing: true }
+    teamLead: { id: team-lead, name: Sanjeewa, userFacing: true }
+    businessAnalyst: { id: business-analyst, name: Thilina, userFacing: false }
+    dataEngineeringPm: { id: data-engineering-pm, name: Chinthaka, userFacing: false }
+    dataArchitect: { id: data-architect, name: Salinda, userFacing: false }
+    sourceConnectorDeveloper: { id: source-connector-developer, name: Sheron, userFacing: false }
+    sinkConnectorDeveloper: { id: sink-connector-developer, name: Kevin, userFacing: false }
+    transformationDeveloper: { id: transformation-developer, name: Madhushika, userFacing: false }
+    dataQualityDeveloper: { id: data-quality-developer, name: Pradeep, userFacing: false }
+    devopsDeveloper: { id: devops-developer, name: Milinda, userFacing: false }
+    dataEngineeringReviewer: { id: data-engineering-reviewer, name: Ayodhya, userFacing: false }
+
+  # Clarification routing — who owns which category of ambiguity. Specialists
+  # never guess; they return BLOCKED and the Team Lead routes per this table.
+  clarificationRouting:
+    businessRequirementAmbiguity: productOwner
+    deDeliveryRequirementAmbiguity: dataEngineeringPm
+    userStoryAmbiguity: businessAnalyst
+    architectureAmbiguity: dataArchitect
+    implementationCoordinationAmbiguity: teamLead
+
+  # Centralized review/workflow states for the DE review-fix loop (Ayodhya ↔
+  # Sanjeewa ↔ specialists). There is deliberately NO numeric iteration cap —
+  # see loopBehavior below. Every agent file referencing these states MUST
+  # use this exact vocabulary.
+  reviewStates:
+    values: [APPROVED, CHANGES_REQUESTED, BLOCKED, REPEATED_FAILURE_ESCALATION]
+    issuedBy:
+      APPROVED: dataEngineeringReviewer (Ayodhya) — the reviewer's verdict.
+      CHANGES_REQUESTED: dataEngineeringReviewer (Ayodhya) — the reviewer's verdict.
+      BLOCKED: any DE specialist (dataEngineeringPm, dataArchitect, or an implementation specialist) when it cannot proceed without missing input.
+      REPEATED_FAILURE_ESCALATION: teamLead (Sanjeewa) only — a judgment call, never a numeric counter.
+    meaning:
+      APPROVED: No blocking findings remain and applicable DoD/standards/requirements are satisfied.
+      CHANGES_REQUESTED: Ayodhya identified actionable blocking findings. Sanjeewa routes each finding to the relevant specialist and re-review occurs after fixes.
+      BLOCKED: Progress cannot continue because required requirements, architecture, access, external information, or a human decision is missing.
+      REPEATED_FAILURE_ESCALATION: The same material issue remains unresolved after reasonable remediation attempts. Sanjeewa stops automatic iteration and asks the user for a decision.
+    loopBehavior: >
+      The review-fix loop (Ayodhya review → Sanjeewa routes findings by area →
+      specialist(s) fix → Ayodhya re-review, appending a new Iteration section
+      and never deleting prior ones) continues until APPROVED, until a BLOCKED
+      condition halts progress, or until Sanjeewa determines
+      REPEATED_FAILURE_ESCALATION applies (the same material issue keeps
+      failing after reasonable remediation attempts) and HALTs to present the
+      unresolved issue plus evidence to the user for a decision. There is no
+      fixed maximum iteration count — do not reintroduce one.
+
+  # Conceptual shape of the "only required specialists" declaration. Salinda
+  # states this in SDD §18 as prose (Required / Not required lists); Sanjeewa
+  # restates it as the DE Plan §3/§6 dispatch table. This YAML shape documents
+  # the underlying schema for tooling reference — it is not itself parsed.
+  requiredSpecialistsSchema:
+    sourceConnector: bool
+    sinkConnector: bool
+    transformation: bool
+    dataQuality: bool
+    devops: bool
+
+  # Gate definitions — see team-lead.md `*implement-de-workstream` for the
+  # runnable version of this sequence.
+  approvalGates:
+    - id: gate1_productOwner
+      owner: productOwner
+      description: PRD + task backlog complete. STOP — user decides whether to proceed.
+    - id: gate2_deRequirements
+      owner: dataEngineeringPm
+      description: Unresolved critical DE requirement → BLOCKED, routed upstream. No guessing.
+    - id: gate3_architecture
+      owner: dataArchitect
+      description: SDD complete enough for planning. Unresolved critical technical decision → BLOCKED.
+    - id: gate4_implementationPlan
+      owner: teamLead
+      description: DE Plan presented (files, agents needed, architecture, data movement, state strategy, security, tests, risks). Explicit user approval required before dispatch.
+    - id: gate5_finalReview
+      owner: dataEngineeringReviewer
+      description: APPROVED or CHANGES_REQUESTED. Fix loop repeats until APPROVED, until BLOCKED halts progress, or until Sanjeewa determines REPEATED_FAILURE_ESCALATION applies and hands the unresolved issue to the user — no fixed iteration cap (see reviewStates above).

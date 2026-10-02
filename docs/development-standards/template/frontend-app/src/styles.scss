@@ -1,0 +1,2138 @@
+@import "bootstrap/dist/css/bootstrap-grid.min.css";
+@import "quill/dist/quill.snow.css";
+
+html {
+  font-size: 14px; /* Default is 16px; adjust as needed */
+}
+body {
+  margin: 0px;
+  // zoom: 90%;
+}
+html body *:not(mat-icon) {
+  font-family: "Poppins", "Helvetica Neue", sans-serif !important;
+  font-optical-sizing: auto;
+}
+.row {
+  width: 100% !important;
+}
+.title-mat-primary {
+  margin-top: 2px;
+}
+.system-page-title {
+  font-size: 1.7rem;
+  font-weight: 600;
+  padding-left: 15px;
+  margin-top: 10px;
+}
+.system-page-subtitle {
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin-top: 5px;
+  padding-left: 15px;
+  margin-bottom: 30px;
+}
+.system-model-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 5px;
+}
+.system-inner-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 5px;
+}
+.page-sub-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  color: #673bb7;
+}
+
+.thub-image {
+  margin: auto;
+  display: block;
+  height: 150px;
+  width: auto;
+  margin-bottom: 30px;
+}
+
+.editableLink {
+  cursor: pointer;
+  color: #903ab7 !important;
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: unset !important;
+}
+.search-input-icon {
+  position: absolute;
+  margin-left: -25px;
+}
+
+.primary-button {
+  background-color: #903ab7 !important;
+  color: #fff !important;
+}
+.primary-button:disabled {
+  background-color: #a5a5a5 !important;
+  color: #fbfbfb !important;
+}
+.primary-button:hover {
+  background-color: #ad4cd9 !important;
+  color: #fff !important;
+}
+.w-100 {
+  width: 100%;
+}
+.ql-editor {
+  min-height: 150px;
+}
+.mat-drawer-inner-container::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.mat-drawer-inner-container::-webkit-scrollbar-thumb {
+  background: rgb(209, 209, 209);
+  border-radius: 10px;
+}
+.mat-drawer-inner-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mat-mdc-button[disabled],
+.mat-mdc-button.mat-mdc-button-disabled {
+  color: #ccc !important;
+}
+
+.information-lable {
+  color: #a1a1a1;
+  font-size: 0.9rem;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.data-entry-form {
+  max-width: 1200px;
+}
+
+.detail-view-row {
+  padding-left: 15px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.form-detail-view {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  .lable {
+    color: #6d6d6d;
+    display: flex;
+    font-weight: 400;
+    font-size: 0.87rem;
+    -webkit-font-smoothing: antialiased;
+    margin-bottom: 2px;
+  }
+  .htmlview {
+    display: block;
+    border: 1px solid #e1e1e1;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    max-height: 200px;
+    min-height: 80px;
+    overflow: auto;
+    zoom: 0.8;
+  }
+  .value {
+    display: flex;
+  }
+}
+
+.green-pill {
+  background-color: #a6ffa6;
+  padding: 4px;
+  width: fit-content;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 8px;
+}
+.orange-pill {
+  background-color: #ffa6a6;
+  padding: 4px;
+  width: fit-content;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 8px;
+}
+.grid-item-pill {
+  background-color: #e7e7e7;
+  padding: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 8px;
+  width: fit-content;
+  display: inline;
+  margin-right: 5px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.grid-item-pill:hover {
+  background-color: #e9cff6;
+}
+
+.card-detail-wrapper {
+  border-bottom: 1px dashed #ccc;
+  font-size: 1rem;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+
+  .sup {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #636363;
+  }
+  .title {
+    font-weight: 500;
+    padding-bottom: 5px;
+  }
+  .detail {
+    font-size: 0.85rem;
+    color: #636363;
+  }
+  .heading {
+    font-weight: 500;
+    color: #232323;
+  }
+  .datacol {
+    max-width: 200px;
+  }
+  .action-btn {
+    color: #903ab7 !important;
+  }
+}
+.card-detail-wrapper:hover {
+  background: #8f3ab717;
+  cursor: pointer;
+}
+
+.inner-half-bold {
+  font-weight: 500;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 7px;
+  border-radius: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgb(229, 229, 229);
+  border-radius: 7px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #a5a5a5;
+  border-radius: 7px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #903ab7;
+}
+
+/* Dark Mode Styles */
+:root {
+  /* Light theme variables */
+  --primary-color: #903ab7;
+  --primary-hover-color: #ad4cd9;
+  --background-color: #ffffff;
+  --surface-color: #f5f5f5;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --border-color: #e0e0e0;
+  --card-background: #ffffff;
+  --toolbar-background: #ffffff;
+  --sidenav-background: #f8f9fa;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --scrollbar-track: #f1f1f1;
+  --scrollbar-thumb: #c1c1c1;
+  --scrollbar-thumb-hover: #a8a8a8;
+}
+
+.dark-theme {
+  /* Dark theme variables */
+  --primary-color: #bb86fc;
+  --primary-hover-color: #d4a4ff;
+  --background-color: #121212;
+  --surface-color: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --text-muted: #808080;
+  --border-color: #333333;
+  --card-background: #1e1e1e;
+  --toolbar-background: #1e1e1e;
+  --sidenav-background: #2d2d2d;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --scrollbar-track: #2d2d2d;
+  --scrollbar-thumb: #555555;
+  --scrollbar-thumb-hover: #777777;
+}
+
+/* Apply theme variables */
+body {
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Material Design components dark mode overrides */
+.dark-theme {
+  .mat-toolbar {
+    background-color: var(--toolbar-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-sidenav {
+    background-color: var(--sidenav-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-sidenav-container {
+    background-color: var(--background-color) !important;
+  }
+
+  .mat-card {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-list-item {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-list-item:hover {
+    background-color: var(--surface-color) !important;
+  }
+
+  /* Side menu specific styles */
+  .menu-item {
+    color: var(--text-primary) !important;
+  }
+
+  .menu-item .menu-item-text {
+    color: var(--text-primary) !important;
+  }
+
+  .menu-item .mat-icon {
+    color: var(--text-primary) !important;
+  }
+
+  .menu-item:hover {
+    background-color: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .menu-item:hover .menu-item-text {
+    color: var(--text-primary) !important;
+  }
+
+  .menu-item:hover .mat-icon {
+    color: var(--text-primary) !important;
+  }
+
+  .menu-selected {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+
+  .menu-selected .menu-item-text {
+    color: white !important;
+  }
+
+  .menu-selected .mat-icon {
+    color: white !important;
+  }
+
+  /* Override any existing hover styles for dark theme */
+  .dark-theme .menu-item:hover {
+    background-color: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .dark-theme .menu-item:hover .menu-item-text {
+    color: var(--text-primary) !important;
+  }
+
+  .dark-theme .menu-item:hover .mat-icon {
+    color: var(--text-primary) !important;
+  }
+
+  /* Form elements */
+  .mat-form-field {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-input-element {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-label {
+    color: var(--text-secondary) !important;
+  }
+
+  /* Buttons */
+  .mat-button, .mat-raised-button {
+    color: var(--text-primary) !important;
+  }
+
+  /* Cards and containers */
+  .card-detail-wrapper {
+    border-bottom-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .card-detail-wrapper:hover {
+    background-color: var(--surface-color) !important;
+  }
+
+  .card-detail-wrapper .sup {
+    color: var(--text-secondary) !important;
+  }
+
+  .card-detail-wrapper .detail {
+    color: var(--text-secondary) !important;
+  }
+
+  .card-detail-wrapper .heading {
+    color: var(--text-primary) !important;
+  }
+
+  /* Scrollbars */
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track) !important;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb) !important;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover) !important;
+  }
+
+  /* Form detail view */
+  .form-detail-view .lable {
+    color: var(--text-secondary) !important;
+  }
+
+  .form-detail-view .htmlview {
+    background-color: var(--surface-color) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* Grid items */
+  .grid-item-pill {
+    background-color: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .grid-item-pill:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+
+  /* Information labels */
+  .information-lable {
+    color: var(--text-muted) !important;
+  }
+
+  /* Page titles */
+  .page-sub-title {
+    color: var(--primary-color) !important;
+  }
+
+  /* System titles */
+  .system-page-title,
+  .system-model-title,
+  .system-inner-title {
+    color: var(--text-primary) !important;
+  }
+
+  .system-page-subtitle {
+    color: var(--text-secondary) !important;
+  }
+
+  /* Links */
+  .editableLink {
+    color: var(--primary-color) !important;
+  }
+
+  /* User info */
+  .username,
+  .designation {
+    color: var(--text-primary) !important;
+  }
+
+  /* Sample Form specific styles */
+  .mat-card {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-card-header {
+    background-color: var(--card-background) !important;
+  }
+
+  .mat-card-title {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-card-subtitle {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-card-content {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* Form fields */
+  .mat-form-field {
+    background-color: transparent !important;
+  }
+
+  .mat-form-field-label {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-form-field-outline {
+    color: var(--border-color) !important;
+  }
+
+  .mat-form-field-outline-thick {
+    color: var(--primary-color) !important;
+  }
+
+  .mat-input-element {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-input-element::placeholder {
+    color: var(--text-muted) !important;
+  }
+
+  /* Mat select */
+  .mat-select-value {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-select-arrow {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-option {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-option:hover {
+    background-color: var(--surface-color) !important;
+  }
+
+  .mat-option.mat-selected {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+
+  /* Mat select panel */
+  .mat-select-panel {
+    background-color: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  /* Quill editor */
+  .ql-editor {
+    background-color: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .ql-toolbar {
+    background-color: var(--surface-color) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .ql-container {
+    border-color: var(--border-color) !important;
+  }
+
+  .ql-editor.ql-blank::before {
+    color: var(--text-muted) !important;
+  }
+
+  /* Quill editor buttons */
+  .ql-stroke {
+    stroke: var(--text-primary) !important;
+  }
+
+  .ql-fill {
+    fill: var(--text-primary) !important;
+  }
+
+  .ql-picker {
+    color: var(--text-primary) !important;
+  }
+
+  .ql-picker-options {
+    background-color: var(--card-background) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* Buttons in forms */
+  .primary-button {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+
+  .primary-button:hover {
+    background-color: var(--primary-hover-color) !important;
+  }
+
+  .primary-button:disabled {
+    background-color: var(--text-muted) !important;
+    color: var(--text-secondary) !important;
+  }
+
+  /* Mat button */
+  .mat-button {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-flat-button {
+    background-color: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-flat-button:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+
+  /* Additional button styles for Material Design */
+  .mat-mdc-button {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-button.mat-mdc-button-base {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-button.mat-mdc-button-base .mat-mdc-button-touch-target {
+    color: var(--text-primary) !important;
+  }
+
+  /* Button text and icon colors */
+  .mat-button .mat-button-wrapper,
+  .mat-mdc-button .mat-mdc-button-wrapper {
+    color: var(--text-primary) !important;
+  }
+
+  /* Button hover states */
+  .mat-button:hover,
+  .mat-mdc-button:hover {
+    background-color: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* Button focus states */
+  .mat-button:focus,
+  .mat-mdc-button:focus {
+    background-color: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* Button ripple effects */
+  .mat-button .mat-ripple,
+  .mat-mdc-button .mat-ripple {
+    background-color: var(--surface-color) !important;
+  }
+
+  /* Button content and text */
+  .mat-button span,
+  .mat-mdc-button span {
+    color: var(--text-primary) !important;
+  }
+
+  /* Button icons */
+  .mat-button .mat-icon,
+  .mat-mdc-button .mat-icon {
+    color: var(--text-primary) !important;
+  }
+
+  /* Button with icons */
+  .mat-button .menu-icon,
+  .mat-mdc-button .menu-icon {
+    color: var(--text-primary) !important;
+  }
+
+  /* Button label */
+  .mat-button .mat-button-label,
+  .mat-mdc-button .mat-mdc-button-label {
+    color: var(--text-primary) !important;
+  }
+
+  /* Form labels and text */
+  .bold {
+    color: var(--text-primary) !important;
+  }
+
+  .information-lable {
+    color: var(--text-muted) !important;
+  }
+
+  /* Editor container */
+  .editor-container {
+    background-color: var(--surface-color) !important;
+  }
+
+  /* Mat icon in forms */
+  .menu-icon {
+    color: var(--text-primary) !important;
+  }
+
+  /* Additional Material Design form styles */
+  .mat-mdc-form-field {
+    background-color: transparent !important;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    background-color: transparent !important;
+  }
+
+  .mat-mdc-form-field-focus-overlay {
+    background-color: transparent !important;
+  }
+
+  .mat-mdc-form-field-infix {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-select-value {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-select-arrow {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-mdc-select-panel {
+    background-color: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  .mat-mdc-option {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-option:hover {
+    background-color: var(--surface-color) !important;
+  }
+
+  .mat-mdc-option.mat-mdc-option-active {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+
+  .mat-mdc-option.mat-mdc-selected {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+
+  /* Mat label styles */
+  .mat-mdc-form-field-label {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-mdc-floating-label {
+    color: var(--text-secondary) !important;
+  }
+
+  /* Mat input styles */
+  .mat-mdc-input-element {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-input-element::placeholder {
+    color: var(--text-muted) !important;
+  }
+
+  /* Mat card appearance */
+  .mat-card.mat-card-appearance-outlined {
+    border-color: var(--border-color) !important;
+  }
+
+  /* Mat MDC card styles */
+  .mat-mdc-card {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-card-outlined {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .mat-mdc-card-header {
+    background-color: var(--card-background) !important;
+  }
+
+  .mat-mdc-card-title {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-card-subtitle {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-mdc-card-content {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* Material Table Dark Mode Styles */
+  .mat-table {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-header-row {
+    background-color: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-row {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-row:hover {
+    background-color: var(--surface-color) !important;
+  }
+
+  .mat-header-cell {
+    color: var(--text-primary) !important;
+    border-bottom-color: var(--border-color) !important;
+  }
+
+  .mat-cell {
+    color: var(--text-primary) !important;
+    border-bottom-color: var(--border-color) !important;
+  }
+
+  .mat-sort-header {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-sort-header-arrow {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-sort-header-sorted {
+    color: var(--primary-color) !important;
+  }
+
+  .mat-sort-header-sorted .mat-sort-header-arrow {
+    color: var(--primary-color) !important;
+  }
+
+  /* Mat MDC Table Styles */
+  .mat-mdc-table {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-header-row {
+    background-color: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-row {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-row:hover {
+    background-color: var(--surface-color) !important;
+  }
+
+  .mat-mdc-header-cell {
+    color: var(--text-primary) !important;
+    border-bottom-color: var(--border-color) !important;
+  }
+
+  .mat-mdc-cell {
+    color: var(--text-primary) !important;
+    border-bottom-color: var(--border-color) !important;
+  }
+
+  .mat-mdc-sort-header {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-sort-header-arrow {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-mdc-sort-header-sorted {
+    color: var(--primary-color) !important;
+  }
+
+  .mat-mdc-sort-header-sorted .mat-mdc-sort-header-arrow {
+    color: var(--primary-color) !important;
+  }
+
+  /* Paginator Dark Mode Styles */
+  .mat-paginator {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-paginator-page-size {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-paginator-range-label {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-paginator-navigation-previous,
+  .mat-paginator-navigation-next,
+  .mat-paginator-navigation-first,
+  .mat-paginator-navigation-last {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-paginator-navigation-previous:disabled,
+  .mat-paginator-navigation-next:disabled,
+  .mat-paginator-navigation-first:disabled,
+  .mat-paginator-navigation-last:disabled {
+    color: var(--text-muted) !important;
+  }
+
+  /* Mat MDC Paginator Styles */
+  .mat-mdc-paginator {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-paginator-page-size {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-paginator-range-label {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-paginator-navigation-previous,
+  .mat-mdc-paginator-navigation-next,
+  .mat-mdc-paginator-navigation-first,
+  .mat-mdc-paginator-navigation-last {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-paginator-navigation-previous:disabled,
+  .mat-mdc-paginator-navigation-next:disabled,
+  .mat-mdc-paginator-navigation-first:disabled,
+  .mat-mdc-paginator-navigation-last:disabled {
+    color: var(--text-muted) !important;
+  }
+
+  /* Table container and wrapper styles */
+  .mat-table-container {
+    background-color: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 4px !important;
+  }
+
+  .mat-mdc-table-container {
+    background-color: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 4px !important;
+  }
+
+  /* Table border styles */
+  .mat-table {
+    border-collapse: collapse !important;
+  }
+
+  .mat-mdc-table {
+    border-collapse: collapse !important;
+  }
+
+  /* Table cell padding and alignment */
+  .mat-cell,
+  .mat-header-cell {
+    padding: 12px 16px !important;
+  }
+
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 12px 16px !important;
+  }
+
+  /* Table row alternating colors for better readability */
+  .mat-row:nth-child(even) {
+    background-color: var(--surface-color) !important;
+  }
+
+  .mat-mdc-row:nth-child(even) {
+    background-color: var(--surface-color) !important;
+  }
+
+  /* Table row hover effect */
+  .mat-row:hover,
+  .mat-mdc-row:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+
+  .mat-row:hover .mat-cell,
+  .mat-mdc-row:hover .mat-mdc-cell {
+    color: white !important;
+  }
+
+  /* Table header styling */
+  .mat-header-row,
+  .mat-mdc-header-row {
+    background-color: var(--surface-color) !important;
+    font-weight: 600 !important;
+  }
+
+  /* Table sort indicators */
+  .mat-sort-header-container,
+  .mat-mdc-sort-header-container {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-sort-header-sorted .mat-sort-header-container,
+  .mat-mdc-sort-header-sorted .mat-mdc-sort-header-container {
+    color: var(--primary-color) !important;
+  }
+
+  /* Additional table styles for better dark mode support */
+  .mat-table,
+  .mat-mdc-table {
+    box-shadow: none !important;
+  }
+
+  /* Table wrapper with border */
+  .mat-table-wrapper {
+    border: 1px solid var(--border-color) !important;
+    border-radius: 4px !important;
+    overflow: hidden !important;
+    background-color: var(--card-background) !important;
+  }
+
+  /* Ensure table cells have proper spacing */
+  .mat-cell,
+  .mat-header-cell,
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 12px 16px !important;
+    text-align: left !important;
+  }
+
+  /* Table header background */
+  .mat-header-row,
+  .mat-mdc-header-row {
+    background-color: var(--surface-color) !important;
+    min-height: 48px !important;
+  }
+
+  /* Table row styling */
+  .mat-row,
+  .mat-mdc-row {
+    min-height: 48px !important;
+    transition: background-color 0.2s ease !important;
+  }
+
+  /* Table row hover effects */
+  .mat-row:hover,
+  .mat-mdc-row:hover {
+    background-color: var(--surface-color) !important;
+  }
+
+  /* Table borders */
+  .mat-table,
+  .mat-mdc-table {
+    border-collapse: collapse !important;
+  }
+
+  .mat-header-cell,
+  .mat-cell,
+  .mat-mdc-header-cell,
+  .mat-mdc-cell {
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  /* Last row should not have bottom border */
+  .mat-row:last-child .mat-cell,
+  .mat-mdc-row:last-child .mat-mdc-cell {
+    border-bottom: none !important;
+  }
+
+  /* Sort header styling */
+  .mat-sort-header,
+  .mat-mdc-sort-header {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-sort-header-sorted,
+  .mat-mdc-sort-header-sorted {
+    color: var(--primary-color) !important;
+  }
+
+  /* Paginator container */
+  .mat-paginator-container,
+  .mat-mdc-paginator-container {
+    background-color: var(--card-background) !important;
+    border-top: 1px solid var(--border-color) !important;
+  }
+
+  /* Additional card variants */
+  .mat-card[appearance="outlined"] {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .mat-mdc-card[appearance="outlined"] {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* Card outline styles */
+  .mat-card-outlined {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* Quill editor additional styles */
+  .ql-snow .ql-tooltip {
+    background-color: var(--card-background) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .ql-snow .ql-tooltip a {
+    color: var(--primary-color) !important;
+  }
+
+  .ql-snow .ql-tooltip::before {
+    color: var(--text-secondary) !important;
+  }
+
+  /* Form field focus states */
+  .mat-mdc-form-field.mat-focused .mat-mdc-form-field-label {
+    color: var(--primary-color) !important;
+  }
+
+  .mat-mdc-form-field.mat-focused .mat-mdc-form-field-outline-thick {
+    color: var(--primary-color) !important;
+  }
+
+  /* Component-specific table wrapper styles */
+  .mat-table-wrapper {
+    background-color: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 4px !important;
+    overflow: hidden !important;
+  }
+
+  /* Component-specific table styling */
+  .mat-table {
+    width: 100% !important;
+    background-color: var(--card-background) !important;
+  }
+
+  .mat-header-row {
+    background-color: var(--surface-color) !important;
+  }
+
+  .mat-row {
+    background-color: var(--card-background) !important;
+  }
+
+  .mat-row:hover {
+    background-color: var(--surface-color) !important;
+  }
+
+  .mat-header-cell,
+  .mat-cell {
+    color: var(--text-primary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  /* Component-specific paginator styling */
+  .mat-paginator {
+    background-color: var(--card-background) !important;
+    border-top: 1px solid var(--border-color) !important;
+  }
+
+  /* Component-specific search field styling */
+  .mat-form-field {
+    .mat-form-field-label {
+      color: var(--text-secondary) !important;
+    }
+
+    .mat-form-field-outline {
+      color: var(--border-color) !important;
+    }
+
+    .mat-input-element {
+      color: var(--text-primary) !important;
+    }
+  }
+
+  /* Component-specific button styling */
+  .primary-button {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+
+  .primary-button:hover {
+    background-color: var(--primary-hover-color) !important;
+  }
+
+  .editableLink {
+    color: var(--primary-color) !important;
+  }
+
+  .editableLink:hover {
+    color: var(--primary-hover-color) !important;
+  }
+
+  /* Action column alignment styles */
+  .action-column-header {
+    text-align: right !important;
+    justify-content: flex-end !important;
+  }
+
+  .action-column-cell {
+    text-align: right !important;
+    justify-content: flex-end !important;
+  }
+
+  /* Ensure action buttons are properly aligned */
+  .action-column-cell .mat-button,
+  .action-column-cell .mat-mdc-button {
+    justify-content: flex-end !important;
+    text-align: right !important;
+  }
+}
+
+/* Light theme specific overrides */
+.light-theme {
+  .mat-toolbar {
+    background-color: var(--toolbar-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-sidenav {
+    background-color: var(--sidenav-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-sidenav-container {
+    background-color: var(--background-color) !important;
+  }
+}
+
+/* Global action column alignment styles (works for both themes) */
+.action-column-header {
+  text-align: right !important;
+  justify-content: flex-end !important;
+}
+
+/* Global Reusable Button Styles */
+.success-button {
+  background-color: #4caf50 !important;
+  color: white !important;
+  
+  &:hover {
+    background-color: #45a049 !important;
+  }
+  
+  &:focus {
+    background-color: #45a049 !important;
+  }
+  
+  &:disabled {
+    background-color: #a5a5a5 !important;
+    color: #fbfbfb !important;
+  }
+}
+
+.info-button {
+  background-color: #2196f3 !important;
+  color: white !important;
+  
+  &:hover {
+    background-color: #1976d2 !important;
+  }
+  
+  &:focus {
+    background-color: #1976d2 !important;
+  }
+  
+  &:disabled {
+    background-color: #a5a5a5 !important;
+    color: #fbfbfb !important;
+  }
+}
+
+/* Material Design Button Overrides */
+.mat-mdc-button.success-button,
+.mat-mdc-raised-button.success-button,
+.mat-mdc-flat-button.success-button {
+  background-color: #4caf50 !important;
+  color: white !important;
+  
+  &:hover {
+    background-color: #45a049 !important;
+  }
+  
+  &:focus {
+    background-color: #45a049 !important;
+  }
+  
+  &:disabled {
+    background-color: #a5a5a5 !important;
+    color: #fbfbfb !important;
+  }
+}
+
+.mat-mdc-button.info-button,
+.mat-mdc-raised-button.info-button,
+.mat-mdc-flat-button.info-button {
+  background-color: #2196f3 !important;
+  color: white !important;
+  
+  &:hover {
+    background-color: #1976d2 !important;
+  }
+  
+  &:focus {
+    background-color: #1976d2 !important;
+  }
+  
+  &:disabled {
+    background-color: #a5a5a5 !important;
+    color: #fbfbfb !important;
+  }
+}
+
+/* Material Design Button Content Overrides */
+.mat-mdc-button.success-button .mat-mdc-button-wrapper,
+.mat-mdc-raised-button.success-button .mat-mdc-button-wrapper,
+.mat-mdc-flat-button.success-button .mat-mdc-button-wrapper {
+  color: white !important;
+}
+
+.mat-mdc-button.success-button .mat-icon,
+.mat-mdc-raised-button.success-button .mat-icon,
+.mat-mdc-flat-button.success-button .mat-icon {
+  color: white !important;
+}
+
+.mat-mdc-button.info-button .mat-mdc-button-wrapper,
+.mat-mdc-raised-button.info-button .mat-mdc-button-wrapper,
+.mat-mdc-flat-button.info-button .mat-mdc-button-wrapper {
+  color: white !important;
+}
+
+.mat-mdc-button.info-button .mat-icon,
+.mat-mdc-raised-button.info-button .mat-icon,
+.mat-mdc-flat-button.info-button .mat-icon {
+  color: white !important;
+}
+
+/* Global Reusable Form Field Styles */
+.mat-form-field {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+  
+  .mat-mdc-text-field-wrapper {
+    padding: 0 12px;
+  }
+}
+
+/* Global Reusable Loading State Styles */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Global Reusable Disabled State Styles */
+.disabled-grid {
+  opacity: 0.6;
+  pointer-events: none;
+  
+  .mat-table {
+    .mat-cell {
+      .mat-form-field {
+        .mat-mdc-text-field-wrapper {
+          background-color: #f5f5f5;
+        }
+      }
+    }
+  }
+}
+
+/* Global Reusable Card Styles */
+.warning-card {
+  border-color: #ff9800 !important;
+  background-color: #fff3e0 !important;
+  
+  .mat-card-content {
+    padding: 12px !important;
+    
+    .d-flex {
+      display: flex !important;
+      align-items: center !important;
+      
+      mat-icon {
+        font-size: 20px !important;
+        width: 20px !important;
+        height: 20px !important;
+      }
+      
+      span {
+        color: #e65100 !important;
+        font-weight: 500 !important;
+      }
+    }
+  }
+}
+
+.info-card {
+  border-color: #2196f3 !important;
+  background-color: #e3f2fd !important;
+  
+  .mat-card-content {
+    padding: 12px !important;
+    
+    .d-flex {
+      display: flex !important;
+      align-items: flex-start !important;
+      
+      mat-icon {
+        font-size: 20px !important;
+        width: 20px !important;
+        height: 20px !important;
+        margin-top: 2px !important;
+      }
+      
+      div {
+        color: #1565c0 !important;
+        font-size: 14px !important;
+        line-height: 1.4 !important;
+        
+        strong {
+          font-weight: 600 !important;
+        }
+        
+        .mt-1 {
+          margin-top: 4px !important;
+        }
+      }
+      
+      span {
+        color: #1565c0 !important;
+        font-weight: 500 !important;
+      }
+    }
+  }
+}
+
+/* Global Reusable Badge Styles */
+.primary-badge {
+  background-color: #2196f3 !important;
+  color: white !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-size: 11px !important;
+  margin-left: 8px !important;
+  font-weight: normal !important;
+}
+
+/* Skeleton Loading Styles - Global Reusable Components */
+.skeleton-text {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: skeleton-loading 1.5s infinite;
+  width: 80%;
+  margin: 4px 0;
+}
+
+.skeleton-badge {
+  height: 24px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  border-radius: 12px;
+  animation: skeleton-loading 1.5s infinite;
+  width: 60px;
+  margin: 4px 0;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Skeleton row styling */
+.mat-row.skeleton-row {
+  background-color: #fafafa;
+}
+
+.mat-row.skeleton-row:hover {
+  background-color: #fafafa;
+}
+
+/* Ensure skeleton elements don't interfere with sorting */
+.mat-sort-header-container {
+  pointer-events: auto;
+}
+
+/* Skeleton loading for different content types */
+.skeleton-text.skeleton-fiscal-year {
+  width: 60px;
+}
+
+.skeleton-text.skeleton-month {
+  width: 80px;
+}
+
+.skeleton-text.skeleton-department {
+  width: 120px;
+}
+
+.skeleton-text.skeleton-user {
+  width: 100px;
+}
+
+.skeleton-text.skeleton-date {
+  width: 90px;
+}
+
+.skeleton-text.skeleton-pagination {
+  width: 200px;
+  margin: 0 auto;
+}
+
+/* Skeleton Filter Styles */
+.skeleton-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-label {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: skeleton-loading 1.5s infinite;
+  width: 80px;
+}
+
+.skeleton-select {
+  height: 56px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: skeleton-loading 1.5s infinite;
+  border: 1px solid #e0e0e0;
+}
+
+/* Filter and Actions Layout - Global Reusable Components */
+.filters-actions-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.filter-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.actions-column {
+  flex: 2;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.filter-field {
+  width: 100%;
+}
+
+.actions-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  padding-top: 8px;
+}
+
+.actions-container button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Responsive design for filter actions */
+@media (max-width: 768px) {
+  .filters-actions-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .year-filter,
+  .month-filter {
+    max-width: none;
+  }
+  
+  .actions-column {
+    justify-content: center;
+  }
+  
+  .actions-container {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .actions-container button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Badge styles for status indicators */
+.badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+.badge-secondary {
+  background-color: #9e9e9e;
+  color: white;
+}
+
+.badge-danger {
+  background-color: #f44336;
+  color: white;
+}
+
+.badge-warning {
+  background-color: #ff9800;
+  color: white;
+}
+
+.badge-info {
+  background-color: #2196f3;
+  color: white;
+}
+
+.badge-primary {
+  background-color: #903ab7;
+  color: white;
+}
+
+.action-column-cell {
+  text-align: right !important;
+  justify-content: flex-end !important;
+}
+
+/* Ensure action buttons are properly aligned */
+.action-column-cell .mat-button,
+.action-column-cell .mat-mdc-button {
+  justify-content: flex-end !important;
+  text-align: right !important;
+}
+
+/* Dialog Dark Mode Styles */
+.dark-theme {
+  /* Mat Dialog Container */
+  .mat-dialog-container,
+  .mat-mdc-dialog-container {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  /* Mat Dialog Surface */
+  .mat-dialog-surface,
+  .mat-mdc-dialog-surface {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  /* Mat Dialog Content */
+  .mat-dialog-content,
+  .mat-mdc-dialog-content {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* Mat Dialog Actions */
+  .mat-dialog-actions,
+  .mat-mdc-dialog-actions {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+    border-top: 1px solid var(--border-color) !important;
+  }
+
+  /* Dialog Overlay */
+  .mat-dialog-overlay,
+  .mat-mdc-dialog-overlay {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Dialog Backdrop */
+  .cdk-overlay-backdrop {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Dialog Panel */
+  .mat-dialog-panel,
+  .mat-mdc-dialog-panel {
+    background-color: var(--card-background) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  /* Dialog Title */
+  .mat-dialog-title,
+  .mat-mdc-dialog-title {
+    color: var(--text-primary) !important;
+  }
+
+  /* Dialog Close Button */
+  .mat-dialog-close,
+  .mat-mdc-dialog-close {
+    color: var(--text-primary) !important;
+  }
+
+  /* Dialog Form Fields */
+  .mat-dialog-container .mat-form-field,
+  .mat-mdc-dialog-container .mat-form-field {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-dialog-container .mat-form-field-label,
+  .mat-mdc-dialog-container .mat-form-field-label {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-dialog-container .mat-form-field-outline,
+  .mat-mdc-dialog-container .mat-form-field-outline {
+    color: var(--border-color) !important;
+  }
+
+  .mat-dialog-container .mat-form-field-outline-thick,
+  .mat-mdc-dialog-container .mat-form-field-outline-thick {
+    color: var(--primary-color) !important;
+  }
+
+  .mat-dialog-container .mat-input-element,
+  .mat-mdc-dialog-container .mat-input-element {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-dialog-container .mat-input-element::placeholder,
+  .mat-mdc-dialog-container .mat-input-element::placeholder {
+    color: var(--text-muted) !important;
+  }
+
+  /* Dialog Buttons */
+  .mat-dialog-container .mat-button,
+  .mat-mdc-dialog-container .mat-button,
+  .mat-dialog-container .mat-flat-button,
+  .mat-mdc-dialog-container .mat-flat-button {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-dialog-container .primary-button,
+  .mat-mdc-dialog-container .primary-button {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+
+  .mat-dialog-container .primary-button:hover,
+  .mat-mdc-dialog-container .primary-button:hover {
+    background-color: var(--primary-hover-color) !important;
+  }
+
+  /* Dialog System Titles */
+  .mat-dialog-container .system-model-title,
+  .mat-mdc-dialog-container .system-model-title {
+    color: var(--text-primary) !important;
+  }
+
+  /* Dialog Form Validation */
+  .mat-dialog-container .mat-form-field.mat-form-field-invalid .mat-form-field-label,
+  .mat-mdc-dialog-container .mat-form-field.mat-form-field-invalid .mat-form-field-label {
+    color: #f44336 !important;
+  }
+
+  .mat-dialog-container .mat-form-field.mat-form-field-invalid .mat-form-field-outline,
+  .mat-mdc-dialog-container .mat-form-field.mat-form-field-invalid .mat-form-field-outline {
+    color: #f44336 !important;
+  }
+
+  /* Additional Dialog Overlay Styles */
+  .cdk-overlay-pane {
+    background-color: var(--card-background) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 4px 20px var(--shadow-color) !important;
+  }
+
+  /* Dialog Animation and Transition */
+  .mat-dialog-container,
+  .mat-mdc-dialog-container {
+    transition: all 0.3s ease !important;
+  }
+
+  /* Dialog Focus States */
+  .mat-dialog-container .mat-form-field.mat-focused .mat-form-field-label,
+  .mat-mdc-dialog-container .mat-form-field.mat-focused .mat-form-field-label {
+    color: var(--primary-color) !important;
+  }
+
+  .mat-dialog-container .mat-form-field.mat-focused .mat-form-field-outline-thick,
+  .mat-mdc-dialog-container .mat-form-field.mat-focused .mat-form-field-outline-thick {
+    color: var(--primary-color) !important;
+  }
+
+  /* Common Dialog Form Field Styling */
+  .mat-dialog-container .mat-form-field,
+  .mat-mdc-dialog-container .mat-form-field {
+    .mat-form-field-label {
+      color: var(--text-secondary) !important;
+    }
+
+    .mat-form-field-outline {
+      color: var(--border-color) !important;
+    }
+
+    .mat-form-field-outline-thick {
+      color: var(--primary-color) !important;
+    }
+
+    .mat-input-element {
+      color: var(--text-primary) !important;
+    }
+
+    .mat-input-element::placeholder {
+      color: var(--text-muted) !important;
+    }
+  }
+
+  /* Common Dialog Focus States */
+  .mat-dialog-container .mat-form-field.mat-focused,
+  .mat-mdc-dialog-container .mat-form-field.mat-focused {
+    .mat-form-field-label {
+      color: var(--primary-color) !important;
+    }
+
+    .mat-form-field-outline-thick {
+      color: var(--primary-color) !important;
+    }
+  }
+
+  /* Common Dialog Button Styling */
+  .mat-dialog-container .primary-button,
+  .mat-mdc-dialog-container .primary-button {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+
+  .mat-dialog-container .primary-button:hover,
+  .mat-mdc-dialog-container .primary-button:hover {
+    background-color: var(--primary-hover-color) !important;
+  }
+
+  .mat-dialog-container .primary-button:disabled,
+  .mat-mdc-dialog-container .primary-button:disabled {
+    background-color: var(--text-muted) !important;
+    color: var(--text-secondary) !important;
+  }
+
+  /* Common Dialog Cancel Button Styling */
+  .mat-dialog-container button.mat-flat-button:not(.primary-button),
+  .mat-mdc-dialog-container button.mat-flat-button:not(.primary-button) {
+    background-color: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  .mat-dialog-container button.mat-flat-button:not(.primary-button):hover,
+  .mat-mdc-dialog-container button.mat-flat-button:not(.primary-button):hover {
+    background-color: var(--border-color) !important;
+  }
+
+  /* Common Dialog System Title Styling */
+  .mat-dialog-container .system-model-title,
+  .mat-mdc-dialog-container .system-model-title {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+  }
+
+  /* Badge styles for dark theme */
+  .badge-success {
+    background-color: #4caf50 !important;
+    color: white !important;
+  }
+
+  .badge-secondary {
+    background-color: #666666 !important;
+    color: white !important;
+  }
+
+  .badge-danger {
+    background-color: #f44336 !important;
+    color: white !important;
+  }
+
+  .badge-warning {
+    background-color: #ff9800 !important;
+    color: white !important;
+  }
+
+  .badge-info {
+    background-color: #2196f3 !important;
+    color: white !important;
+  }
+
+  .badge-primary {
+    background-color: #903ab7 !important;
+    color: white !important;
+  }
+
+  /* Material Design Checkbox Dark Mode Styles */
+  .mat-checkbox,
+  .mat-mdc-checkbox {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-checkbox-label,
+  .mat-mdc-checkbox-label {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-checkbox-frame,
+  .mat-mdc-checkbox-frame {
+    border-color: var(--border-color) !important;
+  }
+
+  .mat-checkbox-checkmark-path,
+  .mat-mdc-checkbox-checkmark-path {
+    stroke: var(--text-primary) !important;
+  }
+
+  .mat-checkbox-checked .mat-checkbox-checkmark-path,
+  .mat-mdc-checkbox-checked .mat-mdc-checkbox-checkmark-path {
+    stroke: var(--primary-color) !important;
+  }
+
+  .mat-checkbox-checked .mat-checkbox-background,
+  .mat-mdc-checkbox-checked .mat-mdc-checkbox-background {
+    background-color: var(--primary-color) !important;
+  }
+
+  .mat-checkbox-indeterminate .mat-checkbox-background,
+  .mat-mdc-checkbox-indeterminate .mat-mdc-checkbox-background {
+    background-color: var(--primary-color) !important;
+  }
+
+  .mat-checkbox-ripple,
+  .mat-mdc-checkbox-ripple {
+    background-color: var(--surface-color) !important;
+  }
+
+  .mat-checkbox:hover .mat-checkbox-frame,
+  .mat-mdc-checkbox:hover .mat-mdc-checkbox-frame {
+    border-color: var(--primary-color) !important;
+  }
+
+  .mat-checkbox:focus .mat-checkbox-frame,
+  .mat-mdc-checkbox:focus .mat-mdc-checkbox-frame {
+    border-color: var(--primary-color) !important;
+  }
+
+  /* Checkbox label text color */
+  .mat-checkbox .mat-checkbox-label,
+  .mat-mdc-checkbox .mat-mdc-checkbox-label {
+    color: var(--text-primary) !important;
+  }
+
+  /* Checkbox disabled state */
+  .mat-checkbox-disabled .mat-checkbox-label,
+  .mat-mdc-checkbox-disabled .mat-mdc-checkbox-label {
+    color: var(--text-muted) !important;
+  }
+
+  .mat-checkbox-disabled .mat-checkbox-frame,
+  .mat-mdc-checkbox-disabled .mat-mdc-checkbox-frame {
+    border-color: var(--text-muted) !important;
+  }
+
+  /* Checkbox animation and transitions */
+  .mat-checkbox,
+  .mat-mdc-checkbox {
+    transition: all 0.3s ease !important;
+  }
+
+  /* Checkbox focus indicator */
+  .mat-checkbox .mat-checkbox-ripple .mat-ripple-element,
+  .mat-mdc-checkbox .mat-mdc-checkbox-ripple .mat-ripple-element {
+    background-color: var(--primary-color) !important;
+    opacity: 0.12 !important;
+  }
+
+  /* Skeleton Loading Dark Theme Styles */
+  .skeleton-text {
+    background: linear-gradient(90deg, var(--surface-color) 25%, var(--border-color) 50%, var(--surface-color) 75%) !important;
+  }
+
+  .skeleton-badge {
+    background: linear-gradient(90deg, var(--surface-color) 25%, var(--border-color) 50%, var(--surface-color) 75%) !important;
+  }
+
+  .skeleton-label {
+    background: linear-gradient(90deg, var(--surface-color) 25%, var(--border-color) 50%, var(--surface-color) 75%) !important;
+  }
+
+  .skeleton-select {
+    background: linear-gradient(90deg, var(--surface-color) 25%, var(--border-color) 50%, var(--surface-color) 75%) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* Skeleton row styling for dark theme */
+  .mat-row.skeleton-row {
+    background-color: var(--surface-color) !important;
+  }
+
+  .mat-row.skeleton-row:hover {
+    background-color: var(--surface-color) !important;
+  }
+}
+
+/* Material Select Dropdown Fixes for Dialogs */
+.mat-mdc-dialog-container .mat-mdc-select-panel {
+  z-index: 10000 !important;
+}
+
+.mat-mdc-dialog-container .cdk-overlay-pane {
+  z-index: 10000 !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-select-trigger {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-select-arrow {
+  pointer-events: auto !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-option {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* Ensure dialog content doesn't clip overlays */
+.mat-mdc-dialog-container {
+  overflow: visible !important;
+}
+
+.mat-mdc-dialog-content {
+  overflow: visible !important;
+}
+
+/* Additional overlay fixes */
+.cdk-overlay-container {
+  z-index: 1000 !important;
+}
+
+.cdk-overlay-pane {
+  z-index: 10000 !important;
+}
+
+/* Ensure select panels are above everything */
+.mat-mdc-select-panel {
+  z-index: 10000 !important;
+  position: relative !important;
+}
+
+/* Fix for Material Design 3 select */
+.mat-mdc-select {
+  pointer-events: auto !important;
+}
+
+.mat-mdc-select-trigger {
+  pointer-events: auto !important;
+}
+
+/* Ensure form fields in dialogs work properly */
+.mat-mdc-dialog-container .mat-mdc-form-field {
+  pointer-events: auto !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-form-field-infix {
+  pointer-events: auto !important;
+}

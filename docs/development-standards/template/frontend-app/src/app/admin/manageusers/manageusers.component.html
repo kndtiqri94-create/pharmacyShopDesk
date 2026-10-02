@@ -1,0 +1,92 @@
+<div class="row p-0 m-0">
+    <div class="col-12">
+        <mat-card appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>
+                    <div class="system-page-title">{{ 'pages.userManagement.title' | translate }}</div>
+                </mat-card-title>
+                <mat-card-subtitle>
+                    <div class="system-page-subtitle">{{ 'pages.userManagement.subtitle' | translate }}</div>
+                </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="row m-0">
+                    <div class="col-6">
+                        <mat-form-field style="width: 100%; max-width: 500px;">
+                            <mat-label>{{ 'pages.userManagement.filterUsers' | translate }}</mat-label>
+                            <input matInput (keyup)="applyFilter($event)"
+                                [placeholder]="'placeholders.email' | translate" #input>
+                            <mat-icon aria-hidden="false" class="search-input-icon material-symbols-outlined"
+                                aria-label="add icon">search</mat-icon>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                        <button mat-flat-button class="primary-button" style="float: right;" (click)="addEditUser(0)">
+                            <mat-icon aria-hidden="false" class="material-symbols-outlined"
+                                aria-label="add icon">add</mat-icon>{{ 'pages.userManagement.addUser' | translate
+                            }}</button>
+                    </div>
+                </div>
+                <div class="row m-0">
+                    <div class="col-12">
+                        <div class="mat-table-wrapper">
+                            <table mat-table [dataSource]="allUserDataSource" #allUserSort="matSort" matSort>
+                                <ng-container matColumnDef="Edit">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="action-column-header">
+                                    </th>
+                                    <td mat-cell *matCellDef="let element" class="action-column-cell">
+                                        <button mat-button class="editableLink" (click)="this.addEditUser(element.id)">
+                                            <mat-icon aria-hidden="false" class="menu-icon material-symbols-outlined"
+                                                aria-label="add icon">edit</mat-icon>{{ 'common.actions.edit' |
+                                            translate }}</button>
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Email">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'tableHeaders.email' |
+                                        translate }} </th>
+                                    <td class="title-td" mat-cell *matCellDef="let element"> {{element.email}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="DisplayName">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'tableHeaders.displayName'
+                                        | translate }} </th>
+                                    <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Status">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'tableHeaders.status' |
+                                        translate }} </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <span class="badge"
+                                            [class]="element.isActive ? 'badge-success' : 'badge-secondary'">
+                                            {{ element.isActive ? ('common.status.active' | translate) :
+                                            ('common.status.inactive' | translate) }}
+                                        </span>
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="displayedAllColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedAllColumns;"></tr>
+
+                                <tr class="mat-row" *matNoDataRow>
+                                    @if(isLoading) {
+                                    <td class="mat-cell" colspan="6" style="text-align: center;">
+                                        <div class="pt-5 mb-5">
+                                            <app-spinner></app-spinner>
+                                        </div>
+                                    </td>
+                                    } @else {
+                                    <td class="mat-cell" colspan="6" style="text-align: center;">
+                                        <div class="pt-5 mb-5">
+                                            {{ 'common.messages.noRecordsFound' | translate }}
+                                        </div>
+                                    </td>
+                                    }
+                                </tr>
+                            </table>
+                            <mat-paginator #allPaginator [pageSizeOptions]="[10, 15, 20,35,50]" showFirstLastButtons>
+                            </mat-paginator>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

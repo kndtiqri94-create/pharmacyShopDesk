@@ -1,0 +1,56 @@
+.primary-chip {
+  background-color: #903ab7 !important;
+  color: white !important;
+  
+  .chip-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white !important;
+  }
+  
+  .primary-badge {
+    background-color: #ad4cd9;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+  }
+  
+  // Ensure all text within the primary chip is white
+  span, div, mat-icon {
+    color: white !important;
+  }
+}
+
+mat-chip {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  &.primary-chip:hover {
+    background-color: #ad4cd9 !important;
+  }
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.information-lable {
+  color: #666;
+  font-size: 0.875rem;
+}
