@@ -4,8 +4,11 @@ import {
   formatDate,
   formatDayMonth,
   formatExpiry,
+  formatDayOfMonth,
   formatExpiryInput,
   formatTime,
+  formatWeekday,
+  formatWeekdayLong,
   parseExpiryInput,
 } from './date.util';
 
@@ -48,5 +51,15 @@ describe('date.util', () => {
 
   it('extracts the time of day', () => {
     expect(formatTime('2026-09-21T09:12:00')).toBe('09:12');
+  });
+
+  it('names the day of the week', () => {
+    expect(formatWeekday('2026-09-21')).toBe('Mon');
+    expect(formatWeekdayLong('2026-09-21')).toBe('Monday');
+    expect(formatWeekday('nonsense')).toBe('');
+  });
+
+  it('gives the day of the month', () => {
+    expect(formatDayOfMonth('2026-09-05')).toBe('5');
   });
 });

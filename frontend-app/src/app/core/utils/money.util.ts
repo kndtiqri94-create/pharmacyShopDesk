@@ -26,3 +26,15 @@ export function formatMoneyCell(cents: number): string {
 export function formatCount(value: number): string {
   return WHOLE_NUMBER_FORMAT.format(value);
 }
+
+export function formatRupeesInput(cents: number): string {
+  return (cents / 100).toFixed(2);
+}
+
+export function formatThousands(cents: number): string {
+  return (cents / 100_000).toFixed(1);
+}
+
+export function formatPercent(value: number): string {
+  return `${Math.round(value * 10) / 10}%`;
+}

@@ -35,6 +35,12 @@ describe('SignInComponent', () => {
       password.value = pass;
       password.dispatchEvent(new Event('input'));
       (element.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+      fixture.detectChanges();
+      const login = buttonByText(element, 'Log in');
+      for (let attempt = 0; attempt < 200 && login.disabled; attempt++) {
+        await new Promise<void>(resolve => setTimeout(resolve, 5));
+        fixture.detectChanges();
+      }
       await fixture.whenStable();
       fixture.detectChanges();
     };

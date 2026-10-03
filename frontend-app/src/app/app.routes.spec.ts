@@ -7,14 +7,18 @@ import { routes } from './app.routes';
 
 describe('application routes', () => {
   beforeEach(() => {
+    sharedHarness = undefined;
     clearBrowserStorage();
     TestBed.configureTestingModule({ providers: [...TEST_PROVIDERS, provideRouter(routes)] });
   });
 
   afterEach(clearBrowserStorage);
 
+  let sharedHarness: RouterTestingHarness | undefined;
+
   async function open(url: string) {
-    const harness = await RouterTestingHarness.create();
+    sharedHarness ??= await RouterTestingHarness.create();
+    const harness = sharedHarness;
     await harness.navigateByUrl(url);
     return { harness, router: TestBed.inject(Router) };
   }

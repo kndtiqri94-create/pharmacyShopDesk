@@ -1,5 +1,5 @@
 import { Batch } from '../models/domain/batch.model';
-import { sortBatchesByExpiry } from './batch-order.util';
+import { getEarliestBatchInStock, sortBatchesByExpiry } from './batch-order.util';
 
 describe('batch-order.util', () => {
   const batches: Batch[] = [
@@ -19,5 +19,14 @@ describe('batch-order.util', () => {
   it('does not change the input array', () => {
     sortBatchesByExpiry(batches);
     expect(batches[0].batchNo).toBe('LATE');
+  });
+
+  it('finds the earliest-expiring batch that still has stock', () => {
+    expect(getEarliestBatchInStock(batches)?.batchNo).toBe('EARLY');
+    const emptyEarly = batches.map(batch =>
+      batch.batchNo === 'EARLY' ? { ...batch, quantity: 0 } : batch
+    );
+    expect(getEarliestBatchInStock(emptyEarly)?.batchNo).toBe('MID');
+    expect(getEarliestBatchInStock([])).toBeNull();
   });
 });

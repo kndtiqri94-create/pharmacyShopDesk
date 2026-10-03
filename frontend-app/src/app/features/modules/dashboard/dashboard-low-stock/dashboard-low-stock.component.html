@@ -1,0 +1,18 @@
+<app-card title="Low stock" [flush]="true">
+  <app-button cardActions size="sm" [disabled]="!canOpenProducts()" (click)="viewAll()">
+    View all
+  </app-button>
+  <app-data-table
+    ariaLabel="Low stock products"
+    itemLabel="products"
+    emptyTitle="Nothing is low on stock"
+    emptyMessage="Every product is above its reorder level."
+    [columns]="columns"
+    [rows]="rows()"
+    [rowKey]="rowKey"
+  >
+    <ng-template appDataTableCell="status" let-row>
+      <app-product-status-badge [status]="row.status" />
+    </ng-template>
+  </app-data-table>
+</app-card>

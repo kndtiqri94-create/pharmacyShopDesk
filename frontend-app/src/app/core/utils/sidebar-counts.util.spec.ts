@@ -20,4 +20,19 @@ describe('sidebar-counts.util', () => {
     );
     expect(counts[ModuleKey.PRODUCTS]).toBeUndefined();
   });
+
+  it('reflects a saved product change in the Products count', () => {
+    const restocked = PRODUCT_SEED.map(product =>
+      product.id === 'prod-006'
+        ? {
+            ...product,
+            batches: [
+              { id: 'b', batchNo: 'B1', expiryDate: '2030-01-31', quantity: 500, costCents: 1 },
+            ],
+          }
+        : product
+    );
+    const counts = computeSidebarCounts(restocked, GRN_SEED, SETTINGS_SEED, '2026-09-21');
+    expect(counts[ModuleKey.PRODUCTS]).toBe(2);
+  });
 });

@@ -1,4 +1,12 @@
-import { formatCount, formatMoneyCell, formatRupees, rupeesToCents } from './money.util';
+import {
+  formatCount,
+  formatMoneyCell,
+  formatPercent,
+  formatRupees,
+  formatRupeesInput,
+  formatThousands,
+  rupeesToCents,
+} from './money.util';
 
 describe('money.util', () => {
   it('formats whole rupees without decimals', () => {
@@ -25,5 +33,20 @@ describe('money.util', () => {
 
   it('formats counts with thousands separators', () => {
     expect(formatCount(1240)).toBe('1,240');
+  });
+
+  it('formats an input value in rupees with two decimals', () => {
+    expect(formatRupeesInput(210)).toBe('2.10');
+    expect(formatRupeesInput(0)).toBe('0.00');
+  });
+
+  it('formats rupee thousands for chart labels', () => {
+    expect(formatThousands(8_425_000)).toBe('84.3');
+  });
+
+  it('formats percentages with at most one decimal place', () => {
+    expect(formatPercent(30)).toBe('30%');
+    expect(formatPercent(23.549)).toBe('23.5%');
+    expect(formatPercent(-12.5)).toBe('-12.5%');
   });
 });

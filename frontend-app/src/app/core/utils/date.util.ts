@@ -12,6 +12,16 @@ const MONTH_NAMES = [
   'Nov',
   'Dec',
 ] as const;
+const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
+const WEEKDAY_LONG_NAMES = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+] as const;
 const MILLISECONDS_PER_DAY = 86_400_000;
 const MIN_EXPIRY_YEAR = 2000;
 const MAX_EXPIRY_YEAR = 2999;
@@ -88,4 +98,19 @@ export function addDays(iso: string, days: number): string {
   const millis = toUtcMillis(iso);
   if (millis === null) return '';
   return new Date(millis + days * MILLISECONDS_PER_DAY).toISOString().slice(0, 10);
+}
+
+export function formatWeekday(iso: string): string {
+  const millis = toUtcMillis(iso);
+  return millis === null ? '' : WEEKDAY_NAMES[new Date(millis).getUTCDay()];
+}
+
+export function formatDayOfMonth(iso: string): string {
+  const parts = parseIsoDate(iso);
+  return parts ? String(parts.day) : '';
+}
+
+export function formatWeekdayLong(iso: string): string {
+  const millis = toUtcMillis(iso);
+  return millis === null ? '' : WEEKDAY_LONG_NAMES[new Date(millis).getUTCDay()];
 }

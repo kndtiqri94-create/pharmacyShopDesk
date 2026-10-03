@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { DataTableCellDirective } from './data-table-cell.directive';
 import { DataTableColumn } from './data-table-column.model';
@@ -64,6 +64,78 @@ class HostComponent {
   rowKey = (row: Row) => row.id;
   events: DataTableRowActionEvent<Row>[] = [];
 }
+
+@Component({
+  imports: [DataTableComponent],
+  template: `
+    <app-data-table
+      ariaLabel="Products"
+      itemLabel="products"
+      [columns]="columns"
+      [rows]="rows"
+      [rowKey]="rowKey"
+      [selectable]="true"
+      [(selectedKeys)]="selected"
+      [(pageNumber)]="page"
+    />
+  `,
+})
+class SelectableHostComponent {
+  columns = COLUMNS;
+  rows: Row[] = makeRows(25);
+  rowKey = (row: Row) => row.id;
+  selected: readonly (string | number)[] = [];
+  page = signal(1);
+}
+
+describe('DataTableComponent selection and paging', () => {
+  function render() {
+    const fixture = TestBed.createComponent(SelectableHostComponent);
+    fixture.detectChanges();
+    return { fixture, element: fixture.nativeElement as HTMLElement };
+  }
+
+  it('ticks rows one at a time with an accessible name', () => {
+    const { fixture, element } = render();
+    const box = element.querySelector(
+      'tbody tr:nth-child(2) input[type="checkbox"]'
+    ) as HTMLInputElement;
+    expect(element.querySelector('tbody tr:nth-child(2) .sd-sr-only')?.textContent).toBe(
+      'Select Product 2'
+    );
+    box.click();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.selected).toEqual([2]);
+    expect(element.querySelector('tbody tr:nth-child(2)')?.classList).toContain('is-selected');
+    box.click();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.selected).toEqual([]);
+  });
+
+  it('selects and clears every row on the current page only', () => {
+    const { fixture, element } = render();
+    const header = element.querySelector('thead input[type="checkbox"]') as HTMLInputElement;
+    header.click();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.selected).toHaveSize(10);
+    expect(header.checked).toBeTrue();
+    header.click();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.selected).toEqual([]);
+  });
+
+  it('follows a page number set from outside and clamps it to the last page', () => {
+    const { fixture, element } = render();
+    fixture.componentInstance.page.set(2);
+    fixture.detectChanges();
+    expect(element.querySelector('tbody tr:first-child td:nth-child(2)')?.textContent).toContain(
+      'Product 11'
+    );
+    fixture.componentInstance.page.set(99);
+    fixture.detectChanges();
+    expect(element.querySelectorAll('tbody tr')).toHaveSize(5);
+  });
+});
 
 describe('DataTableComponent', () => {
   function render(setup: (host: HostComponent) => void = () => undefined) {

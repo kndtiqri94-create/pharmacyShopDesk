@@ -49,9 +49,9 @@ Sequencing: F-2.1 first (everything depends on it); F-2.2 next (the product and 
 
 ### F-2.2 Dashboard and Products (WEB)
 
-- [ ] **S-2.2.1** [WEB] Dashboard: heading and actions, four StatCards, 7/30-day sales bar chart, Needs attention list, Low stock table and Best sellers. — _Traces: FR-DASH-1, FR-DASH-2, FR-DASH-3, FR-DASH-4, FR-DASH-5_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.2.2** [WEB] Product list with search, status chips with live counts, category filter, derived status (Out of stock / Low stock / Expiring soon / In stock), batch and expiry column, pagination. — _Traces: FR-PROD-1, FR-PROD-2, FR-PROD-3_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.2.3** [WEB] Add/Edit product form with validation, live Margin card, Status card, Save & add another, and breadcrumb. — _Traces: FR-PROD-4_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.2.1** [WEB] Dashboard: heading and actions, four StatCards, 7/30-day sales bar chart, Needs attention list, Low stock table and Best sellers. — _Traces: FR-DASH-1, FR-DASH-2, FR-DASH-3, FR-DASH-4, FR-DASH-5_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.2.2** [WEB] Product list with search, status chips with live counts, category filter, derived status (Out of stock / Low stock / Expiring soon / In stock), batch and expiry column (blank for a new batch-tracked product until a GRN), single-status precedence, inactive products stay listed, cost and margin visible to Cashiers, view/edit row actions open the form (read-only for View access), pagination. — _Traces: FR-PROD-1, FR-PROD-2, FR-PROD-3, FR-PROD-6, FR-PROD-7_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.2.3** [WEB] Add/Edit product form with validation, live Margin card, Status card, Save & add another, breadcrumb, duplicate SKU rejected on save, and read-only mode for View access. — _Traces: FR-PROD-4, FR-PROD-5, FR-PROD-7_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
 
 ### F-2.3 Stock-in (WEB)
 

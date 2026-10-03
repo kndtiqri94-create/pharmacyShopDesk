@@ -22,15 +22,21 @@ describe('AppShellComponent', () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl(url);
     harness.detectChanges();
-    return { harness, element: document.body.querySelector('app-shell') as HTMLElement };
+    const element = (harness.fixture.nativeElement as HTMLElement).querySelector(
+      'app-shell'
+    ) as HTMLElement;
+    return { harness, element };
   }
 
   it('wraps pages in the sidebar, top bar and one main area, with no footer bar', async () => {
-    const { element } = await openShell(UserRole.ADMIN, '/products');
+    const { element } = await openShell(UserRole.ADMIN, '/suppliers');
     expect(element.querySelector('app-sidebar')).not.toBeNull();
     expect(element.querySelector('app-top-bar')).not.toBeNull();
     expect(element.querySelectorAll('main')).toHaveSize(1);
-    expect(element.querySelector('footer')).toBeNull();
+    const footersOutsidePage = Array.from(element.querySelectorAll('footer')).filter(
+      footer => !footer.closest('main')
+    );
+    expect(footersOutsidePage).toHaveSize(0);
     expect(element.querySelector('select')).toBeNull();
   });
 
@@ -42,7 +48,7 @@ describe('AppShellComponent', () => {
   });
 
   it('closes the menu when the page changes', async () => {
-    const { harness } = await openShell(UserRole.ADMIN, '/products');
+    const { harness } = await openShell(UserRole.ADMIN, '/suppliers');
     const state = TestBed.inject(ShellStateService);
     state.openMenu();
     expect(state.menuOpen()).toBeTrue();
@@ -51,7 +57,7 @@ describe('AppShellComponent', () => {
   });
 
   it('closes the menu with the Escape key', async () => {
-    const { harness } = await openShell(UserRole.ADMIN, '/products');
+    const { harness } = await openShell(UserRole.ADMIN, '/suppliers');
     const state = TestBed.inject(ShellStateService);
     state.openMenu();
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));

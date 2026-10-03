@@ -1,0 +1,310 @@
+<div class="sd-stack">
+  <app-breadcrumb [items]="breadcrumb()" />
+  <app-page-header [title]="title()" [subtitle]="subtitle()">
+    <div pageActions class="sd-row">
+      @if (readOnly()) {
+        <app-badge label="View only" tone="info" />
+        <app-button (click)="goToList()">Back to products</app-button>
+      } @else {
+        <app-button (click)="cancel()">Cancel</app-button>
+        <app-button variant="primary" [disabled]="saving()" (click)="save(false)">
+          Save product
+        </app-button>
+      }
+    </div>
+  </app-page-header>
+
+  @if (notFound()) {
+    <app-card>
+      <app-empty-state
+        title="That product is not in your list"
+        message="It may have been typed wrongly in the address. Go back to Products and pick it from the list."
+      >
+        <app-button (click)="goToList()">Back to products</app-button>
+      </app-empty-state>
+    </app-card>
+  } @else if (loaded()) {
+    @if (confirmingCancel()) {
+      <app-alert tone="warning" title="Leave without saving">
+        You have changes that are not saved. Discard them and go back to Products?
+        <span class="sd-row confirm-actions">
+          <app-button size="sm" (click)="goToList()">Discard changes</app-button>
+          <app-button size="sm" variant="soft" (click)="keepEditing()">Keep editing</app-button>
+        </span>
+      </app-alert>
+    }
+
+    <div class="sd-with-summary">
+      <form class="form-card" novalidate [formGroup]="form" (submit)="$event.preventDefault()">
+        <app-card [flush]="true">
+          <section class="group" aria-labelledby="group-basic">
+            <div class="group__intro">
+              <h2 class="sd-section-title" id="group-basic">Basic details</h2>
+              <p class="sd-caption">What the product is and how to find it.</p>
+            </div>
+            <div class="sd-form-grid group__fields">
+              <app-field
+                label="Product name"
+                [fieldId]="fieldId('name')"
+                [required]="true"
+                [span]="8"
+                [error]="error('name')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  formControlName="name"
+                  autocomplete="off"
+                  [attr.maxlength]="maxLength.name"
+                />
+              </app-field>
+              <app-field
+                label="Unit"
+                [fieldId]="fieldId('unit')"
+                [span]="4"
+                [error]="error('unit')"
+              >
+                <select appFieldControl formControlName="unit">
+                  @for (unit of units; track unit) {
+                    <option [value]="unit">{{ unitLabel(unit) }}</option>
+                  }
+                </select>
+              </app-field>
+              <app-field
+                label="Generic name"
+                [fieldId]="fieldId('genericName')"
+                [span]="6"
+                [error]="error('genericName')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  formControlName="genericName"
+                  autocomplete="off"
+                  [attr.maxlength]="maxLength.genericName"
+                />
+              </app-field>
+              <app-field
+                label="Category"
+                [fieldId]="fieldId('category')"
+                [required]="true"
+                [span]="6"
+                [error]="error('category')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  formControlName="category"
+                  autocomplete="off"
+                  list="product-category-options"
+                  [attr.maxlength]="maxLength.category"
+                />
+              </app-field>
+              <datalist id="product-category-options">
+                @for (category of categories(); track category) {
+                  <option [value]="category"></option>
+                }
+              </datalist>
+              <app-field
+                label="Manufacturer"
+                [fieldId]="fieldId('manufacturer')"
+                [span]="12"
+                [error]="error('manufacturer')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  formControlName="manufacturer"
+                  autocomplete="off"
+                  [attr.maxlength]="maxLength.manufacturer"
+                />
+              </app-field>
+              <app-field label="SKU" [fieldId]="fieldId('sku')" [span]="6" [error]="error('sku')">
+                <input
+                  appFieldControl
+                  type="text"
+                  formControlName="sku"
+                  autocomplete="off"
+                  [attr.maxlength]="maxLength.sku"
+                />
+              </app-field>
+              <app-field
+                label="Barcode"
+                hint="Point the scanner at the field and scan."
+                [fieldId]="fieldId('barcode')"
+                [span]="6"
+                [error]="error('barcode')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  formControlName="barcode"
+                  autocomplete="off"
+                  [attr.maxlength]="maxLength.barcode"
+                />
+                <app-button
+                  fieldAction
+                  variant="ghost"
+                  icon="barcode"
+                  ariaLabel="Scan barcode"
+                  [disabled]="readOnly()"
+                  (click)="scanBarcode()"
+                />
+              </app-field>
+            </div>
+          </section>
+
+          <section class="group" aria-labelledby="group-pricing">
+            <div class="group__intro">
+              <h2 class="sd-section-title" id="group-pricing">Pricing</h2>
+              <p class="sd-caption">What you pay and what you charge.</p>
+            </div>
+            <div class="sd-form-grid group__fields">
+              <app-field
+                label="Cost price"
+                prefix="Rs."
+                [fieldId]="fieldId('costPrice')"
+                [span]="4"
+                [error]="error('costPrice')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  inputmode="decimal"
+                  formControlName="costPrice"
+                  autocomplete="off"
+                />
+              </app-field>
+              <app-field
+                label="Selling price"
+                prefix="Rs."
+                [fieldId]="fieldId('sellingPrice')"
+                [required]="true"
+                [span]="4"
+                [error]="error('sellingPrice')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  inputmode="decimal"
+                  formControlName="sellingPrice"
+                  autocomplete="off"
+                />
+              </app-field>
+              <app-field
+                label="Tax"
+                [fieldId]="fieldId('taxRate')"
+                [span]="4"
+                [error]="error('taxRate')"
+              >
+                <select appFieldControl formControlName="taxRate">
+                  @for (rate of taxRates; track rate) {
+                    <option [value]="rate">{{ taxLabel(rate) }}</option>
+                  }
+                </select>
+              </app-field>
+            </div>
+          </section>
+
+          <section class="group" aria-labelledby="group-stock">
+            <div class="group__intro">
+              <h2 class="sd-section-title" id="group-stock">Stock rules</h2>
+              <p class="sd-caption">When to reorder and how stock is tracked.</p>
+            </div>
+            <div class="sd-form-grid group__fields">
+              <app-field
+                label="Reorder level"
+                [suffix]="unitPlural()"
+                [fieldId]="fieldId('reorderLevel')"
+                [span]="6"
+                [error]="error('reorderLevel')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  inputmode="numeric"
+                  formControlName="reorderLevel"
+                  autocomplete="off"
+                />
+              </app-field>
+              <app-field
+                label="Opening stock"
+                [suffix]="unitPlural()"
+                [hint]="
+                  hasBatches()
+                    ? 'Stock changes come in through GRN.'
+                    : 'Leave 0 and use GRN instead.'
+                "
+                [fieldId]="fieldId('openingStock')"
+                [span]="6"
+                [error]="error('openingStock')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  inputmode="numeric"
+                  formControlName="openingStock"
+                  autocomplete="off"
+                />
+              </app-field>
+              <app-field
+                label="Shelf or location"
+                [fieldId]="fieldId('shelfLocation')"
+                [span]="12"
+                [error]="error('shelfLocation')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  formControlName="shelfLocation"
+                  autocomplete="off"
+                  [attr.maxlength]="maxLength.shelfLocation"
+                />
+              </app-field>
+              <div class="sd-col-12 toggles">
+                <app-toggle
+                  label="Track batches and expiry dates"
+                  [checked]="values().trackBatches"
+                  [disabled]="readOnly() || hasBatches()"
+                  (checkedChange)="setToggle('trackBatches', $event)"
+                />
+                <app-toggle
+                  label="Prescription required"
+                  [checked]="values().prescriptionRequired"
+                  [disabled]="readOnly()"
+                  (checkedChange)="setToggle('prescriptionRequired', $event)"
+                />
+              </div>
+            </div>
+          </section>
+
+          @if (!readOnly()) {
+            <div cardFooter class="form-footer">
+              <app-button (click)="cancel()">Cancel</app-button>
+              <app-button [disabled]="saving()" (click)="save(true)"
+                >Save &amp; add another</app-button
+              >
+              <app-button variant="primary" [disabled]="saving()" (click)="save(false)">
+                Save product
+              </app-button>
+            </div>
+          }
+        </app-card>
+      </form>
+
+      <aside class="summary sd-stack" aria-label="Product summary">
+        <app-margin-card [margin]="margin()" [unit]="values().unit" />
+        <app-product-status-card
+          [disabled]="readOnly()"
+          [active]="values().active"
+          [showInPosQuickList]="values().showInPosQuickList"
+          (activeChange)="setToggle('active', $event)"
+          (showInPosQuickListChange)="setToggle('showInPosQuickList', $event)"
+        />
+        <app-alert tone="info" title="Tip">
+          After saving, receive stock with a GRN so the first batch and expiry date are recorded.
+        </app-alert>
+      </aside>
+    </div>
+  }
+</div>

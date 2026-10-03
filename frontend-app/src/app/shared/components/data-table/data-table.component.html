@@ -5,6 +5,18 @@
     <table class="table" [attr.aria-label]="ariaLabel()">
       <thead>
         <tr>
+          @if (selectable()) {
+            <th scope="col" class="cell-select">
+              <label class="sd-checkbox">
+                <input
+                  type="checkbox"
+                  [checked]="allPageRowsSelected()"
+                  (change)="toggleAllOnPage()"
+                />
+                <span class="sd-sr-only">Select all rows on this page</span>
+              </label>
+            </th>
+          }
           @for (column of displayColumns(); track column.key) {
             <th scope="col" class="sd-label-caps" [class.is-right]="isRightAligned(column)">
               {{ column.label }}
@@ -17,7 +29,19 @@
       </thead>
       <tbody>
         @for (row of pageRows(); track trackRow(row, $index)) {
-          <tr>
+          <tr [class.is-selected]="selectable() && isSelected(row, $index)">
+            @if (selectable()) {
+              <td class="cell-select">
+                <label class="sd-checkbox">
+                  <input
+                    type="checkbox"
+                    [checked]="isSelected(row, $index)"
+                    (change)="toggleRow(row, $index)"
+                  />
+                  <span class="sd-sr-only">{{ selectLabel(row) }}</span>
+                </label>
+              </td>
+            }
             @for (column of displayColumns(); track column.key) {
               <td
                 [attr.data-label]="column.label"

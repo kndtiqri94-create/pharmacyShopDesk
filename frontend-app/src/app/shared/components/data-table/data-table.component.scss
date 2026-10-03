@@ -27,6 +27,15 @@ tbody tr:hover {
   background: var(--sd-surface-sunken);
 }
 
+.cell-select {
+  width: 1%;
+  padding-right: 0;
+}
+
+.is-selected {
+  background: var(--sd-primary-soft);
+}
+
 .is-right {
   text-align: right;
 }

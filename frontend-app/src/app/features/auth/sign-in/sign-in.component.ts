@@ -48,8 +48,8 @@ export class SignInComponent {
     this.submitted() && !this.values().username?.trim() ? USERNAME_REQUIRED_MESSAGE : null
   );
   protected readonly passwordError = computed(() => {
-    if (this.submitted() && !this.values().password) return PASSWORD_REQUIRED_MESSAGE;
-    return this.signInFailed() ? SIGN_IN_FAILED_MESSAGE : null;
+    if (this.signInFailed()) return SIGN_IN_FAILED_MESSAGE;
+    return this.submitted() && !this.values().password ? PASSWORD_REQUIRED_MESSAGE : null;
   });
 
   constructor() {

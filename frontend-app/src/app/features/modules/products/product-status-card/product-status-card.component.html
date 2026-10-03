@@ -1,0 +1,13 @@
+<app-card title="Status">
+  <div class="status-stack">
+    <app-toggle label="Active, can be sold" [disabled]="disabled()" [(checked)]="active" />
+    <app-toggle
+      label="Show in POS quick list"
+      [disabled]="disabled()"
+      [(checked)]="showInPosQuickList"
+    />
+    <p class="sd-caption">
+      Inactive products stay in reports but disappear from sales and new GRNs.
+    </p>
+  </div>
+</app-card>

@@ -1,0 +1,25 @@
+<app-card title="Needs attention">
+  @if (rows().length === 0) {
+    <app-empty-state
+      title="Nothing needs attention right now"
+      message="Stock, expiry dates, orders and float are all in good shape."
+    />
+  } @else {
+    <ul class="attention">
+      @for (row of rows(); track row.id) {
+        <li class="attention__row">
+          <span class="attention__message">{{ row.message }}</span>
+          <app-button
+            size="sm"
+            [variant]="row.soft ? 'soft' : 'default'"
+            [disabled]="!isAllowed(row)"
+            [ariaLabel]="row.actionLabel + ': ' + row.message"
+            (click)="open(row)"
+          >
+            {{ row.actionLabel }}
+          </app-button>
+        </li>
+      }
+    </ul>
+  }
+</app-card>

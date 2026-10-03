@@ -5,6 +5,7 @@ import { ProductStatus } from '../models/enums/product-status.enum';
 import { ReloadStatus } from '../models/enums/reload-status.enum';
 import {
   GRN_STATUS_DISPLAY,
+  getActiveDisplay,
   PAYMENT_STATUS_DISPLAY,
   PO_STATUS_DISPLAY,
   PRODUCT_STATUS_DISPLAY,
@@ -38,5 +39,10 @@ describe('status-display.util', () => {
       ...Object.values(RELOAD_STATUS_DISPLAY),
     ];
     expect(all.every(display => display.label.length > 0)).toBeTrue();
+  });
+
+  it('shows an inactive product with a word and a neutral tone', () => {
+    expect(getActiveDisplay(false)).toEqual({ label: 'Inactive', tone: 'neutral' });
+    expect(getActiveDisplay(true).label).toBe('Active');
   });
 });

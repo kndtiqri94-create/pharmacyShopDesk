@@ -1,0 +1,57 @@
+:host {
+  display: block;
+}
+
+.chart {
+  display: flex;
+  align-items: stretch;
+  gap: var(--sd-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chart--dense {
+  gap: var(--sd-space-1);
+}
+
+.chart__item {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sd-space-1);
+  min-width: 0;
+}
+
+.chart__value--hidden {
+  visibility: hidden;
+}
+
+.chart__track {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 180px;
+}
+
+.chart__bar {
+  display: block;
+  width: 100%;
+  max-width: 48px;
+  min-height: 2px;
+  border-radius: var(--sd-radius-sm) var(--sd-radius-sm) 0 0;
+  background: color-mix(in srgb, var(--sd-primary) 55%, var(--sd-surface));
+}
+
+.chart__bar--today {
+  background: var(--sd-primary);
+}
+
+.chart__label {
+  min-height: var(--sd-lh-caption);
+  color: var(--sd-ink-muted);
+  white-space: nowrap;
+}

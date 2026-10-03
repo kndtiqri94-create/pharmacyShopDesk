@@ -1,0 +1,25 @@
+<app-card [title]="title()" subtitle="Rs. thousands, all bills">
+  <app-chips cardActions ariaLabel="Chart period" [items]="periodItems" [(value)]="period" />
+  <ol class="chart" [class.chart--dense]="days() > 7" [attr.aria-label]="title()">
+    @for (bar of bars(); track bar.date; let index = $index) {
+      <li class="chart__item">
+        <span
+          class="chart__value sd-caption sd-num"
+          aria-hidden="true"
+          [class.chart__value--hidden]="!bar.showValue"
+        >
+          {{ formatThousands(bar.salesCents) }}
+        </span>
+        <span class="chart__track" aria-hidden="true">
+          <span
+            class="chart__bar"
+            [class.chart__bar--today]="bar.isToday"
+            [style.height.%]="bar.heightPercent"
+          ></span>
+        </span>
+        <span class="chart__label sd-caption" aria-hidden="true">{{ axisLabel(bar, index) }}</span>
+        <span class="sd-sr-only">{{ readableValue(bar) }}</span>
+      </li>
+    }
+  </ol>
+</app-card>
