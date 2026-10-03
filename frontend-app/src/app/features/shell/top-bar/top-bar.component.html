@@ -1,0 +1,42 @@
+<header class="topbar">
+  <div #menuButton class="topbar__menu">
+    <app-button
+      variant="ghost"
+      icon="menu"
+      ariaControls="app-sidebar"
+      [ariaExpanded]="shellStateService.menuOpen()"
+      (click)="shellStateService.toggleMenu()"
+    >
+      Menu
+    </app-button>
+  </div>
+  <p class="topbar__title sd-section-title">{{ shellStateService.pageTitle() }}</p>
+  <app-global-search class="topbar__search" />
+  <div class="topbar__tools">
+    <app-sync-pill />
+    <app-button
+      variant="ghost"
+      icon="bell"
+      ariaLabel="Notifications"
+      (click)="showNotificationsMessage()"
+    ></app-button>
+    <app-button
+      variant="ghost"
+      size="sm"
+      [icon]="isDark() ? 'sun' : 'moon'"
+      (click)="toggleTheme()"
+    >
+      {{ isDark() ? 'Light theme' : 'Dark theme' }}
+    </app-button>
+  </div>
+  @if (user(); as currentUser) {
+    <div class="topbar__user">
+      <app-avatar [name]="currentUser.displayName" [initials]="currentUser.initials" />
+      <div class="topbar__identity">
+        <p class="sd-body-strong">{{ currentUser.displayName }}</p>
+        <p class="sd-caption">{{ roleLabel() }}</p>
+      </div>
+      <app-button variant="ghost" size="sm" icon="logout" (click)="signOut()">Sign out</app-button>
+    </div>
+  }
+</header>

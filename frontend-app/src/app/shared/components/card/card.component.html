@@ -1,0 +1,15 @@
+<section class="card" [attr.aria-labelledby]="title() ? titleId : null">
+  @if (title()) {
+    <header class="card__header">
+      <div>
+        <h2 class="card__title sd-section-title" [id]="titleId">{{ title() }}</h2>
+        @if (subtitle()) {
+          <p class="sd-caption">{{ subtitle() }}</p>
+        }
+      </div>
+      <div class="card__actions"><ng-content select="[cardActions]" /></div>
+    </header>
+  }
+  <div class="card__body" [class.card__body--flush]="flush()"><ng-content /></div>
+  <footer class="card__footer"><ng-content select="[cardFooter]" /></footer>
+</section>

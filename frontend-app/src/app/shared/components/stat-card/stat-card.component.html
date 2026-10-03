@@ -1,0 +1,10 @@
+<article class="stat">
+  <div class="stat__text">
+    <p class="sd-label stat__label">{{ label() }}</p>
+    <p class="sd-stat-value">{{ value() }}</p>
+    @if (note()) {
+      <p class="sd-caption">{{ note() }}</p>
+    }
+  </div>
+  <span class="stat__chip" [attr.data-tone]="tone()"><app-icon [name]="icon()" [size]="22" /></span>
+</article>

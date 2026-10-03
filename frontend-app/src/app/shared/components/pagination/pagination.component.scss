@@ -1,0 +1,53 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sd-space-3);
+  padding: var(--sd-space-3) var(--sd-space-5);
+}
+
+.pagination__pages {
+  display: flex;
+  gap: var(--sd-space-1);
+}
+
+.page-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--sd-control-sm);
+  height: var(--sd-control-sm);
+  padding: 0 var(--sd-space-2);
+  border: 1px solid transparent;
+  border-radius: var(--sd-radius-md);
+  background: transparent;
+  color: var(--sd-ink);
+  font-weight: 600;
+
+  &:hover:not(:disabled) {
+    background: var(--sd-surface-sunken);
+  }
+
+  &:disabled {
+    opacity: var(--sd-disabled-opacity);
+    cursor: default;
+  }
+
+  @include bp.below-laptop {
+    min-width: var(--sd-touch-min);
+    height: var(--sd-touch-min);
+  }
+}
+
+.page-button--active {
+  border-color: var(--sd-primary);
+  background: var(--sd-primary-soft);
+  color: var(--sd-primary);
+}

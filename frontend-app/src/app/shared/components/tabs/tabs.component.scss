@@ -1,0 +1,39 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.tabs {
+  display: flex;
+  gap: var(--sd-space-1);
+  border-bottom: 1px solid var(--sd-border);
+  overflow-x: auto;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sd-space-2);
+  min-height: var(--sd-control-md);
+  padding: 0 var(--sd-space-4);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--sd-ink-muted);
+  font-weight: 600;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--sd-surface-sunken);
+  }
+
+  @include bp.below-laptop {
+    min-height: var(--sd-touch-min);
+  }
+}
+
+.tab--active {
+  border-bottom-color: var(--sd-primary);
+  color: var(--sd-primary);
+}

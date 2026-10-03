@@ -1,0 +1,25 @@
+<div class="sd-stack">
+  <app-page-header [title]="definition.label" [subtitle]="definition.subtitle">
+    <div pageActions class="sd-row">
+      @if (isViewOnly()) {
+        <app-badge label="View only" tone="info" />
+      }
+      <ng-template [appCanWrite]="moduleKey">
+        <app-button variant="primary" icon="plus" (click)="showSampleMessage()">
+          Create sample record
+        </app-button>
+      </ng-template>
+    </div>
+  </app-page-header>
+  @if (isViewOnly()) {
+    <app-alert tone="info"
+      >You can look at this area but you cannot change anything in it.</app-alert
+    >
+  }
+  <app-card>
+    <app-empty-state
+      title="This area is coming soon"
+      message="Nothing is built here yet. Use the menu to open another area in the meantime."
+    />
+  </app-card>
+</div>

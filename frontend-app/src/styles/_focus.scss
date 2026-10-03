@@ -1,0 +1,8 @@
+:focus-visible {
+  outline: 2px solid var(--sd-focus-ring);
+  outline-offset: 2px;
+}
+
+.sd-on-dark :focus-visible {
+  outline-color: var(--sd-focus-ring-inverse);
+}

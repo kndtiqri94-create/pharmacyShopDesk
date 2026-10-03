@@ -1,0 +1,8 @@
+<output class="toast-region">
+  @if (notification(); as current) {
+    <div class="toast">
+      <app-alert [tone]="current.tone">{{ current.message }}</app-alert>
+      <app-button variant="ghost" size="sm" (click)="dismiss()">Dismiss message</app-button>
+    </div>
+  }
+</output>

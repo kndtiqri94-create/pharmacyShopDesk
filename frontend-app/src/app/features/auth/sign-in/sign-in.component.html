@@ -1,0 +1,90 @@
+<main class="signin sd-on-dark">
+  <section class="signin__card" aria-labelledby="signin-title">
+    <div class="brand">
+      <span class="brand__tile" aria-hidden="true">S</span>
+      <div>
+        <p class="brand__name">ShopDesk</p>
+        <p class="sd-caption">Main Shop</p>
+      </div>
+    </div>
+    <div>
+      <h1 id="signin-title" class="sd-page-title">Welcome back</h1>
+      <p class="sd-muted">Sign in to continue to ShopDesk.</p>
+    </div>
+    @if (!authService.isConfigured) {
+      <app-alert tone="warning" title="Sign-in is not set up">
+        This copy of ShopDesk has no sign-in turned on yet. Ask the person who installed it to set
+        it up.
+      </app-alert>
+    }
+    <form class="sd-stack" novalidate [formGroup]="form" (ngSubmit)="submit()">
+      <app-field
+        label="Username or email"
+        fieldId="signin-username"
+        size="lg"
+        [required]="true"
+        [error]="usernameError()"
+      >
+        <input
+          appFieldControl
+          type="text"
+          autocomplete="username"
+          formControlName="username"
+          [maxLength]="maxLength"
+        />
+      </app-field>
+      <app-field
+        label="Password"
+        fieldId="signin-password"
+        size="lg"
+        [required]="true"
+        [error]="passwordError()"
+      >
+        <input
+          appFieldControl
+          autocomplete="current-password"
+          formControlName="password"
+          [type]="showPassword() ? 'text' : 'password'"
+          [maxLength]="maxLength"
+        />
+        <button
+          fieldAction
+          type="button"
+          class="signin__reveal"
+          [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+          [attr.aria-pressed]="showPassword()"
+          (click)="toggleReveal()"
+        >
+          <app-icon [name]="showPassword() ? 'eyeoff' : 'eye'" />
+        </button>
+      </app-field>
+      <div class="signin__row">
+        <label class="sd-checkbox" for="signin-keep">
+          <input id="signin-keep" type="checkbox" formControlName="keepSignedIn" />
+          <span>Keep me signed in on this device</span>
+        </label>
+        <button type="button" class="signin__link" (click)="showSampleMessage('Password reset')">
+          Forgot password?
+        </button>
+      </div>
+      <app-button
+        type="submit"
+        variant="primary"
+        size="lg"
+        [block]="true"
+        [disabled]="!authService.isConfigured || submitting()"
+      >
+        Log in
+      </app-button>
+      <app-button
+        size="lg"
+        icon="keyboard"
+        [block]="true"
+        (click)="showSampleMessage('The on-screen keyboard')"
+      >
+        Show on-screen keyboard
+      </app-button>
+    </form>
+    <p class="sd-caption signin__footer">Works offline · last synced today 09:12</p>
+  </section>
+</main>

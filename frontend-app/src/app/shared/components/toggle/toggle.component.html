@@ -1,0 +1,14 @@
+<button
+  type="button"
+  role="switch"
+  class="toggle"
+  [attr.aria-checked]="checked()"
+  [disabled]="disabled()"
+  (click)="flip()"
+>
+  <span class="toggle__track" [class.toggle__track--on]="checked()" aria-hidden="true">
+    <span class="toggle__thumb"></span>
+  </span>
+  <span class="toggle__label">{{ label() }}</span>
+  <span class="toggle__state sd-caption">{{ checked() ? 'On' : 'Off' }}</span>
+</button>

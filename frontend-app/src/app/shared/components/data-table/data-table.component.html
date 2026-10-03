@@ -1,0 +1,71 @@
+@if (rows().length === 0) {
+  <app-empty-state [title]="emptyTitle()" [message]="emptyMessage()" />
+} @else {
+  <div class="table-wrap sd-scroll-x" [class.table-wrap--stack]="stack()">
+    <table class="table" [attr.aria-label]="ariaLabel()">
+      <thead>
+        <tr>
+          @for (column of displayColumns(); track column.key) {
+            <th scope="col" class="sd-label-caps" [class.is-right]="isRightAligned(column)">
+              {{ column.label }}
+            </th>
+          }
+          @if (visibleActions().length > 0) {
+            <th scope="col" class="is-right"><span class="sd-sr-only">Actions</span></th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of pageRows(); track trackRow(row, $index)) {
+          <tr>
+            @for (column of displayColumns(); track column.key) {
+              <td
+                [attr.data-label]="column.label"
+                [class.is-right]="isRightAligned(column)"
+                [class.is-mono]="column.kind === 'code'"
+              >
+                @if (templates().get(column.key); as template) {
+                  <ng-container
+                    [ngTemplateOutlet]="template"
+                    [ngTemplateOutletContext]="{ $implicit: row }"
+                  />
+                } @else {
+                  <span
+                    [class.sd-body-strong]="!!column.subValue"
+                    [class.sd-num]="isRightAligned(column)"
+                  >
+                    {{ cellText(row, column) }}
+                  </span>
+                  @if (column.subValue) {
+                    <span class="cell-sub sd-caption">{{ column.subValue(row) }}</span>
+                  }
+                }
+              </td>
+            }
+            @if (visibleActions().length > 0) {
+              <td class="is-right cell-actions">
+                @for (action of visibleActions(); track action.id) {
+                  <button
+                    type="button"
+                    class="row-action"
+                    [attr.aria-label]="actionLabel(action, row)"
+                    (click)="trigger(action, row)"
+                  >
+                    <app-icon [name]="action.icon" />
+                  </button>
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <app-pagination
+    [total]="rows().length"
+    [page]="page()"
+    [pageSize]="effectivePageSize()"
+    [itemLabel]="itemLabel()"
+    (pageChange)="setPage($event)"
+  />
+}

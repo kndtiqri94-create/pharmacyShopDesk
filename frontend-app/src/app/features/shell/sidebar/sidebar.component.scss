@@ -1,0 +1,126 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: contents;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+  width: var(--sd-sidebar-width);
+  height: 100vh;
+  padding: var(--sd-space-4) var(--sd-space-3);
+  background: var(--sd-sidebar-bg);
+  color: var(--sd-sidebar-ink);
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  flex: none;
+
+  @include bp.below-desktop {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 50;
+    visibility: hidden;
+    transform: translateX(-100%);
+    box-shadow: var(--sd-shadow-pop);
+  }
+}
+
+.sidebar--open {
+  @include bp.below-desktop {
+    visibility: visible;
+    transform: none;
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sd-space-3);
+  padding: var(--sd-space-1) var(--sd-space-2);
+}
+
+.brand__tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--sd-radius-md);
+  background: var(--sd-sidebar-accent);
+  color: var(--sd-sidebar-accent-ink);
+  font-weight: 700;
+  font-size: var(--sd-fs-section-title);
+}
+
+.brand__name {
+  color: var(--sd-sidebar-ink-strong);
+  font-weight: 700;
+}
+
+.brand__shop {
+  color: var(--sd-sidebar-label);
+  font-size: var(--sd-fs-caption);
+}
+
+.sidebar__nav {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+}
+
+.group__label {
+  padding: 0 var(--sd-space-2) var(--sd-space-1);
+  color: var(--sd-sidebar-label);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--sd-space-3);
+  min-height: var(--sd-control-md);
+  padding: 0 var(--sd-space-2);
+  border-radius: var(--sd-radius-md);
+  color: var(--sd-sidebar-ink);
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    background: var(--sd-sidebar-hover);
+    color: var(--sd-sidebar-ink-strong);
+  }
+
+  @include bp.below-laptop {
+    min-height: var(--sd-touch-min);
+  }
+}
+
+.nav-link--active {
+  background: var(--sd-sidebar-hover);
+  color: var(--sd-sidebar-ink-strong);
+  font-weight: 600;
+}
+
+.nav-link__label {
+  flex: 1 1 auto;
+}
+
+.nav-link__count {
+  min-width: 22px;
+  padding: 0 var(--sd-space-2);
+  border-radius: var(--sd-radius-pill);
+  background: var(--sd-sidebar-accent);
+  color: var(--sd-sidebar-accent-ink);
+  font-size: var(--sd-fs-caption);
+  font-weight: 700;
+  text-align: center;
+}
+
+.sidebar__footer {
+  padding: 0 var(--sd-space-2);
+  color: var(--sd-sidebar-label);
+  font-size: var(--sd-fs-caption);
+}

@@ -1,0 +1,54 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.shell__main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.shell__content {
+  flex: 1 1 auto;
+  padding: var(--sd-space-6);
+  outline: 0;
+
+  @include bp.below-tablet {
+    padding: var(--sd-space-4);
+  }
+}
+
+.shell__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--sd-scrim);
+  cursor: pointer;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--sd-space-2);
+  left: var(--sd-space-2);
+  z-index: 70;
+  padding: var(--sd-space-2) var(--sd-space-3);
+  border: 1px solid var(--sd-border-strong);
+  border-radius: var(--sd-radius-md);
+  background: var(--sd-surface);
+  transform: translateY(-200%);
+
+  &:focus {
+    transform: none;
+  }
+}

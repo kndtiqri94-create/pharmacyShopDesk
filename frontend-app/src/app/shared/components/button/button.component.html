@@ -1,0 +1,15 @@
+<button
+  class="btn"
+  [type]="type()"
+  [disabled]="disabled()"
+  [attr.data-variant]="variant()"
+  [attr.data-size]="size()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-expanded]="ariaExpanded()"
+  [attr.aria-controls]="ariaControls()"
+>
+  @if (icon(); as iconName) {
+    <app-icon [name]="iconName" [size]="size() === 'sm' ? 16 : 18" />
+  }
+  <span class="btn__label"><ng-content /></span>
+</button>

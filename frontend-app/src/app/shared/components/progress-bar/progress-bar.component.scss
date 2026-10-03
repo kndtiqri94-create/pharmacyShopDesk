@@ -1,0 +1,51 @@
+:host {
+  display: block;
+}
+
+.progress {
+  display: block;
+  width: 100%;
+  height: 8px;
+  border: 0;
+  border-radius: var(--sd-radius-pill);
+  background: var(--sd-surface-sunken);
+  overflow: hidden;
+  appearance: none;
+  accent-color: var(--sd-primary);
+}
+
+.progress::-webkit-progress-bar {
+  background: var(--sd-surface-sunken);
+}
+
+.progress::-webkit-progress-value {
+  background: var(--sd-primary);
+}
+
+.progress::-moz-progress-bar {
+  background: var(--sd-primary);
+}
+
+.progress[data-tone='success']::-webkit-progress-value {
+  background: var(--sd-success);
+}
+
+.progress[data-tone='success']::-moz-progress-bar {
+  background: var(--sd-success);
+}
+
+.progress[data-tone='warning']::-webkit-progress-value {
+  background: var(--sd-warning);
+}
+
+.progress[data-tone='warning']::-moz-progress-bar {
+  background: var(--sd-warning);
+}
+
+.progress[data-tone='danger']::-webkit-progress-value {
+  background: var(--sd-danger);
+}
+
+.progress[data-tone='danger']::-moz-progress-bar {
+  background: var(--sd-danger);
+}

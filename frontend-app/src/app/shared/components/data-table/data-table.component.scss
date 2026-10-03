@@ -1,0 +1,125 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.table {
+  width: 100%;
+  font-size: var(--sd-fs-body);
+}
+
+th {
+  padding: var(--sd-space-3) var(--sd-space-5);
+  background: var(--sd-surface-sunken);
+  color: var(--sd-ink-muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+td {
+  padding: var(--sd-space-3) var(--sd-space-5);
+  border-top: 1px solid var(--sd-border);
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background: var(--sd-surface-sunken);
+}
+
+.is-right {
+  text-align: right;
+}
+
+.is-mono {
+  font-family: var(--sd-font-mono);
+  font-size: var(--sd-fs-code);
+}
+
+.cell-sub {
+  display: block;
+}
+
+.cell-actions {
+  white-space: nowrap;
+}
+
+.row-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sd-control-sm);
+  height: var(--sd-control-sm);
+  border: 0;
+  border-radius: var(--sd-radius-md);
+  background: transparent;
+  color: var(--sd-ink-muted);
+
+  &:hover {
+    background: var(--sd-surface);
+    color: var(--sd-ink);
+  }
+
+  @include bp.below-laptop {
+    width: var(--sd-touch-min);
+    height: var(--sd-touch-min);
+  }
+}
+
+@include bp.below-tablet {
+  .table-wrap:not(.table-wrap--stack) {
+    td:first-child,
+    th:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background: var(--sd-surface);
+    }
+
+    th:first-child {
+      background: var(--sd-surface-sunken);
+    }
+  }
+
+  .table-wrap--stack {
+    .table,
+    tbody,
+    tr,
+    td {
+      display: block;
+    }
+
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    tr {
+      border-top: 1px solid var(--sd-border);
+      padding: var(--sd-space-2) 0;
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--sd-space-3);
+      border-top: 0;
+      padding: var(--sd-space-1) var(--sd-space-4);
+      text-align: right;
+    }
+
+    td::before {
+      content: attr(data-label);
+      color: var(--sd-ink-muted);
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .cell-actions::before {
+      content: none;
+    }
+  }
+}

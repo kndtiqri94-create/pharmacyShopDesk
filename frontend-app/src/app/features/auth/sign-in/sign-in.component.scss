@@ -1,0 +1,84 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.signin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--sd-space-6) var(--sd-space-4);
+  background: var(--sd-sidebar-bg);
+}
+
+.signin__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-5);
+  width: 100%;
+  max-width: 420px;
+  padding: var(--sd-space-8);
+  background: var(--sd-surface);
+  border-radius: var(--sd-radius-lg);
+  box-shadow: var(--sd-shadow-pop);
+
+  @include bp.below-tablet {
+    padding: var(--sd-space-5);
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sd-space-3);
+}
+
+.brand__tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--sd-radius-md);
+  background: var(--sd-sidebar-accent);
+  color: var(--sd-sidebar-accent-ink);
+  font-weight: 700;
+}
+
+.brand__name {
+  font-weight: 700;
+}
+
+.signin__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sd-space-2);
+}
+
+.signin__link {
+  min-height: var(--sd-touch-min);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sd-primary);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.signin__reveal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--sd-touch-min);
+  border: 0;
+  background: transparent;
+  color: var(--sd-ink-muted);
+}
+
+.signin__footer {
+  text-align: center;
+}

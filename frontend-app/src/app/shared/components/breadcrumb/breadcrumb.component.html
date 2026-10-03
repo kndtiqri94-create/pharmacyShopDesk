@@ -1,0 +1,18 @@
+<nav aria-label="Breadcrumb">
+  <ol class="breadcrumb">
+    @for (item of items(); track item.label; let last = $last) {
+      <li class="breadcrumb__item">
+        @if (item.link && !last) {
+          <a [routerLink]="item.link">{{ item.label }}</a>
+        } @else {
+          <span [attr.aria-current]="last ? 'page' : null" [class.sd-body-strong]="last">
+            {{ item.label }}
+          </span>
+        }
+        @if (!last) {
+          <app-icon name="right" [size]="16" />
+        }
+      </li>
+    }
+  </ol>
+</nav>

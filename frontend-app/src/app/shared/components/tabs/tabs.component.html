@@ -1,0 +1,21 @@
+<div class="tabs" role="tablist" [attr.aria-label]="ariaLabel()">
+  @for (item of visibleItems(); track item.id; let index = $index) {
+    <button
+      #tabButton
+      type="button"
+      role="tab"
+      class="tab"
+      [attr.aria-selected]="item.id === value()"
+      [attr.aria-controls]="panelId()"
+      [attr.tabindex]="item.id === value() ? 0 : -1"
+      [class.tab--active]="item.id === value()"
+      (click)="select(item.id)"
+      (keydown)="onKeydown($event, index)"
+    >
+      {{ item.label }}
+      @if (item.count !== undefined) {
+        <app-badge [label]="item.count.toString()" [plain]="true" />
+      }
+    </button>
+  }
+</div>

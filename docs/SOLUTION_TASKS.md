@@ -39,13 +39,13 @@ Sequencing: F-2.1 first (everything depends on it); F-2.2 next (the product and 
 
 ### F-2.1 Foundation (WEB)
 
-- [ ] **S-2.1.1** [WEB] Design tokens (light and dark, DM Sans/Consolas, 4px spacing, radius, depth, states), theme switching and responsive base layout rules. — _Traces: FR-FND-1, FR-FND-2, FR-FND-5_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.1.2** [WEB] Icon set (all required names) plus Button, Badge, Card, StatCard, Avatar and Alert components. — _Traces: FR-FND-3, FR-FND-4, FR-FND-7_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.1.3** [WEB] DataTable (horizontal scroll or stacking on small screens), Pagination, Chips, Tabs, Field with 12-column responsive form grid, Toggle, Breadcrumb and progress bar. — _Traces: FR-FND-4, FR-FND-6_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.1.4** [WEB] Mock data layer: domain models and service interfaces with in-memory implementations (products and batches, GRNs, POs, suppliers, employees, users/roles, reload, settings, sync) seeded with the design's sample data. — _Traces: FR-PROD-3, FR-GRN-5, FR-USR-2, FR-SET-3_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.1.5** [WEB] AppShell with grouped sidebar (collapses on small screens), top bar, UI-only sync pill, theme switch, and nine lazy-loaded module routes. — _Traces: FR-SHELL-1, FR-SHELL-2, FR-SHELL-3_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.1.6** [WEB] Sign-in screen, mock session and auth guard with sign-out. — _Traces: FR-AUTH-1, FR-AUTH-2_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.1.7** [WEB] Role/permission gating: Full / View / No access applied to sidebar items, routes and action visibility, driven by the permission matrix. — _Traces: FR-AUTH-3, FR-AUTH-4_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.1.1** [WEB] Design tokens (light and dark, DM Sans/Consolas, 4px spacing, radius, depth, states), theme switching and responsive base layout rules. — _Traces: FR-FND-1, FR-FND-2, FR-FND-5_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.1.2** [WEB] Icon set (all required names) plus Button, Badge, Card, StatCard, Avatar and Alert components. — _Traces: FR-FND-3, FR-FND-4, FR-FND-7_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.1.3** [WEB] DataTable (horizontal scroll or stacking on small screens), Pagination, Chips, Tabs, Field with 12-column responsive form grid, Toggle, Breadcrumb and progress bar. — _Traces: FR-FND-4, FR-FND-6_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.1.4** [WEB] Mock data layer: domain models and service interfaces with in-memory implementations (products and batches, GRNs, POs, suppliers, employees, users/roles, reload, settings, sync) seeded with the design's sample data. — _Traces: FR-PROD-3, FR-GRN-5, FR-USR-2, FR-SET-3_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.1.5** [WEB] AppShell with grouped sidebar (collapses on small screens), top bar, UI-only sync pill, theme switch, and nine lazy-loaded module routes. — _Traces: FR-SHELL-1, FR-SHELL-2, FR-SHELL-3_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.1.6** [WEB] Sign-in screen, mock session and auth guard with sign-out. — _Traces: FR-AUTH-1, FR-AUTH-2_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.1.7** [WEB] Role/permission gating: Full / View / No access applied to sidebar items, routes and action visibility, driven by the permission matrix. — _Traces: FR-AUTH-3, FR-AUTH-4_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
 
 ### F-2.2 Dashboard and Products (WEB)
 

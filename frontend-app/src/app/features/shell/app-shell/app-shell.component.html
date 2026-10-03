@@ -1,0 +1,21 @@
+<div class="shell">
+  <button type="button" class="skip-link" (click)="focusMain()">Skip to content</button>
+  <app-sidebar
+    [open]="shellStateService.menuOpen()"
+    [drawerMode]="viewportService.isDrawerMode()"
+  />
+  @if (viewportService.isDrawerMode() && shellStateService.menuOpen()) {
+    <button
+      type="button"
+      class="shell__backdrop"
+      aria-label="Close menu"
+      (click)="closeMenu()"
+    ></button>
+  }
+  <div class="shell__main">
+    <app-top-bar />
+    <main id="main-content" class="shell__content" tabindex="-1">
+      <router-outlet />
+    </main>
+  </div>
+</div>

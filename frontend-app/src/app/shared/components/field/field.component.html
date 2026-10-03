@@ -1,0 +1,25 @@
+<label class="field__label sd-label" [attr.for]="fieldId()">
+  {{ label() }}
+  @if (required()) {
+    <span class="field__required" aria-hidden="true">*</span>
+  }
+</label>
+<div
+  class="sd-field-box"
+  [class.sd-field-box--error]="!!error()"
+  [class.sd-field-box--lg]="size() === 'lg'"
+>
+  @if (prefix()) {
+    <span class="field__affix">{{ prefix() }}</span>
+  }
+  <ng-content />
+  @if (suffix()) {
+    <span class="field__affix">{{ suffix() }}</span>
+  }
+  <ng-content select="[fieldAction]" />
+</div>
+@if (error()) {
+  <p class="field__error" role="alert" [id]="fieldId() + '-error'">{{ error() }}</p>
+} @else if (hint()) {
+  <p class="field__hint sd-caption" [id]="fieldId() + '-hint'">{{ hint() }}</p>
+}

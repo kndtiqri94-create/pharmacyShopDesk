@@ -1,0 +1,43 @@
+@if (visible()) {
+  <nav class="pagination" aria-label="Pagination">
+    <p class="sd-caption" data-testid="pagination-summary">{{ summary() }}</p>
+    <ul class="pagination__pages">
+      <li>
+        <button
+          type="button"
+          class="page-button"
+          aria-label="Previous page"
+          [disabled]="currentPage() === 1"
+          (click)="goTo(currentPage() - 1)"
+        >
+          <app-icon name="left" [size]="16" />
+        </button>
+      </li>
+      @for (pageNumber of pageNumbers(); track pageNumber) {
+        <li>
+          <button
+            type="button"
+            class="page-button"
+            [attr.aria-label]="'Page ' + pageNumber"
+            [attr.aria-current]="pageNumber === currentPage() ? 'page' : null"
+            [class.page-button--active]="pageNumber === currentPage()"
+            (click)="goTo(pageNumber)"
+          >
+            {{ pageNumber }}
+          </button>
+        </li>
+      }
+      <li>
+        <button
+          type="button"
+          class="page-button"
+          aria-label="Next page"
+          [disabled]="currentPage() === totalPages()"
+          (click)="goTo(currentPage() + 1)"
+        >
+          <app-icon name="right" [size]="16" />
+        </button>
+      </li>
+    </ul>
+  </nav>
+}

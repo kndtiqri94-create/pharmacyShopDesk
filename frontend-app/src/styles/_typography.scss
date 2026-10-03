@@ -1,0 +1,56 @@
+.sd-page-title {
+  font-size: var(--sd-fs-page-title);
+  line-height: var(--sd-lh-page-title);
+  font-weight: 700;
+}
+
+.sd-section-title {
+  font-size: var(--sd-fs-section-title);
+  line-height: var(--sd-lh-section-title);
+  font-weight: 600;
+}
+
+.sd-stat-value {
+  font-size: var(--sd-fs-stat-value);
+  line-height: var(--sd-lh-stat-value);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.sd-body-strong {
+  font-weight: 600;
+}
+
+.sd-caption {
+  font-size: var(--sd-fs-caption);
+  line-height: var(--sd-lh-caption);
+  color: var(--sd-ink-muted);
+}
+
+.sd-label {
+  font-size: var(--sd-fs-caption);
+  line-height: var(--sd-lh-caption);
+  font-weight: 600;
+}
+
+.sd-label-caps {
+  font-size: var(--sd-fs-caption);
+  line-height: var(--sd-lh-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sd-code {
+  font-family: var(--sd-font-mono);
+  font-size: var(--sd-fs-code);
+  line-height: var(--sd-lh-code);
+}
+
+.sd-num {
+  font-variant-numeric: tabular-nums;
+}
+
+.sd-muted {
+  color: var(--sd-ink-muted);
+}

@@ -1,0 +1,57 @@
+:host {
+  display: block;
+}
+
+.stat {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sd-space-3);
+  height: 100%;
+  padding: var(--sd-space-5);
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  box-shadow: var(--sd-shadow-card);
+}
+
+.stat__label {
+  color: var(--sd-ink-muted);
+}
+
+.stat__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: var(--sd-radius-md);
+  background: var(--sd-surface-sunken);
+  color: var(--sd-ink-muted);
+}
+
+.stat__chip[data-tone='primary'] {
+  background: var(--sd-primary-soft);
+  color: var(--sd-primary);
+}
+
+.stat__chip[data-tone='success'] {
+  background: var(--sd-success-soft);
+  color: var(--sd-success);
+}
+
+.stat__chip[data-tone='warning'] {
+  background: var(--sd-warning-soft);
+  color: var(--sd-warning);
+}
+
+.stat__chip[data-tone='danger'] {
+  background: var(--sd-danger-soft);
+  color: var(--sd-danger);
+}
+
+.stat__chip[data-tone='info'] {
+  background: var(--sd-info-soft);
+  color: var(--sd-info);
+}

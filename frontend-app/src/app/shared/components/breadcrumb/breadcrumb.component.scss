@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sd-space-1);
+  color: var(--sd-ink-muted);
+}
+
+.breadcrumb__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sd-space-1);
+}

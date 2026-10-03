@@ -1,0 +1,48 @@
+import { RolePermissionMatrix } from '../../../../models/domain/role-permission-matrix.model';
+
+export const ROLE_PERMISSION_SEED: RolePermissionMatrix = {
+  ADMIN: {
+    dashboard: 'FULL',
+    products: 'FULL',
+    grn: 'FULL',
+    'purchase-orders': 'FULL',
+    suppliers: 'FULL',
+    employees: 'FULL',
+    'reload-utility': 'FULL',
+    users: 'FULL',
+    settings: 'FULL',
+  },
+  MANAGER: {
+    dashboard: 'FULL',
+    products: 'FULL',
+    grn: 'FULL',
+    'purchase-orders': 'FULL',
+    suppliers: 'FULL',
+    employees: 'VIEW',
+    'reload-utility': 'FULL',
+    users: 'NONE',
+    settings: 'NONE',
+  },
+  PHARMACIST: {
+    dashboard: 'VIEW',
+    products: 'FULL',
+    grn: 'FULL',
+    'purchase-orders': 'VIEW',
+    suppliers: 'VIEW',
+    employees: 'NONE',
+    'reload-utility': 'VIEW',
+    users: 'NONE',
+    settings: 'NONE',
+  },
+  CASHIER: {
+    dashboard: 'NONE',
+    products: 'VIEW',
+    grn: 'NONE',
+    'purchase-orders': 'NONE',
+    suppliers: 'NONE',
+    employees: 'NONE',
+    'reload-utility': 'FULL',
+    users: 'NONE',
+    settings: 'NONE',
+  },
+};

@@ -1,0 +1,28 @@
+:host {
+  display: block;
+}
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sd-space-3);
+  padding: var(--sd-space-3) var(--sd-space-4);
+  border-radius: var(--sd-radius-md);
+  background: var(--sd-info-soft);
+  color: var(--sd-info);
+}
+
+.alert[data-tone='warning'] {
+  background: var(--sd-warning-soft);
+  color: var(--sd-warning);
+}
+
+.alert[data-tone='success'] {
+  background: var(--sd-success-soft);
+  color: var(--sd-success);
+}
+
+.alert__text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}

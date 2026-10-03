@@ -1,0 +1,42 @@
+<aside
+  id="app-sidebar"
+  class="sidebar sd-on-dark"
+  [cdkTrapFocus]="drawerMode() && open()"
+  [class.sidebar--open]="open()"
+>
+  <div class="brand">
+    <span class="brand__tile" aria-hidden="true">S</span>
+    <div>
+      <p class="brand__name">ShopDesk</p>
+      <p class="brand__shop">Main Shop</p>
+    </div>
+  </div>
+  <nav #navigation class="sidebar__nav" aria-label="Main navigation">
+    @for (group of groups(); track group.name) {
+      <section class="group" [attr.aria-labelledby]="'nav-group-' + group.name">
+        <h2 class="group__label sd-label-caps" [id]="'nav-group-' + group.name">
+          {{ group.name }}
+        </h2>
+        <ul>
+          @for (item of group.items; track item.key) {
+            <li>
+              <a
+                class="nav-link"
+                [routerLink]="'/' + item.path"
+                routerLinkActive="nav-link--active"
+                ariaCurrentWhenActive="page"
+              >
+                <app-icon [name]="item.icon" />
+                <span class="nav-link__label">{{ item.label }}</span>
+                @if (countFor(item.key); as count) {
+                  <span class="nav-link__count">{{ count }}</span>
+                }
+              </a>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  </nav>
+  <p class="sidebar__footer">ShopDesk 1.0 · Offline ready</p>
+</aside>

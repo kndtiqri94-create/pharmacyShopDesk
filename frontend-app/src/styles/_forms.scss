@@ -1,0 +1,62 @@
+.sd-field-box {
+  display: flex;
+  align-items: stretch;
+  min-height: var(--sd-control-md);
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border-strong);
+  border-radius: var(--sd-radius-md);
+  overflow: hidden;
+
+  &:focus-within {
+    outline: 2px solid var(--sd-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.sd-field-box--error {
+  border-color: var(--sd-danger);
+}
+
+.sd-field-box--lg {
+  min-height: var(--sd-control-lg);
+}
+
+.sd-field-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 var(--sd-space-3);
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--sd-ink);
+}
+
+textarea.sd-field-control {
+  padding-top: var(--sd-space-2);
+  padding-bottom: var(--sd-space-2);
+  min-height: 88px;
+  resize: vertical;
+}
+
+.sd-field-control:disabled,
+.sd-field-control[readonly] {
+  background: var(--sd-surface-sunken);
+}
+
+.sd-field-control:disabled {
+  opacity: var(--sd-disabled-opacity);
+}
+
+.sd-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sd-space-2);
+  min-height: 24px;
+
+  input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--sd-primary);
+  }
+}

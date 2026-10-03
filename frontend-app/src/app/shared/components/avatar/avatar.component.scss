@@ -1,0 +1,28 @@
+:host {
+  display: inline-flex;
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--sd-radius-pill);
+  background: var(--sd-primary-soft);
+  color: var(--sd-primary);
+  font-size: var(--sd-fs-caption);
+  font-weight: 700;
+  flex: none;
+}
+
+.avatar[data-size='sm'] {
+  width: 28px;
+  height: 28px;
+}
+
+.avatar[data-size='lg'] {
+  width: 48px;
+  height: 48px;
+  font-size: var(--sd-fs-body);
+}

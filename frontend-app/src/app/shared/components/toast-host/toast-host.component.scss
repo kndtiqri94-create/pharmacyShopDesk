@@ -1,0 +1,31 @@
+@use 'breakpoints' as bp;
+
+.toast-region {
+  position: fixed;
+  right: var(--sd-space-4);
+  bottom: var(--sd-space-4);
+  z-index: 60;
+  display: block;
+  width: min(420px, calc(100vw - 2 * var(--sd-space-4)));
+
+  @include bp.below-tablet {
+    left: var(--sd-space-4);
+    width: auto;
+  }
+}
+
+.toast {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sd-space-1);
+  padding: var(--sd-space-2);
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  box-shadow: var(--sd-shadow-pop);
+
+  app-alert {
+    width: 100%;
+  }
+}

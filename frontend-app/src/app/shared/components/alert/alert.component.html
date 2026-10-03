@@ -1,0 +1,9 @@
+<div class="alert" [attr.data-tone]="tone()">
+  <app-icon [name]="iconName()" />
+  <div class="alert__text">
+    @if (title()) {
+      <p class="sd-body-strong">{{ title() }}</p>
+    }
+    <p><ng-content /></p>
+  </div>
+</div>
