@@ -60,6 +60,8 @@ describe('dashboard-metrics.util', () => {
     expect(rows[0].message).toBe('Reorder 14 low-stock items');
     expect(rows[1].message).toBe('1 batch expire by 20 Nov');
     expect(rows[2].message).toBe('2 purchase orders overdue');
+    expect(rows[0].commands).toEqual(['/purchase-orders', 'new']);
+    expect(rows[2].commands).toEqual(['/purchase-orders']);
     expect(rows[1].queryParams).toEqual({ status: 'expiring-soon' });
     expect(rows[3].targetModule).toBe(ModuleKey.RELOAD_UTILITY);
   });

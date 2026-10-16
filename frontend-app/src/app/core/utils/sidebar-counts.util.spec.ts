@@ -1,3 +1,4 @@
+import { GrnStatus } from '../models/enums/grn-status.enum';
 import { ModuleKey } from '../models/enums/module-key.enum';
 import { GRN_SEED } from '../services/data/in-memory/seed/grn.seed';
 import { PRODUCT_SEED } from '../services/data/in-memory/seed/product.seed';
@@ -34,5 +35,17 @@ describe('sidebar-counts.util', () => {
     );
     const counts = computeSidebarCounts(restocked, GRN_SEED, SETTINGS_SEED, '2026-09-21');
     expect(counts[ModuleKey.PRODUCTS]).toBe(2);
+  });
+
+  it('updates the GRN count after a draft is saved and after it is received', () => {
+    const newDraft = { ...GRN_SEED[4], id: 'grn-006', number: 'GRN-0212' };
+    const withDraft = [...GRN_SEED, newDraft];
+    expect(
+      computeSidebarCounts(PRODUCT_SEED, withDraft, SETTINGS_SEED, '2026-09-21')[ModuleKey.GRN]
+    ).toBe(2);
+    const received = withDraft.map(grn => ({ ...grn, status: GrnStatus.RECEIVED }));
+    expect(
+      computeSidebarCounts(PRODUCT_SEED, received, SETTINGS_SEED, '2026-09-21')[ModuleKey.GRN]
+    ).toBe(0);
   });
 });

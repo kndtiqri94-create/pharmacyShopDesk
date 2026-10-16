@@ -86,6 +86,56 @@ describe('application routes', () => {
     expect((harness.routeNativeElement as HTMLElement).textContent).toContain('Page not found');
   });
 
+  it('stops a Cashier from reaching any stock-in address by typing it', async () => {
+    await signInAs(UserRole.CASHIER);
+    for (const url of [
+      '/grn/new',
+      '/grn/grn-001',
+      '/purchase-orders/new',
+      '/purchase-orders/po-004',
+      '/purchase-orders/po-005/edit',
+    ]) {
+      const { router } = await open(url);
+      expect(router.url).withContext(url).toBe('/access-denied');
+    }
+  });
+
+  it('lets a Pharmacist read purchase orders and use GRN but not create or edit orders', async () => {
+    await signInAs(UserRole.PHARMACIST);
+    for (const url of ['/purchase-orders', '/purchase-orders/po-004', '/grn', '/grn/new']) {
+      const { router } = await open(url);
+      expect(router.url).withContext(url).toBe(url);
+    }
+    for (const url of ['/purchase-orders/new', '/purchase-orders/po-005/edit']) {
+      const { router } = await open(url);
+      expect(router.url).withContext(url).toBe('/access-denied');
+    }
+  });
+
+  it('lets a Manager open the new and edit purchase order addresses', async () => {
+    await signInAs(UserRole.MANAGER);
+    for (const url of ['/purchase-orders/new', '/purchase-orders/po-005/edit', '/grn/new']) {
+      const { router } = await open(url);
+      expect(router.url).withContext(url).toBe(url);
+    }
+  });
+
+  it('shows a plain not found message for an unknown GRN or purchase order id', async () => {
+    await signInAs(UserRole.MANAGER);
+    const grn = await open('/grn/grn-999');
+    await new Promise(resolve => setTimeout(resolve, 30));
+    grn.harness.detectChanges();
+    expect((grn.harness.routeNativeElement as HTMLElement).textContent).toContain(
+      'That GRN is not in your list'
+    );
+    const order = await open('/purchase-orders/po-999');
+    await new Promise(resolve => setTimeout(resolve, 30));
+    order.harness.detectChanges();
+    expect((order.harness.routeNativeElement as HTMLElement).textContent).toContain(
+      'That purchase order is not in your list'
+    );
+  });
+
   it('sends a signed-in user away from the sign-in page', async () => {
     await signInAs(UserRole.PHARMACIST);
     const { router } = await open('/sign-in');

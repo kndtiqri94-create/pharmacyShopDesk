@@ -1,0 +1,31 @@
+:host {
+  display: block;
+}
+
+.supplier {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-3);
+}
+
+.supplier__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sd-space-3);
+}
+
+.supplier__facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-2);
+  margin: 0;
+
+  dd {
+    margin: 0;
+  }
+}
+
+.supplier__owed {
+  padding-top: var(--sd-space-3);
+  border-top: 1px solid var(--sd-border);
+}

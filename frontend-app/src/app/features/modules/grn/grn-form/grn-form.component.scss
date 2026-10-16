@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.items-error {
+  margin: 0;
+  padding: var(--sd-space-3) var(--sd-space-5);
+  border-top: 1px solid var(--sd-border);
+  background: var(--sd-danger-soft);
+  color: var(--sd-danger);
+  font-size: var(--sd-fs-body);
+  line-height: var(--sd-lh-body);
+}

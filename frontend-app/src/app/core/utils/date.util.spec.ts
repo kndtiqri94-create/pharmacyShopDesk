@@ -9,6 +9,10 @@ import {
   formatTime,
   formatWeekday,
   formatWeekdayLong,
+  endOfMonth,
+  isIsoDate,
+  monthsBetween,
+  startOfMonth,
   parseExpiryInput,
 } from './date.util';
 
@@ -61,5 +65,25 @@ describe('date.util', () => {
 
   it('gives the day of the month', () => {
     expect(formatDayOfMonth('2026-09-05')).toBe('5');
+  });
+
+  it('accepts only real calendar dates', () => {
+    expect(isIsoDate('2026-09-21')).toBeTrue();
+    expect(isIsoDate('2026-02-30')).toBeFalse();
+    expect(isIsoDate('2026-9-1')).toBeFalse();
+    expect(isIsoDate('21/09/2026')).toBeFalse();
+    expect(isIsoDate('')).toBeFalse();
+  });
+
+  it('counts calendar months between dates', () => {
+    expect(monthsBetween('2026-09-21', '2027-02-28')).toBe(5);
+    expect(monthsBetween('2026-09-21', '2026-09-30')).toBe(0);
+    expect(monthsBetween('2026-09-21', 'nonsense')).toBeNaN();
+  });
+
+  it('finds the first and last day of a month', () => {
+    expect(startOfMonth('2026-09-21')).toBe('2026-09-01');
+    expect(endOfMonth('2026-02-10')).toBe('2026-02-28');
+    expect(endOfMonth('x')).toBe('');
   });
 });

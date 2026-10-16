@@ -1,0 +1,16 @@
+<div class="picker" role="group" aria-label="Add an item">
+  <div class="sd-field-box picker__box">
+    <select
+      #choice
+      class="sd-field-control"
+      aria-label="Product to add"
+      (change)="onChange($event)"
+    >
+      <option value="">Choose a product</option>
+      @for (product of products(); track product.id) {
+        <option [value]="product.id">{{ product.name }} · {{ product.sku }}</option>
+      }
+    </select>
+  </div>
+  <app-button size="sm" (click)="dismissed.emit()">Cancel</app-button>
+</div>

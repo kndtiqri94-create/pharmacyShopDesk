@@ -1,0 +1,26 @@
+:host {
+  display: block;
+}
+
+.totals__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-2);
+  margin: 0;
+}
+
+.totals__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sd-space-3);
+}
+
+.totals__row--total {
+  padding-top: var(--sd-space-3);
+  border-top: 1px solid var(--sd-border);
+}
+
+dd {
+  margin: 0;
+}

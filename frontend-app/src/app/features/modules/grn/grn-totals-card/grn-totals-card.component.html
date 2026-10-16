@@ -1,0 +1,28 @@
+<app-card title="Totals">
+  <div class="totals sd-stack">
+    <p class="sd-caption" data-testid="totals-summary">{{ summary(totals()) }}</p>
+    <app-field label="Discount" prefix="Rs." fieldId="grn-discount" [error]="discountError()">
+      <input
+        appFieldControl
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [formControl]="discountControl()"
+      />
+    </app-field>
+    <dl class="totals__list">
+      <div class="totals__row totals__row--total">
+        <dt class="sd-body-strong">Total</dt>
+        <dd class="sd-stat-value sd-num" data-testid="totals-total">
+          {{ formatRupees(totals().totalCents) }}
+        </dd>
+      </div>
+      <div class="totals__row">
+        <dt>Balance due after payment</dt>
+        <dd class="sd-body-strong sd-num" data-testid="totals-balance">
+          {{ formatRupees(totals().balanceCents) }}
+        </dd>
+      </div>
+    </dl>
+  </div>
+</app-card>

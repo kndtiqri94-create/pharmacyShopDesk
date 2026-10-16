@@ -1,0 +1,79 @@
+<div class="sd-scroll-x">
+  <table class="items" aria-label="Items to order">
+    <thead>
+      <tr>
+        <th scope="col" class="sd-label-caps">Product</th>
+        <th scope="col" class="sd-label-caps is-right">In stock</th>
+        <th scope="col" class="sd-label-caps is-right">Reorder at</th>
+        <th scope="col" class="sd-label-caps is-right">Order qty</th>
+        <th scope="col" class="sd-label-caps is-right">Unit cost (Rs.)</th>
+        <th scope="col" class="sd-label-caps is-right">Total (Rs.)</th>
+        <th scope="col" class="is-right"><span class="sd-sr-only">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (group of lines().controls; track group; let index = $index) {
+        <tr [formGroup]="group">
+          <td class="cell-product">
+            <span class="sd-body-strong">{{ productName(group) }}</span>
+            <span class="cell-sub sd-caption">{{ product(group)?.sku }}</span>
+          </td>
+          <td class="is-right sd-num cell-static">{{ stockText(group) }}</td>
+          <td class="is-right sd-num cell-static">{{ reorderText(group) }}</td>
+          <td>
+            <div class="sd-field-box" [class.sd-field-box--error]="error(index, 'quantity')">
+              <input
+                class="sd-field-control is-num"
+                type="text"
+                inputmode="numeric"
+                formControlName="quantity"
+                autocomplete="off"
+                [id]="fieldId(index, 'quantity')"
+                [attr.aria-label]="'Order quantity for ' + productName(group)"
+                [attr.aria-invalid]="error(index, 'quantity') ? 'true' : null"
+                [attr.aria-describedby]="describedBy(index, 'quantity')"
+              />
+            </div>
+            @if (error(index, 'quantity'); as message) {
+              <p class="cell-error" role="alert" [id]="fieldId(index, 'quantity') + '-error'">
+                {{ message }}
+              </p>
+            }
+          </td>
+          <td>
+            <div class="sd-field-box" [class.sd-field-box--error]="error(index, 'unitCost')">
+              <input
+                class="sd-field-control is-num"
+                type="text"
+                inputmode="decimal"
+                formControlName="unitCost"
+                autocomplete="off"
+                [id]="fieldId(index, 'unitCost')"
+                [attr.aria-label]="'Unit cost for ' + productName(group)"
+                [attr.aria-invalid]="error(index, 'unitCost') ? 'true' : null"
+                [attr.aria-describedby]="describedBy(index, 'unitCost')"
+              />
+            </div>
+            @if (error(index, 'unitCost'); as message) {
+              <p class="cell-error" role="alert" [id]="fieldId(index, 'unitCost') + '-error'">
+                {{ message }}
+              </p>
+            }
+          </td>
+          <td class="is-right sd-num sd-body-strong cell-static">{{ totalText(index) }}</td>
+          <td class="is-right">
+            @if (!readOnly()) {
+              <app-button
+                variant="ghost"
+                size="sm"
+                icon="trash"
+                [ariaLabel]="'Remove ' + productName(group)"
+                (click)="removeLine.emit(index)"
+              />
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

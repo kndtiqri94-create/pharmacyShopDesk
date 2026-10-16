@@ -114,3 +114,34 @@ export function formatWeekdayLong(iso: string): string {
   const millis = toUtcMillis(iso);
   return millis === null ? '' : WEEKDAY_LONG_NAMES[new Date(millis).getUTCDay()];
 }
+
+export function isIsoDate(text: string): boolean {
+  const pieces = text.split('-');
+  if (pieces.length !== 3 || pieces[0].length !== 4 || pieces[1].length !== 2) return false;
+  if (pieces[2].length !== 2) return false;
+  const [year, month, day] = pieces.map(Number);
+  if (![year, month, day].every(Number.isInteger)) return false;
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return (
+    date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
+  );
+}
+
+export function monthsBetween(fromIso: string, toIso: string): number {
+  const from = parseIsoDate(fromIso);
+  const to = parseIsoDate(toIso);
+  if (from === null || to === null) return Number.NaN;
+  return (to.year - from.year) * 12 + (to.month - from.month);
+}
+
+export function startOfMonth(iso: string): string {
+  const parts = parseIsoDate(iso);
+  return parts ? `${parts.year}-${pad(parts.month)}-01` : '';
+}
+
+export function endOfMonth(iso: string): string {
+  const parts = parseIsoDate(iso);
+  if (parts === null) return '';
+  const lastDay = new Date(Date.UTC(parts.year, parts.month, 0)).getUTCDate();
+  return `${parts.year}-${pad(parts.month)}-${pad(lastDay)}`;
+}

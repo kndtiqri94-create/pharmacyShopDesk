@@ -1,0 +1,141 @@
+<div class="sd-scroll-x">
+  <table class="items" aria-label="Items received">
+    <thead>
+      <tr>
+        <th scope="col" class="sd-label-caps">Product</th>
+        <th scope="col" class="sd-label-caps">Batch no</th>
+        <th scope="col" class="sd-label-caps">Expiry (MM/YYYY)</th>
+        <th scope="col" class="sd-label-caps is-right">Received</th>
+        <th scope="col" class="sd-label-caps is-right">Free</th>
+        <th scope="col" class="sd-label-caps is-right">Cost (Rs.)</th>
+        <th scope="col" class="sd-label-caps is-right">Price (Rs.)</th>
+        <th scope="col" class="sd-label-caps is-right">Total (Rs.)</th>
+        <th scope="col" class="is-right"><span class="sd-sr-only">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (group of lines().controls; track group; let index = $index) {
+        <tr [formGroup]="group">
+          <td class="cell-product">
+            <span class="sd-body-strong">{{ productName(group) }}</span>
+            <span class="cell-sub sd-caption">{{ productCaption(group) }}</span>
+          </td>
+          <td>
+            <div class="sd-field-box" [class.sd-field-box--error]="hasProblem(index, 'batchNo')">
+              <input
+                class="sd-field-control is-mono"
+                type="text"
+                formControlName="batchNo"
+                autocomplete="off"
+                maxlength="40"
+                [id]="fieldId(index, 'batchNo')"
+                [attr.aria-label]="'Batch no for ' + productName(group)"
+                [attr.aria-invalid]="error(index, 'batchNo') ? 'true' : null"
+                [attr.aria-describedby]="describedBy(index, 'batchNo')"
+              />
+            </div>
+            @if (error(index, 'batchNo'); as message) {
+              <p class="cell-error" role="alert" [id]="fieldId(index, 'batchNo') + '-error'">
+                {{ message }}
+              </p>
+            }
+          </td>
+          <td>
+            <div class="sd-field-box" [class.sd-field-box--error]="hasProblem(index, 'expiry')">
+              <input
+                class="sd-field-control is-mono"
+                type="text"
+                formControlName="expiry"
+                autocomplete="off"
+                placeholder="03/2028"
+                maxlength="7"
+                [id]="fieldId(index, 'expiry')"
+                [attr.aria-label]="'Expiry for ' + productName(group)"
+                [attr.aria-invalid]="hasProblem(index, 'expiry') ? 'true' : null"
+                [attr.aria-describedby]="describedBy(index, 'expiry')"
+              />
+            </div>
+            @if (error(index, 'expiry'); as message) {
+              <p class="cell-error" role="alert" [id]="fieldId(index, 'expiry') + '-error'">
+                {{ message }}
+              </p>
+            }
+          </td>
+          <td>
+            <div class="sd-field-box" [class.sd-field-box--error]="hasProblem(index, 'received')">
+              <input
+                class="sd-field-control is-num"
+                type="text"
+                inputmode="numeric"
+                formControlName="received"
+                autocomplete="off"
+                [id]="fieldId(index, 'received')"
+                [attr.aria-label]="'Received quantity for ' + productName(group)"
+                [attr.aria-invalid]="error(index, 'received') ? 'true' : null"
+                [attr.aria-describedby]="describedBy(index, 'received')"
+              />
+            </div>
+            @if (error(index, 'received'); as message) {
+              <p class="cell-error" role="alert" [id]="fieldId(index, 'received') + '-error'">
+                {{ message }}
+              </p>
+            }
+          </td>
+          <td>
+            <div class="sd-field-box" [class.sd-field-box--error]="hasProblem(index, 'free')">
+              <input
+                class="sd-field-control is-num"
+                type="text"
+                inputmode="numeric"
+                formControlName="free"
+                autocomplete="off"
+                [id]="fieldId(index, 'free')"
+                [attr.aria-label]="'Free quantity for ' + productName(group)"
+                [attr.aria-invalid]="error(index, 'free') ? 'true' : null"
+                [attr.aria-describedby]="describedBy(index, 'free')"
+              />
+            </div>
+            @if (error(index, 'free'); as message) {
+              <p class="cell-error" role="alert" [id]="fieldId(index, 'free') + '-error'">
+                {{ message }}
+              </p>
+            }
+          </td>
+          <td>
+            <div class="sd-field-box" [class.sd-field-box--error]="hasProblem(index, 'cost')">
+              <input
+                class="sd-field-control is-num"
+                type="text"
+                inputmode="decimal"
+                formControlName="cost"
+                autocomplete="off"
+                [id]="fieldId(index, 'cost')"
+                [attr.aria-label]="'Cost for ' + productName(group)"
+                [attr.aria-invalid]="error(index, 'cost') ? 'true' : null"
+                [attr.aria-describedby]="describedBy(index, 'cost')"
+              />
+            </div>
+            @if (error(index, 'cost'); as message) {
+              <p class="cell-error" role="alert" [id]="fieldId(index, 'cost') + '-error'">
+                {{ message }}
+              </p>
+            }
+          </td>
+          <td class="is-right sd-num">{{ priceText(group) }}</td>
+          <td class="is-right sd-num sd-body-strong">{{ totalText(index) }}</td>
+          <td class="is-right">
+            @if (!readOnly()) {
+              <app-button
+                variant="ghost"
+                size="sm"
+                icon="trash"
+                [ariaLabel]="'Remove ' + productName(group)"
+                (click)="removeLine.emit(index)"
+              />
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

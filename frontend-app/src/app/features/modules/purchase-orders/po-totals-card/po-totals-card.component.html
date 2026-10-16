@@ -1,0 +1,32 @@
+<app-card title="Totals">
+  <div class="sd-stack">
+    <p class="sd-caption" data-testid="totals-summary">
+      {{ summary() }} · Expected {{ expectedText() }}
+    </p>
+    <dl class="totals__list">
+      <div class="totals__row">
+        <dt>Sub-total</dt>
+        <dd class="sd-body-strong sd-num" data-testid="totals-subtotal">
+          {{ formatRupees(totals().subTotalCents) }}
+        </dd>
+      </div>
+    </dl>
+    <app-field label="Delivery" prefix="Rs." fieldId="po-delivery" [error]="deliveryError()">
+      <input
+        appFieldControl
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [formControl]="deliveryControl()"
+      />
+    </app-field>
+    <dl class="totals__list">
+      <div class="totals__row totals__row--total">
+        <dt class="sd-body-strong">Total</dt>
+        <dd class="sd-stat-value sd-num" data-testid="totals-total">
+          {{ formatRupees(totals().totalCents) }}
+        </dd>
+      </div>
+    </dl>
+  </div>
+</app-card>

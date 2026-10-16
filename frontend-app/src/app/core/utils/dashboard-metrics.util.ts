@@ -112,7 +112,7 @@ export function buildNeedsAttention(input: NeedsAttentionInput): NeedsAttentionR
       message: `Reorder ${pluralize(input.needsRestock, 'low-stock item')}`,
       actionLabel: 'Create PO',
       targetModule: ModuleKey.PURCHASE_ORDERS,
-      commands: ['/purchase-orders'],
+      commands: ['/purchase-orders', 'new'],
       queryParams: null,
       changesData: true,
       soft: true,

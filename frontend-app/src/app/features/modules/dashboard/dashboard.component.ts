@@ -119,6 +119,6 @@ export class DashboardComponent {
 
   protected openNewGrn(): void {
     if (!this.canCreateGrn()) return;
-    this.router.navigate(['/grn']).catch(() => undefined);
+    this.router.navigate(['/grn', 'new']).catch(() => undefined);
   }
 }

@@ -60,7 +60,7 @@ describe('DashboardComponent', () => {
     const { element } = await render(UserRole.ADMIN);
     const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
     buttonByText(element, 'New GRN').click();
-    expect(navigate).toHaveBeenCalledWith(['/grn']);
+    expect(navigate).toHaveBeenCalledWith(['/grn', 'new']);
   });
 
   it('shows four tiles in order with figures that match the product list counts', async () => {
@@ -107,6 +107,13 @@ describe('DashboardComponent', () => {
     ]);
     expect(rows[0].textContent).toContain('Reorder 3 low-stock items');
     expect(rows[1].textContent).toContain('1 batch expire by 20 Nov');
+  });
+
+  it('opens the new purchase order form from Create PO for a Manager', async () => {
+    const { element } = await render(UserRole.MANAGER);
+    const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+    buttonByText(element, 'Create PO').click();
+    expect(navigate).toHaveBeenCalledWith(['/purchase-orders', 'new'], { queryParams: undefined });
   });
 
   it('sends Review to the product list with the expiring filter', async () => {

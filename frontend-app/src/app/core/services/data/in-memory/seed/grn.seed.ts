@@ -108,7 +108,7 @@ export const GRN_SEED: readonly Grn[] = [
   },
   {
     id: 'grn-004',
-    number: 'GRN-0211',
+    number: 'GRN-0207',
     receivedDate: '2026-09-05',
     supplierId: 'sup-004',
     invoiceNo: 'INV-9001',
@@ -136,7 +136,7 @@ export const GRN_SEED: readonly Grn[] = [
   },
   {
     id: 'grn-005',
-    number: 'GRN-0212',
+    number: 'GRN-0211',
     receivedDate: '2026-09-21',
     supplierId: 'sup-001',
     invoiceNo: 'INV-88301',
