@@ -1,5 +1,6 @@
 import {
   addDays,
+  addSeconds,
   daysBetween,
   formatDate,
   formatDayMonth,
@@ -85,5 +86,12 @@ describe('date.util', () => {
     expect(startOfMonth('2026-09-21')).toBe('2026-09-01');
     expect(endOfMonth('2026-02-10')).toBe('2026-02-28');
     expect(endOfMonth('x')).toBe('');
+  });
+
+  it('adds seconds to a date and time, crossing the minute and the day', () => {
+    expect(addSeconds('2026-09-21T10:52:00', 1)).toBe('2026-09-21T10:52:01');
+    expect(addSeconds('2026-09-21T10:52:59', 1)).toBe('2026-09-21T10:53:00');
+    expect(addSeconds('2026-09-21T23:59:59', 1)).toBe('2026-09-22T00:00:00');
+    expect(addSeconds('nonsense', 1)).toBe('nonsense');
   });
 });

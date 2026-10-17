@@ -145,3 +145,9 @@ export function endOfMonth(iso: string): string {
   const lastDay = new Date(Date.UTC(parts.year, parts.month, 0)).getUTCDate();
   return `${parts.year}-${pad(parts.month)}-${pad(lastDay)}`;
 }
+
+export function addSeconds(isoDateTime: string, seconds: number): string {
+  const millis = Date.parse(`${isoDateTime.slice(0, 19)}Z`);
+  if (Number.isNaN(millis)) return isoDateTime;
+  return new Date(millis + seconds * 1000).toISOString().slice(0, 19);
+}

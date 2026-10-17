@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.backup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+}
+
+.backup__auto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-1);
+}

@@ -24,6 +24,7 @@ import {
 import { formatDate, formatWeekdayLong } from '../../../core/utils/date.util';
 import { formatRupees } from '../../../core/utils/money.util';
 import { isPurchaseOrderOverdue } from '../../../core/utils/purchase-order-overdue.util';
+import { currentFloat, isFloatLow } from '../../../core/utils/reload-summary.util';
 import { pluralize } from '../../../core/utils/text.util';
 import { getFirstName } from '../../../core/utils/user-name.util';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
@@ -85,16 +86,12 @@ export class DashboardComponent {
     const { products, settings, orders, floats, summary } = data;
     const alertDays = settings.expiryAlertDays;
     const counts = computeStockAlertCounts(products, alertDays, this.today);
-    const latestFloat = floats.reduce<(typeof floats)[number] | null>(
-      (latest, entry) => (latest === null || entry.date > latest.date ? entry : latest),
-      null
-    );
     const attention = buildNeedsAttention({
       needsRestock: counts.needsRestock,
       expiringBatches: counts.expiringBatches,
       expireByDate: expireByDate(this.today, alertDays),
       overdueOrders: orders.filter(order => isPurchaseOrderOverdue(order, this.today)).length,
-      floatLow: latestFloat !== null && latestFloat.availableCents < settings.lowFloatCents,
+      floatLow: isFloatLow(currentFloat(floats), settings.lowFloatCents),
     });
     return {
       subtitle: `${formatDate(this.today)} · ${settings.branchLabel}`,

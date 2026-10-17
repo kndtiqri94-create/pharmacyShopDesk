@@ -1,0 +1,77 @@
+<div class="sd-form-grid">
+  <app-field
+    label="Shop name"
+    [fieldId]="fieldId('shopName')"
+    [required]="true"
+    [span]="8"
+    [error]="error('shopName')"
+  >
+    <input
+      appFieldControl
+      type="text"
+      autocomplete="off"
+      [attr.maxlength]="maxLength.shopName"
+      [disabled]="disabled()"
+      [value]="draft().shopName"
+      (input)="onInput('shopName', $event)"
+    />
+  </app-field>
+  <app-field
+    label="Registration no"
+    [fieldId]="fieldId('registrationNo')"
+    [span]="4"
+    [error]="error('registrationNo')"
+  >
+    <input
+      appFieldControl
+      type="text"
+      autocomplete="off"
+      [attr.maxlength]="maxLength.registrationNo"
+      [disabled]="disabled()"
+      [value]="draft().registrationNo"
+      (input)="onInput('registrationNo', $event)"
+    />
+  </app-field>
+  <app-field label="Address" [fieldId]="fieldId('address')" [span]="12" [error]="error('address')">
+    <input
+      appFieldControl
+      type="text"
+      autocomplete="off"
+      [attr.maxlength]="maxLength.address"
+      [disabled]="disabled()"
+      [value]="draft().address"
+      (input)="onInput('address', $event)"
+    />
+  </app-field>
+  <app-field label="Phone" [fieldId]="fieldId('phone')" [span]="6" [error]="error('phone')">
+    <input
+      appFieldControl
+      type="tel"
+      autocomplete="off"
+      [attr.maxlength]="maxLength.phone"
+      [disabled]="disabled()"
+      [value]="draft().phone"
+      (input)="onInput('phone', $event)"
+    />
+  </app-field>
+  <app-field label="Email" [fieldId]="fieldId('email')" [span]="6" [error]="error('email')">
+    <input
+      appFieldControl
+      type="email"
+      autocomplete="off"
+      [attr.maxlength]="maxLength.email"
+      [disabled]="disabled()"
+      [value]="draft().email"
+      (input)="onInput('email', $event)"
+    />
+  </app-field>
+  <div class="logo sd-col-12">
+    <p class="sd-label">Shop logo</p>
+    <div class="logo__row">
+      <app-button icon="upload" [disabled]="disabled()" (click)="showUploadMessage()">
+        Upload logo
+      </app-button>
+      <p class="sd-caption">PNG or JPG, at least 200 px. Shown on printed documents.</p>
+    </div>
+  </div>
+</div>

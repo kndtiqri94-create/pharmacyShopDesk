@@ -40,11 +40,12 @@ describe('AppShellComponent', () => {
     expect(element.querySelector('select')).toBeNull();
   });
 
-  it('shows the placeholder for a module that is not built yet inside the frame', async () => {
+  it('shows a module page inside the frame', async () => {
     const { element } = await openShell(UserRole.ADMIN, '/settings');
     const main = element.querySelector('main') as HTMLElement;
     expect(main.querySelector('h1')?.textContent).toBe('Settings');
-    expect(main.textContent).toContain('coming soon');
+    expect(main.textContent).toContain('One shop, one place to change how it runs.');
+    expect(main.textContent).not.toContain('coming soon');
   });
 
   it('closes the menu when the page changes', async () => {

@@ -1,0 +1,50 @@
+<div class="sd-stack">
+  <app-page-header title="Settings" subtitle="One shop, one place to change how it runs.">
+    <div pageActions class="sd-row">
+      @if (canWrite()) {
+        <app-button [disabled]="!dirty() || saving()" (click)="discard()">Discard</app-button>
+        <app-button variant="primary" [disabled]="!dirty() || saving()" (click)="save()">
+          Save changes
+        </app-button>
+      } @else {
+        <app-badge label="View only" tone="info" />
+      }
+    </div>
+  </app-page-header>
+
+  @if (draft(); as currentDraft) {
+    <div class="settings">
+      <app-settings-group-list [active]="activeGroup()" (selected)="selectGroup($event)" />
+      <app-card [title]="activeLabel()">
+        @switch (activeGroup()) {
+          @case ('shop-profile') {
+            <app-shop-profile-section
+              [draft]="currentDraft"
+              [errors]="errors()"
+              [disabled]="!canWrite()"
+              (changed)="edit($event)"
+            />
+          }
+          @case ('currency-region') {
+            <app-currency-region-section />
+          }
+          @case ('inventory-alerts') {
+            <app-inventory-alerts-section
+              [draft]="currentDraft"
+              [errors]="errors()"
+              [disabled]="!canWrite()"
+              (changed)="edit($event)"
+            />
+          }
+          @case ('backup-sync') {
+            <app-backup-sync-section
+              [autoSync]="autoSync()"
+              [disabled]="!canWrite()"
+              (autoSyncChanged)="changeAutoSync($event)"
+            />
+          }
+        }
+      </app-card>
+    </div>
+  }
+</div>

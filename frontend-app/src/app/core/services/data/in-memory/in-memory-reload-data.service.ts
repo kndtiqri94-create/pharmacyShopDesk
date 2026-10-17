@@ -22,6 +22,17 @@ export class InMemoryReloadDataService extends ReloadDataService {
     return of(cloneValue(this.floatHistory));
   }
 
+  saveFloat(reloadFloat: ReloadFloat): Observable<ReloadFloat> {
+    const copy = cloneValue(reloadFloat);
+    const index = this.floatHistory.findIndex(entry => entry.date === copy.date);
+    if (index === -1) {
+      this.floatHistory.push(copy);
+    } else {
+      this.floatHistory[index] = copy;
+    }
+    return of(cloneValue(copy));
+  }
+
   addTransaction(transaction: ReloadTransaction): Observable<ReloadTransaction> {
     return of(this.transactions.upsert(transaction));
   }

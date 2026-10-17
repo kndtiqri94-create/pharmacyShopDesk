@@ -1,0 +1,107 @@
+<app-card title="Mobile reload">
+  <form class="reload" novalidate (submit)="send($event)">
+    <app-operator-tiles
+      [operators]="operators"
+      [value]="operator()"
+      [disabled]="!canWrite()"
+      [error]="error('operator')"
+      (valueChange)="setOperator($event)"
+    />
+
+    <div class="sd-form-grid">
+      <app-field
+        label="Mobile number"
+        size="lg"
+        prefix="+94"
+        hint="Nine digits, for example 77 123 4567."
+        [fieldId]="fieldId('mobile')"
+        [required]="true"
+        [span]="6"
+        [error]="error('mobile')"
+      >
+        <input
+          appFieldControl
+          type="tel"
+          inputmode="numeric"
+          autocomplete="off"
+          [attr.maxlength]="mobileMaxLength"
+          [disabled]="!canWrite()"
+          [value]="mobile()"
+          (input)="onMobileInput($event)"
+        />
+      </app-field>
+      <app-field
+        label="Customer name"
+        size="lg"
+        hint="Optional."
+        [fieldId]="fieldId('customerName')"
+        [span]="6"
+        [error]="error('customerName')"
+      >
+        <input
+          appFieldControl
+          type="text"
+          autocomplete="off"
+          [attr.maxlength]="nameMaxLength"
+          [disabled]="!canWrite()"
+          [value]="customerName()"
+          (input)="onNameInput($event)"
+        />
+      </app-field>
+    </div>
+
+    <div class="amount">
+      <p class="sd-label">Choose the amount</p>
+      <app-chips
+        ariaLabel="Choose an amount"
+        [items]="amountChips"
+        [value]="amountChoice()"
+        (valueChange)="chooseAmount($event)"
+      />
+      <app-field
+        label="Amount (Rs.)"
+        size="lg"
+        prefix="Rs."
+        [fieldId]="fieldId('amount')"
+        [required]="true"
+        [error]="error('amount')"
+      >
+        <input
+          appFieldControl
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          [attr.maxlength]="amountMaxLength"
+          [readOnly]="!amountEditable()"
+          [disabled]="!canWrite()"
+          [value]="amountText()"
+          (input)="onAmountInput($event)"
+        />
+      </app-field>
+    </div>
+
+    <output class="preview">
+      <span class="preview__row">
+        <span>Commission you earn</span>
+        <span class="sd-body-strong sd-num" data-testid="commission-preview">
+          {{ commissionText() }} ({{ ratePercent }})
+        </span>
+      </span>
+      <span class="preview__row">
+        <span>Customer pays</span>
+        <span class="sd-body-strong sd-num" data-testid="customer-pays">
+          {{ customerPaysText() }}
+        </span>
+      </span>
+    </output>
+
+    @if (canWrite()) {
+      <div class="reload__actions">
+        <app-button size="lg" (click)="clear()">Clear</app-button>
+        <app-button variant="primary" size="lg" icon="zap" type="submit" [disabled]="busy()">
+          Send reload
+        </app-button>
+      </div>
+    }
+  </form>
+</app-card>

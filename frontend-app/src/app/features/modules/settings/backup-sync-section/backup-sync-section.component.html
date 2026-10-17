@@ -1,0 +1,20 @@
+<div class="backup">
+  <app-alert tone="success">{{ notice }}</app-alert>
+  <div class="backup__auto">
+    <app-toggle
+      label="Sync automatically when online"
+      [checked]="autoSync()"
+      [disabled]="disabled()"
+      (checkedChange)="autoSyncChanged.emit($event)"
+    />
+    <p class="sd-caption">This applies straight away and does not need Save changes.</p>
+  </div>
+  <div class="sd-row">
+    <app-button icon="download" [disabled]="disabled()" (click)="showSampleMessage('Back up now')">
+      Back up now
+    </app-button>
+    <app-button icon="cloud" [disabled]="disabled()" (click)="showSampleMessage('Sync now')">
+      Sync now
+    </app-button>
+  </div>
+</div>

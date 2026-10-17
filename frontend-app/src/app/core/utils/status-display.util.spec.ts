@@ -5,6 +5,7 @@ import { PaymentStatus } from '../models/enums/payment-status.enum';
 import { PoStatus } from '../models/enums/po-status.enum';
 import { ProductStatus } from '../models/enums/product-status.enum';
 import { ReloadStatus } from '../models/enums/reload-status.enum';
+import { ReloadTransactionType } from '../models/enums/reload-transaction-type.enum';
 import { UserStatus } from '../models/enums/user-status.enum';
 import {
   ATTENDANCE_STATUS_DISPLAY,
@@ -15,6 +16,7 @@ import {
   PO_STATUS_DISPLAY,
   PRODUCT_STATUS_DISPLAY,
   RELOAD_STATUS_DISPLAY,
+  RELOAD_TYPE_LABEL,
   USER_STATUS_DISPLAY,
 } from './status-display.util';
 
@@ -34,6 +36,13 @@ describe('status-display.util', () => {
     expect(PAYMENT_STATUS_DISPLAY[PaymentStatus.PART_PAID].label).toBe('Part paid');
     expect(PO_STATUS_DISPLAY[PoStatus.PART_RECEIVED].label).toBe('Part received');
     expect(RELOAD_STATUS_DISPLAY[ReloadStatus.PENDING].tone).toBe('warning');
+    expect(RELOAD_STATUS_DISPLAY[ReloadStatus.SUCCESS]).toEqual({
+      label: 'Success',
+      tone: 'success',
+    });
+    expect(RELOAD_STATUS_DISPLAY[ReloadStatus.FAILED]).toEqual({ label: 'Failed', tone: 'danger' });
+    expect(RELOAD_TYPE_LABEL[ReloadTransactionType.RELOAD]).toBe('Reload');
+    expect(RELOAD_TYPE_LABEL[ReloadTransactionType.BILL_PAYMENT]).toBe('Bill payment');
   });
 
   it('uses the design words for attendance, employee and user status', () => {

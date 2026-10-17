@@ -5,6 +5,7 @@ import { PaymentStatus } from '../models/enums/payment-status.enum';
 import { PoStatus } from '../models/enums/po-status.enum';
 import { ProductStatus } from '../models/enums/product-status.enum';
 import { ReloadStatus } from '../models/enums/reload-status.enum';
+import { ReloadTransactionType } from '../models/enums/reload-transaction-type.enum';
 import { SyncState } from '../models/enums/sync-state.enum';
 import { UserStatus } from '../models/enums/user-status.enum';
 import { StatusDisplay } from '../models/shared/status-display.model';
@@ -40,6 +41,11 @@ export const RELOAD_STATUS_DISPLAY: Record<ReloadStatus, StatusDisplay> = {
   SUCCESS: { label: 'Success', tone: 'success' },
   PENDING: { label: 'Pending', tone: 'warning' },
   FAILED: { label: 'Failed', tone: 'danger' },
+};
+
+export const RELOAD_TYPE_LABEL: Record<ReloadTransactionType, string> = {
+  RELOAD: 'Reload',
+  BILL_PAYMENT: 'Bill payment',
 };
 
 export const EMPLOYEE_STATUS_DISPLAY: Record<EmployeeStatus, StatusDisplay> = {

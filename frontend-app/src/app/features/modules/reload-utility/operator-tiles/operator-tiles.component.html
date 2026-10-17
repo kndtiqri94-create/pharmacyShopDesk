@@ -1,0 +1,27 @@
+<fieldset class="tiles" [disabled]="disabled()" [attr.aria-describedby]="error() ? errorId : null">
+  <legend class="sd-label tiles__legend">
+    Operator
+    <span class="tiles__required" aria-hidden="true">*</span>
+  </legend>
+  <div class="tiles__grid">
+    @for (operator of operators(); track operator; let first = $first) {
+      <label class="tile" [class.tile--selected]="operator === value()">
+        <input
+          class="sd-sr-only"
+          type="radio"
+          [name]="groupName"
+          [attr.id]="first ? firstTileId : null"
+          [value]="operator"
+          [checked]="operator === value()"
+          [attr.aria-invalid]="error() ? 'true' : null"
+          (change)="value.set(operator)"
+        />
+        <app-icon name="phone" [size]="22" />
+        <span class="tile__name">{{ operator }}</span>
+      </label>
+    }
+  </div>
+  @if (error()) {
+    <p class="tiles__error" role="alert" [id]="errorId">{{ error() }}</p>
+  }
+</fieldset>

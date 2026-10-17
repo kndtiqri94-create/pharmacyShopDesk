@@ -126,6 +126,20 @@ describe('in-memory seed coverage', () => {
     expect(settings.showLowStockCountInSidebar).toBeTrue();
   });
 
+  it('has the shop profile sample values', async () => {
+    const settings = await firstValueFrom(TestBed.inject(SettingsDataService).get());
+    expect(settings.shopName).toBe('ShopDesk');
+    expect(settings.branchLabel).toBe('Main Shop');
+    for (const value of [
+      settings.registrationNo,
+      settings.address,
+      settings.phone,
+      settings.email,
+    ]) {
+      expect(value.length).toBeGreaterThan(0);
+    }
+  });
+
   it('keeps a saved settings change for the session only', async () => {
     const settingsService = TestBed.inject(SettingsDataService);
     const settings = await firstValueFrom(settingsService.get());
