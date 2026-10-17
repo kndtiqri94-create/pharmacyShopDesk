@@ -3,12 +3,20 @@ import {
   formatMoneyCell,
   formatPercent,
   formatRupees,
+  formatRupeesExact,
   formatRupeesInput,
   formatThousands,
   rupeesToCents,
 } from './money.util';
 
 describe('money.util', () => {
+  it('formats an owed amount with two decimals, including zero and negatives', () => {
+    expect(formatRupeesExact(1_160_000)).toBe('Rs. 11,600.00');
+    expect(formatRupeesExact(0)).toBe('Rs. 0.00');
+    expect(formatRupeesExact(12_345)).toBe('Rs. 123.45');
+    expect(formatRupeesExact(-500)).toBe('-Rs. 5.00');
+  });
+
   it('formats whole rupees without decimals', () => {
     expect(formatRupees(8_425_000)).toBe('Rs. 84,250');
   });

@@ -48,6 +48,7 @@ function makeRows(count: number): Row[] {
       [actions]="actions"
       [rowKey]="rowKey"
       [stack]="stack"
+      [activeRowKey]="activeKey()"
       (actionTriggered)="events.push($event)"
     >
       <ng-template appDataTableCell="sku" let-row
@@ -61,6 +62,7 @@ class HostComponent {
   rows: Row[] = makeRows(3);
   actions = ACTIONS;
   stack = false;
+  activeKey = signal<number | null>(null);
   rowKey = (row: Row) => row.id;
   events: DataTableRowActionEvent<Row>[] = [];
 }
@@ -226,6 +228,17 @@ describe('DataTableComponent', () => {
     const { element } = render(host => (host.rows = []));
     expect(element.querySelector('table')).toBeNull();
     expect(element.querySelector('app-empty-state')).not.toBeNull();
+  });
+
+  it('marks the active row visibly and for assistive tech', () => {
+    const { fixture, element } = render(host => host.activeKey.set(2));
+    const rows = element.querySelectorAll('tbody tr');
+    expect(rows[1].classList).toContain('is-selected');
+    expect(rows[1].getAttribute('aria-current')).toBe('true');
+    expect(rows[0].getAttribute('aria-current')).toBeNull();
+    fixture.componentInstance.activeKey.set(null);
+    fixture.detectChanges();
+    expect(element.querySelector('tr[aria-current]')).toBeNull();
   });
 
   it('names the table for assistive tech', () => {

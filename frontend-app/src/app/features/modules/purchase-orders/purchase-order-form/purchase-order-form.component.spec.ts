@@ -21,7 +21,12 @@ describe('PurchaseOrderFormComponent', () => {
     TestBed.inject(NotificationService).dismiss();
   });
 
-  async function render(role: UserRole, mode: PurchaseOrderFormMode, id: string | null = null) {
+  async function render(
+    role: UserRole,
+    mode: PurchaseOrderFormMode,
+    id: string | null = null,
+    query: Record<string, string> = {}
+  ) {
     TestBed.configureTestingModule({
       providers: [
         ...TEST_PROVIDERS,
@@ -29,7 +34,11 @@ describe('PurchaseOrderFormComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { data: { mode }, paramMap: convertToParamMap(id ? { id } : {}) },
+            snapshot: {
+              data: { mode },
+              paramMap: convertToParamMap(id ? { id } : {}),
+              queryParamMap: convertToParamMap(query),
+            },
           },
         },
       ],
@@ -116,11 +125,30 @@ describe('PurchaseOrderFormComponent', () => {
     expect(card().textContent).toContain('+94 11 234 5679');
     expect(card().textContent).toContain('14 days credit');
     expect(card().textContent).toContain('2-3 days');
-    expect(card().textContent).toContain('You owe them Rs. 0');
+    expect(card().textContent).toContain('You owe them Rs. 0.00');
     choose(fixture, element, 'supplierId', 'sup-001');
     expect(card().querySelector('[data-testid="supplier-owed"]')?.textContent?.trim()).toBe(
-      'You owe them Rs. 3,300'
+      'You owe them Rs. 11,600.00'
     );
+  });
+
+  it('preselects the supplier named in the address and shows what you owe them', async () => {
+    const { element } = await render(UserRole.MANAGER, 'create', null, { supplier: 'sup-001' });
+    expect(field(element, 'supplierId').value).toBe('sup-001');
+    expect(element.querySelector('[data-testid="supplier-owed"]')?.textContent?.trim()).toBe(
+      'You owe them Rs. 11,600.00'
+    );
+    expect(notification()).toBeNull();
+  });
+
+  it('ignores an inactive, unknown or malformed supplier in the address and says so', async () => {
+    for (const supplier of ['sup-005', 'sup-999', '<script>alert(1)</script>']) {
+      TestBed.resetTestingModule();
+      const { element } = await render(UserRole.MANAGER, 'create', null, { supplier });
+      expect(field(element, 'supplierId').value).withContext(supplier).toBe('');
+      expect(notification()?.message).withContext(supplier).toContain('choose one from the list');
+      TestBed.inject(NotificationService).dismiss();
+    }
   });
 
   it('hides inactive suppliers from the picker', async () => {

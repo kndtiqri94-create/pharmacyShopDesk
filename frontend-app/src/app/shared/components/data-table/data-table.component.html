@@ -29,7 +29,10 @@
       </thead>
       <tbody>
         @for (row of pageRows(); track trackRow(row, $index)) {
-          <tr [class.is-selected]="selectable() && isSelected(row, $index)">
+          <tr
+            [class.is-selected]="(selectable() && isSelected(row, $index)) || isActive(row, $index)"
+            [attr.aria-current]="isActive(row, $index) ? 'true' : null"
+          >
             @if (selectable()) {
               <td class="cell-select">
                 <label class="sd-checkbox">

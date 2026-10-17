@@ -1,19 +1,24 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
+import { AttendanceStatus } from '../../../models/enums/attendance-status.enum';
 import { GrnStatus } from '../../../models/enums/grn-status.enum';
 import { PaymentStatus } from '../../../models/enums/payment-status.enum';
 import { PoStatus } from '../../../models/enums/po-status.enum';
 import { ReloadStatus } from '../../../models/enums/reload-status.enum';
 import { UserRole } from '../../../models/enums/user-role.enum';
 import { isPurchaseOrderOverdue } from '../../../utils/purchase-order-overdue.util';
+import { amountOwedToSupplier } from '../../../utils/supplier-owed.util';
 import { SAMPLE_TODAY } from '../../clock.service';
 import { provideDataServices } from '../data-providers';
+import { AttendanceDataService } from '../attendance-data.service';
 import { EmployeeDataService } from '../employee-data.service';
 import { GrnDataService } from '../grn-data.service';
+import { LeaveDataService } from '../leave-data.service';
 import { PurchaseOrderDataService } from '../purchase-order-data.service';
 import { ReloadDataService } from '../reload-data.service';
 import { SettingsDataService } from '../settings-data.service';
 import { SupplierDataService } from '../supplier-data.service';
+import { SupplierPaymentDataService } from '../supplier-payment-data.service';
 import { UserDataService } from '../user-data.service';
 
 describe('in-memory seed coverage', () => {
@@ -35,7 +40,9 @@ describe('in-memory seed coverage', () => {
 
   it('has an owing supplier and an inactive supplier, and the named suppliers', async () => {
     const suppliers = await firstValueFrom(TestBed.inject(SupplierDataService).getAll());
-    expect(suppliers.some(supplier => supplier.outstandingCents > 0)).toBeTrue();
+    const grns = await firstValueFrom(TestBed.inject(GrnDataService).getAll());
+    const owedBy = (id: string) => amountOwedToSupplier(grns, id);
+    expect(suppliers.filter(supplier => owedBy(supplier.id) > 0).length).toBeGreaterThanOrEqual(2);
     expect(suppliers.some(supplier => !supplier.active)).toBeTrue();
     expect(suppliers.map(supplier => supplier.name)).toEqual([
       'Lanka Pharma',
@@ -44,8 +51,37 @@ describe('in-memory seed coverage', () => {
       'MediCare Distributors',
       'Ceylon Surgical',
     ]);
-    const owing = suppliers.reduce((total, supplier) => total + supplier.outstandingCents, 0);
-    expect(owing).toBe(14_260_000);
+    expect(owedBy('sup-001')).toBe(1_160_000);
+    expect(owedBy('sup-003')).toBe(280_000);
+  });
+
+  it('has a supplier with several unpaid received GRNs of different dates', async () => {
+    const grns = await firstValueFrom(TestBed.inject(GrnDataService).getAll());
+    const unpaid = grns.filter(
+      grn =>
+        grn.supplierId === 'sup-001' &&
+        grn.status === GrnStatus.RECEIVED &&
+        grn.paidCents < grn.totalCents
+    );
+    expect(unpaid.length).toBeGreaterThanOrEqual(3);
+    expect(new Set(unpaid.map(grn => grn.receivedDate)).size).toBe(unpaid.length);
+  });
+
+  it('has attendance for today for every employee, one leave record and seeded payments', async () => {
+    const employees = await firstValueFrom(TestBed.inject(EmployeeDataService).getAll());
+    const attendance = await firstValueFrom(
+      TestBed.inject(AttendanceDataService).getForDate(SAMPLE_TODAY)
+    );
+    expect(attendance.map(record => record.employeeId).sort()).toEqual(
+      employees.map(employee => employee.id).sort()
+    );
+    expect(new Set(attendance.map(record => record.status))).toEqual(
+      new Set(Object.values(AttendanceStatus))
+    );
+    const leave = await firstValueFrom(TestBed.inject(LeaveDataService).getAll());
+    expect(leave.map(record => record.employeeId)).toEqual(['emp-007']);
+    const payments = await firstValueFrom(TestBed.inject(SupplierPaymentDataService).getAll());
+    expect(payments.length).toBeGreaterThan(0);
   });
 
   it('has the named employees', async () => {

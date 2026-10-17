@@ -8,5 +8,4 @@ export interface Supplier {
   creditDays: number;
   deliveryDays: string;
   active: boolean;
-  outstandingCents: number;
 }

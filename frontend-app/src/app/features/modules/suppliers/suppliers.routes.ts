@@ -1,4 +1,11 @@
+import { Routes } from '@angular/router';
 import { ModuleKey } from '../../../core/models/enums/module-key.enum';
-import { createModuleRoutes } from '../module-routes.factory';
 
-export const SUPPLIERS_ROUTES = createModuleRoutes(ModuleKey.SUPPLIERS);
+export const SUPPLIERS_ROUTES: Routes = [
+  {
+    path: '',
+    title: 'Suppliers',
+    data: { module: ModuleKey.SUPPLIERS },
+    loadComponent: () => import('./suppliers.component').then(file => file.SuppliersComponent),
+  },
+];

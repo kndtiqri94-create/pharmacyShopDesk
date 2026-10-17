@@ -12,12 +12,14 @@ import {
   SIGN_IN_MAX_INPUT_LENGTH,
   SIGN_IN_THROTTLE_MS,
 } from './auth.tokens';
+import { SessionCredentialStore } from './session-credential-store.service';
 import { SessionStorageService } from './session-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly userDataService = inject(UserDataService);
   private readonly sessionStorageService = inject(SessionStorageService);
+  private readonly sessionCredentialStore = inject(SessionCredentialStore);
   private readonly router = inject(Router);
   private readonly mockAuthEnabled = inject(MOCK_AUTH_ENABLED);
   private readonly throttleMs = inject(SIGN_IN_THROTTLE_MS);
@@ -52,9 +54,8 @@ export class AuthService {
     }
     const userId = await this.matchCredentials(username, password);
     const user = await firstValueFrom(this.userDataService.getById(userId ?? ''));
-    if (userId === null || user?.status !== UserStatus.ACTIVE) {
-      return this.rejectSignIn();
-    }
+    if (userId === null || user === null) return this.rejectSignIn();
+    if (user.status !== UserStatus.ACTIVE) return { success: false, reason: 'disabled' };
     this.consecutiveFailures = 0;
     this.currentUserSignal.set(user);
     this.sessionStorageService.write(user.id, keepSignedIn);
@@ -78,7 +79,8 @@ export class AuthService {
       const passwordMatches = constantTimeEqual(credential.password, password);
       if (usernameMatches && passwordMatches && !tooLong) matchedUserId = credential.userId;
     }
-    return matchedUserId;
+    const sessionUserId = this.sessionCredentialStore.matchUserId(username, password);
+    return tooLong ? null : (matchedUserId ?? sessionUserId);
   }
 
   private async rejectSignIn(): Promise<SignInResult> {

@@ -2,7 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { clearBrowserStorage, signInAs, TEST_PROVIDERS } from '../testing/auth-test.util';
+import { ModuleKey } from './core/models/enums/module-key.enum';
 import { UserRole } from './core/models/enums/user-role.enum';
+import { RoleDataService } from './core/services/data/role-data.service';
+import { PermissionService } from './core/services/permission.service';
+import { setMatrixCell } from './core/utils/permission-matrix.util';
+import { firstValueFrom } from 'rxjs';
 import { routes } from './app.routes';
 
 describe('application routes', () => {
@@ -140,5 +145,66 @@ describe('application routes', () => {
     await signInAs(UserRole.PHARMACIST);
     const { router } = await open('/sign-in');
     expect(router.url).toBe('/dashboard');
+  });
+
+  it('stops a Cashier from opening Suppliers, Employees or Users by typing the address', async () => {
+    await signInAs(UserRole.CASHIER);
+    for (const url of ['/suppliers', '/employees', '/users']) {
+      const { router } = await open(url);
+      expect(router.url).withContext(url).toBe('/access-denied');
+    }
+    expect(
+      TestBed.inject(PermissionService)
+        .allowedModules()
+        .map(item => item.path)
+    ).not.toContain('suppliers');
+  });
+
+  it('lets a Pharmacist open Suppliers but stops them at Employees and Users', async () => {
+    await signInAs(UserRole.PHARMACIST);
+    expect((await open('/suppliers')).router.url).toBe('/suppliers');
+    for (const url of ['/employees', '/users']) {
+      const { router } = await open(url);
+      expect(router.url).withContext(url).toBe('/access-denied');
+    }
+  });
+
+  it('lets a Manager open Suppliers and Employees but stops them at Users', async () => {
+    await signInAs(UserRole.MANAGER);
+    expect((await open('/suppliers')).router.url).toBe('/suppliers');
+    expect((await open('/employees')).router.url).toBe('/employees');
+    expect((await open('/users')).router.url).toBe('/access-denied');
+  });
+
+  it('applies a saved permission change to guards and the sidebar without signing in again', async () => {
+    await signInAs(UserRole.CASHIER);
+    const permissionService = TestBed.inject(PermissionService);
+    expect((await open('/suppliers')).router.url).toBe('/access-denied');
+    expect(permissionService.allowedModules().map(item => item.key)).not.toContain(
+      ModuleKey.SUPPLIERS
+    );
+    const roleDataService = TestBed.inject(RoleDataService);
+    const saved = await firstValueFrom(roleDataService.getMatrix());
+    await firstValueFrom(
+      roleDataService.saveMatrix(
+        setMatrixCell(saved, UserRole.CASHIER, ModuleKey.SUPPLIERS, 'VIEW')
+      )
+    );
+    expect(permissionService.allowedModules().map(item => item.key)).toContain(ModuleKey.SUPPLIERS);
+    expect((await open('/suppliers')).router.url).toBe('/suppliers');
+    await firstValueFrom(
+      roleDataService.saveMatrix(
+        setMatrixCell(
+          await firstValueFrom(roleDataService.getMatrix()),
+          UserRole.CASHIER,
+          ModuleKey.PRODUCTS,
+          'NONE'
+        )
+      )
+    );
+    expect(permissionService.allowedModules().map(item => item.key)).not.toContain(
+      ModuleKey.PRODUCTS
+    );
+    expect((await open('/products')).router.url).toBe('/access-denied');
   });
 });

@@ -1,0 +1,16 @@
+<dialog #dialog class="confirm" [attr.aria-labelledby]="titleId" (cancel)="onCancel($event)">
+  <div class="confirm__surface">
+    <h2 class="sd-section-title" [id]="titleId">{{ title() }}</h2>
+    <div class="confirm__body"><ng-content /></div>
+    <div class="confirm__actions">
+      <app-button [disabled]="busy()" (click)="cancelled.emit()">{{ cancelLabel() }}</app-button>
+      <app-button
+        [variant]="danger() ? 'danger' : 'primary'"
+        [disabled]="busy()"
+        (click)="confirmed.emit()"
+      >
+        {{ confirmLabel() }}
+      </app-button>
+    </div>
+  </div>
+</dialog>

@@ -1,12 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { clearBrowserStorage, TEST_PROVIDERS } from '../../../../testing/auth-test.util';
 import { isValidButtonLabel } from '../../../core/utils/content-rules.util';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { MOCK_AUTH_ENABLED } from '../../../core/services/auth/auth.tokens';
+import { UserStatus } from '../../../core/models/enums/user-status.enum';
+import { UserDataService } from '../../../core/services/data/user-data.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import {
   PASSWORD_REQUIRED_MESSAGE,
+  SIGN_IN_DISABLED_MESSAGE,
   SIGN_IN_FAILED_MESSAGE,
   SignInComponent,
   USERNAME_REQUIRED_MESSAGE,
@@ -126,6 +130,16 @@ describe('SignInComponent', () => {
     expect(error?.textContent).toBe(SIGN_IN_FAILED_MESSAGE);
     expect(password.closest('app-field')?.contains(error)).toBeTrue();
     expect(password.value).toBe('');
+    expect(TestBed.inject(AuthService).isSignedIn()).toBeFalse();
+  });
+
+  it('tells a disabled user plainly that the sign-in is turned off', async () => {
+    const userDataService = TestBed.inject(UserDataService);
+    const cashier = (await firstValueFrom(userDataService.getById('usr-004')))!;
+    await firstValueFrom(userDataService.save({ ...cashier, status: UserStatus.DISABLED }));
+    const { element, submit } = render();
+    await submit('ruwani', 'Cashier@2026');
+    expect(element.querySelector('.field__error')?.textContent).toBe(SIGN_IN_DISABLED_MESSAGE);
     expect(TestBed.inject(AuthService).isSignedIn()).toBeFalse();
   });
 

@@ -1,0 +1,34 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.attendance {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sd-space-2) var(--sd-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include bp.below-tablet {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.attendance__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sd-space-3);
+  padding: var(--sd-space-2) 0;
+  border-bottom: 1px solid var(--sd-border);
+}
+
+.attendance__state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sd-space-2);
+  white-space: nowrap;
+}

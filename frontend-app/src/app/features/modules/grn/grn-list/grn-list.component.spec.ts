@@ -74,12 +74,12 @@ describe('GrnListComponent', () => {
       'Waiting to be received',
       'Unpaid to suppliers',
     ]);
-    expect(tiles[0].textContent).toContain('Rs. 11,220');
-    expect(tiles[0].textContent).toContain('3 GRNs from 3 suppliers');
+    expect(tiles[0].textContent).toContain('Rs. 20,520');
+    expect(tiles[0].textContent).toContain('5 GRNs from 3 suppliers');
     expect(tiles[1].textContent).toContain('2 POs');
     expect(tiles[1].textContent).toContain('Expected within 7 days');
-    expect(tiles[2].textContent).toContain('Rs. 6,100');
-    expect(tiles[2].textContent).toContain('2 invoices · oldest 7 days');
+    expect(tiles[2].textContent).toContain('Rs. 14,400');
+    expect(tiles[2].textContent).toContain('4 invoices · oldest 18 days');
   });
 
   it('gives a sample-only message from Export and the date button', async () => {
@@ -99,7 +99,15 @@ describe('GrnListComponent', () => {
 
   it('shows each GRN row with reference, items, total and word badges', async () => {
     const { element } = await render();
-    expect(numbers(element)).toEqual(['GRN-0211', 'GRN-0208', 'GRN-0210', 'GRN-0209', 'GRN-0207']);
+    expect(numbers(element)).toEqual([
+      'GRN-0211',
+      'GRN-0208',
+      'GRN-0210',
+      'GRN-0209',
+      'GRN-0206',
+      'GRN-0207',
+      'GRN-0205',
+    ]);
     const second = rows(element)[1];
     const text = (selector: string) => second.querySelector(selector)?.textContent?.trim();
     expect(second.querySelector('td.is-mono')?.textContent?.trim()).toBe('GRN-0208');
@@ -154,11 +162,11 @@ describe('GrnListComponent', () => {
     const counts = Array.from(element.querySelectorAll('button.chip')).map(button =>
       button.textContent?.replace(/\s+/g, ' ').trim()
     );
-    expect(counts).toEqual(['All 5', 'Draft 1', 'Received 3', 'Cancelled 1']);
+    expect(counts).toEqual(['All 7', 'Draft 1', 'Received 5', 'Cancelled 1']);
     expect(element.querySelectorAll('button.chip[aria-pressed="true"]')).toHaveSize(1);
     chip(element, 'Received').click();
     fixture.detectChanges();
-    expect(numbers(element)).toEqual(['GRN-0208', 'GRN-0210', 'GRN-0209']);
+    expect(numbers(element)).toEqual(['GRN-0208', 'GRN-0210', 'GRN-0209', 'GRN-0206', 'GRN-0205']);
     expect(element.querySelectorAll('button.chip[aria-pressed="true"]')).toHaveSize(1);
     chip(element, 'Draft').click();
     fixture.detectChanges();
@@ -170,7 +178,7 @@ describe('GrnListComponent', () => {
     expect(numbers(draft.element)).toEqual(['GRN-0211']);
     TestBed.resetTestingModule();
     const bad = await render(UserRole.MANAGER, { status: '<script>' });
-    expect(numbers(bad.element)).toHaveSize(5);
+    expect(numbers(bad.element)).toHaveSize(7);
   });
 
   it('says plainly when nothing matches', async () => {
@@ -184,6 +192,6 @@ describe('GrnListComponent', () => {
   it('lets a Pharmacist open the list and start a GRN', async () => {
     const { element } = await render(UserRole.PHARMACIST);
     expect(buttonByText(element, 'New GRN')).toBeDefined();
-    expect(numbers(element)).toHaveSize(5);
+    expect(numbers(element)).toHaveSize(7);
   });
 });

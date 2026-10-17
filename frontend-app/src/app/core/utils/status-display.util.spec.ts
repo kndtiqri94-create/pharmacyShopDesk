@@ -1,15 +1,21 @@
+import { AttendanceStatus } from '../models/enums/attendance-status.enum';
+import { EmployeeStatus } from '../models/enums/employee-status.enum';
 import { GrnStatus } from '../models/enums/grn-status.enum';
 import { PaymentStatus } from '../models/enums/payment-status.enum';
 import { PoStatus } from '../models/enums/po-status.enum';
 import { ProductStatus } from '../models/enums/product-status.enum';
 import { ReloadStatus } from '../models/enums/reload-status.enum';
+import { UserStatus } from '../models/enums/user-status.enum';
 import {
+  ATTENDANCE_STATUS_DISPLAY,
+  EMPLOYEE_STATUS_DISPLAY,
   GRN_STATUS_DISPLAY,
   getActiveDisplay,
   PAYMENT_STATUS_DISPLAY,
   PO_STATUS_DISPLAY,
   PRODUCT_STATUS_DISPLAY,
   RELOAD_STATUS_DISPLAY,
+  USER_STATUS_DISPLAY,
 } from './status-display.util';
 
 describe('status-display.util', () => {
@@ -30,6 +36,21 @@ describe('status-display.util', () => {
     expect(RELOAD_STATUS_DISPLAY[ReloadStatus.PENDING].tone).toBe('warning');
   });
 
+  it('uses the design words for attendance, employee and user status', () => {
+    expect(ATTENDANCE_STATUS_DISPLAY[AttendanceStatus.PRESENT]).toEqual({
+      label: 'Present',
+      tone: 'success',
+    });
+    expect(ATTENDANCE_STATUS_DISPLAY[AttendanceStatus.LATE].label).toBe('Late');
+    expect(ATTENDANCE_STATUS_DISPLAY[AttendanceStatus.NOT_YET].label).toBe('Not yet');
+    expect(ATTENDANCE_STATUS_DISPLAY[AttendanceStatus.ON_LEAVE].label).toBe('On leave');
+    expect(EMPLOYEE_STATUS_DISPLAY[EmployeeStatus.ON_LEAVE].label).toBe('On leave');
+    expect(USER_STATUS_DISPLAY[UserStatus.DISABLED]).toEqual({
+      label: 'Disabled',
+      tone: 'neutral',
+    });
+  });
+
   it('never leaves a status without a word', () => {
     const all = [
       ...Object.values(PRODUCT_STATUS_DISPLAY),
@@ -37,6 +58,9 @@ describe('status-display.util', () => {
       ...Object.values(PAYMENT_STATUS_DISPLAY),
       ...Object.values(PO_STATUS_DISPLAY),
       ...Object.values(RELOAD_STATUS_DISPLAY),
+      ...Object.values(ATTENDANCE_STATUS_DISPLAY),
+      ...Object.values(EMPLOYEE_STATUS_DISPLAY),
+      ...Object.values(USER_STATUS_DISPLAY),
     ];
     expect(all.every(display => display.label.length > 0)).toBeTrue();
   });

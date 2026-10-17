@@ -1,0 +1,57 @@
+<app-side-panel
+  title="Edit roles"
+  size="lg"
+  [open]="open()"
+  [initialFocus]="initialFocus"
+  (closed)="discard()"
+>
+  <p class="sd-muted roles__intro">
+    Choose what each role can do. Admin always has full access, so the shop can never lock itself
+    out.
+  </p>
+  <div class="sd-scroll-x">
+    <table class="roles" aria-label="Edit role permissions">
+      <thead>
+        <tr>
+          <th scope="col" class="sd-label-caps">Module</th>
+          <th scope="col" class="sd-label-caps">{{ roleLabel(adminRole) }}</th>
+          @for (role of editableRoles; track role) {
+            <th scope="col" class="sd-label-caps">{{ roleLabel(role) }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (module of modules; track module.key) {
+          <tr>
+            <th scope="row">{{ module.label }}</th>
+            <td>
+              <span class="roles__fixed" data-testid="admin-fixed">{{ adminLevel }}</span>
+            </td>
+            @for (role of editableRoles; track role) {
+              <td>
+                <select
+                  class="roles__select"
+                  [attr.aria-label]="roleLabel(role) + ' access to ' + module.label"
+                  (change)="onChange(role, module.key, $event)"
+                >
+                  @for (level of levels; track level) {
+                    <option [value]="level" [selected]="level === levelOf(role, module.key)">
+                      {{ levelLabels[level] }}
+                    </option>
+                  }
+                </select>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  @if (error(); as message) {
+    <p class="roles__error" role="alert">{{ message }}</p>
+  }
+  <ng-container panelFooter>
+    <app-button [disabled]="saving()" (click)="discard()">Discard</app-button>
+    <app-button variant="primary" [disabled]="saving()" (click)="save()">Save changes</app-button>
+  </ng-container>
+</app-side-panel>

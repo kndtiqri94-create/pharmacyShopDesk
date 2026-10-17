@@ -1,0 +1,62 @@
+<div class="sd-stack">
+  <app-page-header
+    title="Users & roles"
+    subtitle="Who can sign in to ShopDesk and what they can do."
+  >
+    <div pageActions class="sd-row">
+      <ng-template [appCanWrite]="moduleKey">
+        <app-button variant="primary" icon="plus" (click)="addOpen.set(true)">Add user</app-button>
+      </ng-template>
+    </div>
+  </app-page-header>
+
+  <app-users-card
+    [rows]="rows()"
+    [currentUserId]="currentUserId()"
+    [canEdit]="canEdit()"
+    (editUser)="editingId.set($event.user.id)"
+    (toggleLock)="toggleLock($event)"
+  />
+
+  @if (matrix(); as currentMatrix) {
+    <app-role-permissions-card [matrix]="currentMatrix" (editRoles)="rolesOpen.set(true)" />
+  }
+</div>
+
+<ng-template [appCanWrite]="moduleKey">
+  <app-add-user-panel
+    [open]="addOpen()"
+    [employees]="unlinkedEmployees()"
+    (created)="onCreated($event)"
+    (cancelled)="addOpen.set(false)"
+  />
+  <app-edit-user-panel
+    [open]="editingRow() !== null"
+    [row]="editingRow()"
+    [currentUserId]="currentUserId()"
+    (saved)="onRoleSaved($event)"
+    (cancelled)="editingId.set(null)"
+  />
+  @if (matrix(); as currentMatrix) {
+    <app-edit-roles-panel
+      [open]="rolesOpen()"
+      [matrix]="currentMatrix"
+      (saved)="onRolesSaved()"
+      (discarded)="rolesOpen.set(false)"
+    />
+  }
+  <app-confirm-dialog
+    title="Disable this user"
+    confirmLabel="Disable user"
+    [danger]="true"
+    [open]="lockingRow() !== null"
+    [busy]="lockBusy()"
+    (confirmed)="confirmDisable()"
+    (cancelled)="cancelDisable()"
+  >
+    <p>
+      {{ lockingRow()?.user?.displayName }} will not be able to sign in. Everything they did before
+      stays on record, and you can turn their sign-in back on at any time.
+    </p>
+  </app-confirm-dialog>
+</ng-template>

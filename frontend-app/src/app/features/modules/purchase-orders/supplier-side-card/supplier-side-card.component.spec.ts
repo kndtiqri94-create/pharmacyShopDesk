@@ -22,7 +22,7 @@ describe('SupplierSideCardComponent', () => {
     expect(content).toContain(`${supplier.creditDays} days credit`);
     expect(content).toContain(supplier.deliveryDays);
     expect(element.querySelector('[data-testid="supplier-owed"]')?.textContent?.trim()).toBe(
-      'You owe them Rs. 2,500'
+      'You owe them Rs. 2,500.00'
     );
   });
 

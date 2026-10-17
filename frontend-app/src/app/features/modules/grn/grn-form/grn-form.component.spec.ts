@@ -161,7 +161,7 @@ describe('GrnFormComponent', () => {
     ).toBeTrue();
     expect(document.activeElement).toBe(field(element, 'supplierId'));
     const grns = await firstValueFrom(TestBed.inject(GrnDataService).getAll());
-    expect(grns).toHaveSize(5);
+    expect(grns).toHaveSize(7);
   });
 
   it('adds a line with the product cost and price, and removes it again', async () => {
@@ -248,7 +248,7 @@ describe('GrnFormComponent', () => {
       expect(element.querySelector('#grn-paidNow-error')).not.toBeNull();
     }
     const grns = await firstValueFrom(TestBed.inject(GrnDataService).getAll());
-    expect(grns).toHaveSize(5);
+    expect(grns).toHaveSize(7);
   });
 
   it('warns about short expiry naming the product and month, and clears the warning when corrected', async () => {

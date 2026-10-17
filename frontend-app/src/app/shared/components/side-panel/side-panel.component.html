@@ -1,0 +1,18 @@
+<dialog
+  #dialog
+  class="panel"
+  [attr.data-size]="size()"
+  [attr.aria-labelledby]="titleId"
+  (cancel)="onCancel($event)"
+>
+  <div class="panel__surface">
+    <header class="panel__header">
+      <h2 class="sd-section-title" [id]="titleId">{{ title() }}</h2>
+      <button type="button" class="panel__close" aria-label="Close panel" (click)="closed.emit()">
+        <app-icon name="x" />
+      </button>
+    </header>
+    <div class="panel__body"><ng-content /></div>
+    <footer class="panel__footer"><ng-content select="[panelFooter]" /></footer>
+  </div>
+</dialog>

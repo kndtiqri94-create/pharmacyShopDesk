@@ -44,6 +44,7 @@ export class DataTableComponent<T> {
   readonly itemLabel = input('items');
   readonly emptyTitle = input('Nothing to show yet');
   readonly emptyMessage = input('Add the first item to see it here.');
+  readonly activeRowKey = input<string | number | null>(null);
   readonly selectable = input(false);
   readonly selectedKeys = model<readonly (string | number)[]>([]);
   readonly pageNumber = model(1);
@@ -91,6 +92,11 @@ export class DataTableComponent<T> {
 
   protected setPage(page: number): void {
     this.pageNumber.set(page);
+  }
+
+  protected isActive(row: T, index: number): boolean {
+    const key = this.activeRowKey();
+    return key !== null && this.trackRow(row, index) === key;
   }
 
   protected isSelected(row: T, index: number): boolean {

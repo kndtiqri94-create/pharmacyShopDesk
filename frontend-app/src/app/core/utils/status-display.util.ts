@@ -1,3 +1,4 @@
+import { AttendanceStatus } from '../models/enums/attendance-status.enum';
 import { EmployeeStatus } from '../models/enums/employee-status.enum';
 import { GrnStatus } from '../models/enums/grn-status.enum';
 import { PaymentStatus } from '../models/enums/payment-status.enum';
@@ -44,6 +45,13 @@ export const RELOAD_STATUS_DISPLAY: Record<ReloadStatus, StatusDisplay> = {
 export const EMPLOYEE_STATUS_DISPLAY: Record<EmployeeStatus, StatusDisplay> = {
   ACTIVE: { label: 'Active', tone: 'success' },
   ON_LEAVE: { label: 'On leave', tone: 'warning' },
+};
+
+export const ATTENDANCE_STATUS_DISPLAY: Record<AttendanceStatus, StatusDisplay> = {
+  PRESENT: { label: 'Present', tone: 'success' },
+  LATE: { label: 'Late', tone: 'warning' },
+  NOT_YET: { label: 'Not yet', tone: 'neutral' },
+  ON_LEAVE: { label: 'On leave', tone: 'info' },
 };
 
 export const USER_STATUS_DISPLAY: Record<UserStatus, StatusDisplay> = {

@@ -55,17 +55,17 @@ Sequencing: F-2.1 first (everything depends on it); F-2.2 next (the product and 
 
 ### F-2.3 Stock-in (WEB)
 
-- [ ] **S-2.3.1** [WEB] GRN list with StatCards, search, status chips with live counts, date button and payment/status badges. — _Traces: FR-GRN-1_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.3.2** [WEB] New GRN form: delivery details, payment, items table, totals, auto-saved draft, and the under-six-months expiry warning. — _Traces: FR-GRN-2, FR-GRN-3_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.3.3** [WEB] GRN from PO prefill and receiving effects: Receive stock creates batches, updates stock and cost prices, and closes or part-closes the linked PO. — _Traces: FR-GRN-4, FR-GRN-5_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.3.4** [WEB] Purchase order list with status chips, overdue highlighting and row actions (Receive opens prefilled GRN). — _Traces: FR-PO-1_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.3.5** [WEB] New purchase order with supplier side card, items table, "Add all low-stock items", totals, Save draft / Print / Mark as sent. — _Traces: FR-PO-2_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.3.1** [WEB] GRN list with StatCards, search, status chips with live counts, date button and payment/status badges. — _Traces: FR-GRN-1_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.3.2** [WEB] New GRN form: delivery details, payment, items table, totals, auto-saved draft, and the under-six-months expiry warning. — _Traces: FR-GRN-2, FR-GRN-3_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.3.3** [WEB] GRN from PO prefill and receiving effects: Receive stock creates batches, updates stock and cost prices, and closes or part-closes the linked PO. — _Traces: FR-GRN-4, FR-GRN-5_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.3.4** [WEB] Purchase order list with status chips, overdue highlighting and row actions (Receive opens prefilled GRN). — _Traces: FR-PO-1_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.3.5** [WEB] New purchase order with supplier side card, items table, "Add all low-stock items", totals, Save draft / Print / Mark as sent. — _Traces: FR-PO-2_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
 
 ### F-2.4 Suppliers and people (WEB)
 
-- [ ] **S-2.4.1** [WEB] Suppliers list with detail panel, plus Record payment that settles GRNs oldest first. — _Traces: FR-SUP-1, FR-SUP-2_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.4.2** [WEB] Employees with StatCards, Staff / Attendance / Leave tabs, toolbar, table and Today's attendance card. — _Traces: FR-EMP-1_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.4.3** [WEB] Users and roles: users table, permission matrix, Add user panel, disable user keeping history. — _Traces: FR-USR-1, FR-USR-2_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.4.1** [WEB] Suppliers list with detail panel, plus Record payment that settles GRNs oldest first. — _Traces: FR-SUP-1, FR-SUP-2_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.4.2** [WEB] Employees with StatCards, Staff / Attendance / Leave tabs, toolbar, table and Today's attendance card. — _Traces: FR-EMP-1_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.4.3** [WEB] Users and roles: users table, permission matrix, Add user panel, disable user keeping history. — _Traces: FR-USR-1, FR-USR-2_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
 
 ### F-2.5 Services and settings (WEB)
 

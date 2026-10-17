@@ -16,20 +16,25 @@ describe('supplier-owed.util', () => {
   });
 
   it('counts only received GRNs with something left to pay', () => {
-    expect(unpaidGrns(GRN_SEED).map(grn => grn.number)).toEqual(['GRN-0208', 'GRN-0210']);
+    expect(unpaidGrns(GRN_SEED).map(grn => grn.number)).toEqual([
+      'GRN-0208',
+      'GRN-0210',
+      'GRN-0205',
+      'GRN-0206',
+    ]);
   });
 
   it('adds up what one supplier is owed', () => {
-    expect(amountOwedToSupplier(GRN_SEED, 'sup-001')).toBe(330_000);
+    expect(amountOwedToSupplier(GRN_SEED, 'sup-001')).toBe(1_160_000);
     expect(amountOwedToSupplier(GRN_SEED, 'sup-002')).toBe(0);
     expect(amountOwedToSupplier(GRN_SEED, 'sup-004')).toBe(0);
   });
 
   it('summarises the unpaid total, invoice count and age of the oldest', () => {
     expect(summarizeUnpaid(GRN_SEED, '2026-09-21')).toEqual({
-      totalCents: 610_000,
-      invoiceCount: 2,
-      oldestDays: 7,
+      totalCents: 1_440_000,
+      invoiceCount: 4,
+      oldestDays: 18,
     });
   });
 

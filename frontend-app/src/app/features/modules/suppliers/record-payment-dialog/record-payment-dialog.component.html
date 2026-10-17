@@ -1,0 +1,27 @@
+<app-confirm-dialog
+  title="Record payment"
+  confirmLabel="Record payment"
+  [open]="open()"
+  [busy]="busy()"
+  (confirmed)="submit()"
+  (cancelled)="cancelled.emit()"
+>
+  <div class="payment">
+    <p class="sd-muted">
+      You owe {{ supplierName() }} {{ owedText() }}. The amount is taken off their oldest unpaid
+      deliveries first.
+    </p>
+    <app-field label="Amount" [fieldId]="amountId" prefix="Rs." [required]="true" [error]="error()">
+      <input
+        appFieldControl
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [attr.maxlength]="amountMaxLength"
+        [value]="amount()"
+        (input)="onInput($event)"
+        (keydown.enter)="submit()"
+      />
+    </app-field>
+  </div>
+</app-confirm-dialog>

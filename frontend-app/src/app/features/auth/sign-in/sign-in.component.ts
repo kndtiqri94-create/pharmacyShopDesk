@@ -12,6 +12,8 @@ import { FIELD_IMPORTS } from '../../../shared/components/field/field.imports';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 
 export const SIGN_IN_FAILED_MESSAGE = 'Check your password and try again.';
+export const SIGN_IN_DISABLED_MESSAGE =
+  'This sign-in is turned off. Ask the owner to turn it back on.';
 export const USERNAME_REQUIRED_MESSAGE = 'Enter your username or email.';
 export const PASSWORD_REQUIRED_MESSAGE = 'Enter your password.';
 
@@ -39,7 +41,7 @@ export class SignInComponent {
   protected readonly submitting = signal(false);
 
   private readonly submitted = signal(false);
-  private readonly signInFailed = signal(false);
+  private readonly signInFailureMessage = signal<string | null>(null);
   private readonly values = toSignal(this.form.valueChanges, {
     initialValue: this.form.getRawValue(),
   });
@@ -48,14 +50,15 @@ export class SignInComponent {
     this.submitted() && !this.values().username?.trim() ? USERNAME_REQUIRED_MESSAGE : null
   );
   protected readonly passwordError = computed(() => {
-    if (this.signInFailed()) return SIGN_IN_FAILED_MESSAGE;
+    const failure = this.signInFailureMessage();
+    if (failure !== null) return failure;
     return this.submitted() && !this.values().password ? PASSWORD_REQUIRED_MESSAGE : null;
   });
 
   constructor() {
     this.form.controls.password.valueChanges
       .pipe(takeUntilDestroyed())
-      .subscribe(() => this.signInFailed.set(false));
+      .subscribe(() => this.signInFailureMessage.set(null));
   }
 
   protected submit(): void {
@@ -83,6 +86,8 @@ export class SignInComponent {
       return;
     }
     this.form.controls.password.reset('');
-    this.signInFailed.set(true);
+    this.signInFailureMessage.set(
+      result.reason === 'disabled' ? SIGN_IN_DISABLED_MESSAGE : SIGN_IN_FAILED_MESSAGE
+    );
   }
 }

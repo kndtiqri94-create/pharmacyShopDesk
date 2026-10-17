@@ -86,7 +86,7 @@ describe('StockInService', () => {
     expect(result.reason).toBe('invalid');
     expect(result.errors['invoiceNo']).toBe('Enter the supplier invoice number');
     expect(await products()).toEqual(stockBefore);
-    expect(await grns()).toHaveSize(5);
+    expect(await grns()).toHaveSize(7);
   });
 
   it('rejects receiving a GRN that is already received', async () => {
@@ -122,7 +122,7 @@ describe('StockInService', () => {
     const result = await service().receiveGrn(input, null);
     expect(result.ok).toBeFalse();
     if (!result.ok) expect(result.reason).toBe('denied');
-    expect(await grns()).toHaveSize(5);
+    expect(await grns()).toHaveSize(7);
   });
 
   it('denies everything while signed out', async () => {
@@ -151,7 +151,7 @@ describe('StockInService', () => {
     if (!result.ok) return;
     expect(result.grn.id).toBe('grn-005');
     expect(result.grn.number).toBe('GRN-0211');
-    expect(await grns()).toHaveSize(5);
+    expect(await grns()).toHaveSize(7);
   });
 
   it('completes a part received PO with a later GRN', async () => {

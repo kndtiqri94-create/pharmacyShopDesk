@@ -19,6 +19,11 @@ export function formatRupees(cents: number): string {
   return `${sign}Rs. ${formatter.format(absolute / 100)}`;
 }
 
+export function formatRupeesExact(cents: number): string {
+  const sign = cents < 0 ? '-' : '';
+  return `${sign}Rs. ${TWO_DECIMAL_FORMAT.format(Math.abs(cents) / 100)}`;
+}
+
 export function formatMoneyCell(cents: number): string {
   return TWO_DECIMAL_FORMAT.format(cents / 100);
 }

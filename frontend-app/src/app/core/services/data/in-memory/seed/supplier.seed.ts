@@ -11,7 +11,6 @@ export const SUPPLIER_SEED: readonly Supplier[] = [
     creditDays: 30,
     deliveryDays: '2 days',
     active: true,
-    outstandingCents: 9_645_000,
   },
   {
     id: 'sup-002',
@@ -23,7 +22,6 @@ export const SUPPLIER_SEED: readonly Supplier[] = [
     creditDays: 14,
     deliveryDays: '2-3 days',
     active: true,
-    outstandingCents: 1_890_000,
   },
   {
     id: 'sup-003',
@@ -35,7 +33,6 @@ export const SUPPLIER_SEED: readonly Supplier[] = [
     creditDays: 21,
     deliveryDays: '2 days',
     active: true,
-    outstandingCents: 2_725_000,
   },
   {
     id: 'sup-004',
@@ -47,7 +44,6 @@ export const SUPPLIER_SEED: readonly Supplier[] = [
     creditDays: 7,
     deliveryDays: '1-2 days',
     active: true,
-    outstandingCents: 0,
   },
   {
     id: 'sup-005',
@@ -59,6 +55,5 @@ export const SUPPLIER_SEED: readonly Supplier[] = [
     creditDays: 30,
     deliveryDays: '3 days',
     active: false,
-    outstandingCents: 0,
   },
 ];

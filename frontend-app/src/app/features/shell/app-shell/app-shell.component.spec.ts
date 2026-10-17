@@ -41,9 +41,9 @@ describe('AppShellComponent', () => {
   });
 
   it('shows the placeholder for a module that is not built yet inside the frame', async () => {
-    const { element } = await openShell(UserRole.ADMIN, '/suppliers');
+    const { element } = await openShell(UserRole.ADMIN, '/settings');
     const main = element.querySelector('main') as HTMLElement;
-    expect(main.querySelector('h1')?.textContent).toBe('Suppliers');
+    expect(main.querySelector('h1')?.textContent).toBe('Settings');
     expect(main.textContent).toContain('coming soon');
   });
 

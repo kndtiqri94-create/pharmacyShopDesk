@@ -1,0 +1,42 @@
+<div class="sd-stack">
+  <app-page-header title="Employees" [subtitle]="subtitle()">
+    <div pageActions class="sd-row">
+      <app-button icon="download" (click)="showSampleMessage('Export')">Export</app-button>
+      <ng-template [appCanWrite]="moduleKey">
+        <app-button variant="primary" icon="plus" (click)="showSampleMessage('Add employee')">
+          Add employee
+        </app-button>
+      </ng-template>
+    </div>
+  </app-page-header>
+
+  @if (summary(); as summary) {
+    <app-employee-tiles [summary]="summary" />
+  }
+
+  <app-tabs
+    ariaLabel="Employee sections"
+    [items]="tabItems()"
+    [value]="tab()"
+    [panelId]="panelId"
+    (valueChange)="setTab($event)"
+  />
+
+  <div class="sd-stack" role="tabpanel" [id]="panelId">
+    @switch (tab()) {
+      @case ('attendance') {
+        <app-attendance-table [rows]="attendanceRows()" />
+      }
+      @case ('leave') {
+        <app-leave-table [rows]="leaveRows()" />
+      }
+      @default {
+        <app-staff-table [items]="items()" (actionChosen)="showSampleMessage($event)" />
+        <app-todays-attendance-card
+          [rows]="attendanceRows()"
+          (markAttendance)="showSampleMessage('Mark attendance')"
+        />
+      }
+    }
+  </div>
+</div>

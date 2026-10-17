@@ -282,11 +282,28 @@ export class PurchaseOrderFormComponent implements OnInit {
         orders.map(order => order.number)
       )
     );
+    if (this.mode === 'create') this.preselectSupplier(suppliers);
     if (this.mode !== 'create' && !(await this.openExisting(orders))) {
       this.notFound.set(true);
     }
     if (this.readOnly()) this.form.disable();
     this.loaded.set(true);
+  }
+
+  private preselectSupplier(suppliers: readonly Supplier[]): void {
+    const requested = this.route.snapshot.queryParamMap.get('supplier');
+    if (requested === null) return;
+    const supplier = ID_PATTERN.test(requested)
+      ? suppliers.find(candidate => candidate.id === requested && candidate.active)
+      : undefined;
+    if (supplier) {
+      this.form.patchValue({ supplierId: supplier.id });
+      return;
+    }
+    this.notificationService.show(
+      'warning',
+      'We could not use that supplier, so choose one from the list.'
+    );
   }
 
   private async openExisting(orders: readonly PurchaseOrder[]): Promise<boolean> {

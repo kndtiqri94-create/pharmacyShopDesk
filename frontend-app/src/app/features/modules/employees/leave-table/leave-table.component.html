@@ -1,0 +1,11 @@
+<app-card title="On leave" subtitle="Staff who are away and when they return." [flush]="true">
+  <app-data-table
+    ariaLabel="On leave"
+    itemLabel="employees"
+    emptyTitle="Nobody is on leave"
+    emptyMessage="Everyone is in. People who go on leave will show here with their return date."
+    [columns]="columns"
+    [rows]="rows()"
+    [rowKey]="rowKey"
+  />
+</app-card>

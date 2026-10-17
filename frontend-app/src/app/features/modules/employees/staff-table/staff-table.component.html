@@ -1,0 +1,58 @@
+<app-card [flush]="true">
+  <div class="toolbar">
+    <div class="sd-field-box toolbar__search">
+      <app-icon class="toolbar__icon" name="search" [size]="18" />
+      <input
+        type="search"
+        class="sd-field-control"
+        aria-label="Search employees"
+        placeholder="Search by name, ID or phone"
+        [attr.maxlength]="searchMaxLength"
+        [value]="search()"
+        (input)="onSearch($event)"
+      />
+    </div>
+    <app-chips
+      ariaLabel="Filter employees"
+      [items]="chipItems()"
+      [value]="filter()"
+      (valueChange)="setFilter($event)"
+    />
+  </div>
+
+  <app-data-table
+    ariaLabel="Staff"
+    itemLabel="employees"
+    emptyTitle="No employees match"
+    emptyMessage="Clear the search, or choose All, to see every employee."
+    [columns]="columns"
+    [rows]="rows()"
+    [rowKey]="rowKey"
+    [actions]="actions()"
+    [(pageNumber)]="page"
+    (actionTriggered)="onAction($event)"
+  >
+    <ng-template appDataTableCell="employee" let-item>
+      <div class="employee-cell">
+        <app-avatar size="sm" [name]="item.employee.name" />
+        <div>
+          <span class="sd-body-strong employee-cell__name">{{ item.employee.name }}</span>
+          <span class="sd-caption employee-cell__code">{{ item.employee.code }}</span>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template appDataTableCell="login" let-item>
+      @if (item.login.role === null) {
+        <span class="sd-muted">{{ item.login.label }}</span>
+      } @else {
+        <app-badge
+          [label]="loginLabel(item)"
+          [tone]="item.login.disabled ? 'neutral' : 'primary'"
+        />
+      }
+    </ng-template>
+    <ng-template appDataTableCell="status" let-item>
+      <app-badge [label]="statusOf(item).label" [tone]="statusOf(item).tone" />
+    </ng-template>
+  </app-data-table>
+</app-card>

@@ -1,0 +1,53 @@
+:host {
+  display: contents;
+}
+
+.roles__intro {
+  margin-bottom: var(--sd-space-4);
+}
+
+.roles {
+  width: 100%;
+  font-size: var(--sd-fs-body);
+}
+
+th,
+td {
+  padding: var(--sd-space-2) var(--sd-space-2);
+  border-top: 1px solid var(--sd-border);
+  text-align: left;
+  vertical-align: middle;
+}
+
+thead th {
+  border-top: 0;
+  color: var(--sd-ink-muted);
+  white-space: nowrap;
+}
+
+tbody th {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.roles__fixed {
+  display: inline-block;
+  padding: var(--sd-space-1) var(--sd-space-2);
+  color: var(--sd-ink-muted);
+  font-weight: 600;
+}
+
+.roles__select {
+  width: 100%;
+  min-height: var(--sd-control-sm);
+  padding: 0 var(--sd-space-2);
+  border: 1px solid var(--sd-border-strong);
+  border-radius: var(--sd-radius-md);
+  background: var(--sd-surface);
+  color: var(--sd-ink);
+}
+
+.roles__error {
+  margin-top: var(--sd-space-3);
+  color: var(--sd-danger);
+}

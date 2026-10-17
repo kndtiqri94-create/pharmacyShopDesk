@@ -1,0 +1,38 @@
+<app-card
+  title="Role permissions"
+  subtitle="What each role can do in each part of ShopDesk."
+  [flush]="true"
+>
+  <div cardActions>
+    <ng-template [appCanWrite]="usersModule">
+      <app-button size="sm" icon="edit" (click)="editRoles.emit()">Edit roles</app-button>
+    </ng-template>
+  </div>
+  <div class="sd-scroll-x">
+    <table class="matrix" aria-label="Role permissions">
+      <thead>
+        <tr>
+          <th scope="col" class="sd-label-caps">Module</th>
+          @for (role of roles; track role) {
+            <th scope="col" class="sd-label-caps">{{ roleLabel(role) }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (module of modules; track module.key) {
+          <tr>
+            <th scope="row" class="matrix__module">{{ module.label }}</th>
+            @for (role of roles; track role) {
+              <td>
+                <app-badge
+                  [label]="levelLabels[matrix()[role][module.key]]"
+                  [tone]="levelTones[matrix()[role][module.key]]"
+                />
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</app-card>

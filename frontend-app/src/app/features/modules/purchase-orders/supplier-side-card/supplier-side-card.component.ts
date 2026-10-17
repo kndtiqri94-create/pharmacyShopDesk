@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { Supplier } from '../../../../core/models/domain/supplier.model';
-import { formatRupees } from '../../../../core/utils/money.util';
+import { formatRupeesExact } from '../../../../core/utils/money.util';
 import { AvatarComponent } from '../../../../shared/components/avatar/avatar.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 
@@ -14,5 +14,5 @@ export class SupplierSideCardComponent {
   readonly supplier = input<Supplier | null>(null);
   readonly owedCents = input(0);
 
-  protected readonly formatRupees = formatRupees;
+  protected readonly formatRupees = formatRupeesExact;
 }

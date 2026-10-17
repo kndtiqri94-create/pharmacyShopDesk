@@ -31,7 +31,9 @@ describe('grn-list-filter.util', () => {
       'GRN-0208',
       'GRN-0210',
       'GRN-0209',
+      'GRN-0206',
       'GRN-0207',
+      'GRN-0205',
     ]);
     expect(items[1].supplierName).toBe('Lanka Pharma');
   });
@@ -53,12 +55,12 @@ describe('grn-list-filter.util', () => {
   it('filters by status and counts each chip for the search in use', () => {
     expect(filterGrnItems(items, { ...criteria, status: 'draft' })).toHaveSize(1);
     expect(countGrnByStatus(items, { search: '', range })).toEqual({
-      all: 5,
+      all: 7,
       draft: 1,
-      received: 3,
+      received: 5,
       cancelled: 1,
     });
-    expect(countGrnByStatus(items, { search: 'lanka', range }).all).toBe(2);
+    expect(countGrnByStatus(items, { search: 'lanka', range }).all).toBe(4);
   });
 
   it('keeps drafts visible and leaves out other GRNs outside the range', () => {
@@ -75,11 +77,11 @@ describe('grn-list-filter.util', () => {
 
   it('summarises the three tiles from the sample data', () => {
     const tiles = summarizeGrns(GRN_SEED, PURCHASE_ORDER_SEED, TODAY);
-    expect(tiles.receivedValue).toBe('Rs. 11,220');
-    expect(tiles.receivedNote).toBe('3 GRNs from 3 suppliers');
+    expect(tiles.receivedValue).toBe('Rs. 20,520');
+    expect(tiles.receivedNote).toBe('5 GRNs from 3 suppliers');
     expect(tiles.waitingValue).toBe('2 POs');
     expect(tiles.waitingNote).toBe('Expected within 7 days: 2');
-    expect(tiles.unpaidValue).toBe('Rs. 6,100');
-    expect(tiles.unpaidNote).toBe('2 invoices · oldest 7 days');
+    expect(tiles.unpaidValue).toBe('Rs. 14,400');
+    expect(tiles.unpaidNote).toBe('4 invoices · oldest 18 days');
   });
 });
