@@ -215,6 +215,18 @@ describe('DataTableComponent', () => {
     expect(element.querySelectorAll('tbody tr')).toHaveSize(5);
   });
 
+  it('leaves paging to the page when paginate is off', () => {
+    const fixture = TestBed.createComponent(DataTableComponent<Row>);
+    fixture.componentRef.setInput('columns', COLUMNS);
+    fixture.componentRef.setInput('rows', makeRows(25));
+    fixture.componentRef.setInput('ariaLabel', 'Products');
+    fixture.componentRef.setInput('paginate', false);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelectorAll('tbody tr')).toHaveSize(25);
+    expect(element.querySelector('app-pagination')).toBeNull();
+  });
+
   it('scrolls sideways by default and stacks on request', () => {
     const scroll = render().element.querySelector('.table-wrap')!;
     expect(scroll.classList).toContain('sd-scroll-x');

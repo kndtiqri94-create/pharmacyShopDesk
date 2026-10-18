@@ -1,0 +1,100 @@
+<app-card
+  title="More information"
+  subtitle="Pay settings, notes and whether they are still working here."
+>
+  <app-employee-photo-field
+    class="more__photo"
+    [photoDataUrl]="draft().photoDataUrl"
+    [employeeName]="personName()"
+    [readOnly]="readOnly()"
+    [error]="error('photo')"
+    (changed)="changed.emit({ photoDataUrl: $event })"
+  />
+  <div class="sd-form-grid">
+    <app-field label="Status" [fieldId]="fieldId('status')" [span]="4" [error]="error('status')">
+      <select
+        appFieldControl
+        [disabled]="readOnly()"
+        [value]="draft().status"
+        (change)="changed.emit({ status: valueOf($event) })"
+      >
+        @for (status of statuses(); track status) {
+          <option [value]="status" [selected]="draft().status === status">
+            {{ statusLabel(status) }}
+          </option>
+        }
+      </select>
+    </app-field>
+    <app-field
+      label="Salary type"
+      [fieldId]="fieldId('salaryType')"
+      [span]="4"
+      [error]="error('salaryType')"
+    >
+      <select
+        appFieldControl
+        [disabled]="readOnly()"
+        [value]="draft().salaryType"
+        (change)="changed.emit({ salaryType: valueOf($event) })"
+      >
+        @for (type of salaryTypes; track type.value) {
+          <option [value]="type.value" [selected]="draft().salaryType === type.value">
+            {{ type.label }}
+          </option>
+        }
+      </select>
+    </app-field>
+    @for (custom of customFields; track custom.key) {
+      <app-field
+        [label]="custom.label"
+        [hint]="custom.hint"
+        [fieldId]="fieldId(custom.key)"
+        [span]="6"
+        [error]="error(custom.key)"
+      >
+        <input
+          appFieldControl
+          type="text"
+          autocomplete="off"
+          [readOnly]="readOnly()"
+          [value]="draft()[custom.key]"
+          [attr.maxlength]="limits.customField"
+          (input)="setText(custom.key, $event)"
+        />
+      </app-field>
+    }
+  </div>
+  <div class="more__toggles">
+    <app-toggle
+      label="Calculate EPF"
+      [checked]="draft().calculateEpf"
+      [disabled]="readOnly()"
+      (checkedChange)="setToggle('calculateEpf', $event)"
+    />
+    <app-toggle
+      label="Calculate ETF"
+      [checked]="draft().calculateEtf"
+      [disabled]="readOnly()"
+      (checkedChange)="setToggle('calculateEtf', $event)"
+    />
+    <app-toggle
+      label="Consider as customer"
+      [checked]="draft().considerAsCustomer"
+      [disabled]="readOnly()"
+      (checkedChange)="setToggle('considerAsCustomer', $event)"
+    />
+    @if (linkedUser()) {
+      <p class="more__linked" id="employee-createUserAccount">
+        <span class="sd-label">Create user account</span>
+        Already linked to a user account.
+      </p>
+    } @else {
+      <app-toggle
+        label="Create user account"
+        [checked]="draft().createUserAccount"
+        [disabled]="readOnly()"
+        (checkedChange)="setToggle('createUserAccount', $event)"
+      />
+    }
+  </div>
+</app-card>

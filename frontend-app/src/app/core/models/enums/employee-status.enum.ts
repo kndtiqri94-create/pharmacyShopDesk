@@ -1,5 +1,6 @@
 export const EmployeeStatus = {
   ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
   ON_LEAVE: 'ON_LEAVE',
 } as const;
 

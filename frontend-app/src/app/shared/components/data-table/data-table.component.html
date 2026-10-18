@@ -88,11 +88,13 @@
       </tbody>
     </table>
   </div>
-  <app-pagination
-    [total]="rows().length"
-    [page]="page()"
-    [pageSize]="effectivePageSize()"
-    [itemLabel]="itemLabel()"
-    (pageChange)="setPage($event)"
-  />
+  @if (paginate()) {
+    <app-pagination
+      [total]="rows().length"
+      [page]="page()"
+      [pageSize]="effectivePageSize()"
+      [itemLabel]="itemLabel()"
+      (pageChange)="setPage($event)"
+    />
+  }
 }

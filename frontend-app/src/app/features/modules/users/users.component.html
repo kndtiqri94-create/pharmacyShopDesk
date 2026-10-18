@@ -27,6 +27,7 @@
   <app-add-user-panel
     [open]="addOpen()"
     [employees]="unlinkedEmployees()"
+    [preselectedEmployeeId]="preselectedEmployeeId()"
     (created)="onCreated($event)"
     (cancelled)="addOpen.set(false)"
   />

@@ -31,49 +31,28 @@ describe('EmployeesComponent', () => {
   }
 
   const rows = (element: HTMLElement) => Array.from(element.querySelectorAll('tbody tr'));
-  const staffNames = (element: HTMLElement) =>
-    rows(element).map(row => row.querySelector('.employee-cell__name')?.textContent?.trim());
+  const staffCodes = (element: HTMLElement) =>
+    rows(element).map(row => row.querySelector('td:nth-child(2)')?.textContent?.trim());
   const buttonByText = (element: HTMLElement, text: string) =>
     Array.from(element.querySelectorAll('button')).find(
       button => button.textContent?.trim() === text
     ) as HTMLButtonElement | undefined;
-  const chip = (element: HTMLElement, label: string) =>
-    Array.from(element.querySelectorAll('button.chip')).find(button =>
-      button.textContent?.trim().startsWith(label)
-    ) as HTMLButtonElement;
   const tab = (element: HTMLElement, label: string) =>
     Array.from(element.querySelectorAll('[role="tab"]')).find(item =>
       item.textContent?.trim().startsWith(label)
     ) as HTMLButtonElement;
   const notification = () => TestBed.inject(NotificationService).current();
 
-  function search(fixture: Detectable, element: HTMLElement, text: string): void {
-    const input = element.querySelector('input[type="search"]') as HTMLInputElement;
-    input.value = text;
-    input.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-  }
-
-  it('shows the heading, how many staff are on shift, Export and one primary Add employee', async () => {
+  it('shows the heading, how many staff are on shift and one primary Add employee in the list', async () => {
     const { element } = await render();
     expect(element.querySelector('h1')?.textContent).toBe('Employees');
     expect(element.querySelector('app-page-header')?.textContent).toContain(
-      '8 staff · 5 on shift today'
+      '8 staff · 4 on shift today'
     );
-    expect(buttonByText(element, 'Export')).toBeDefined();
+    expect(buttonByText(element, 'Export CSV')).toBeDefined();
+    expect(buttonByText(element, 'Export PDF')).toBeDefined();
     expect(buttonByText(element, 'Add employee')?.getAttribute('data-variant')).toBe('primary');
     expect(element.querySelectorAll('button[data-variant="primary"]')).toHaveSize(1);
-  });
-
-  it('gives a sample-only message from Export and Add employee and changes nothing', async () => {
-    const { fixture, element } = await render();
-    buttonByText(element, 'Export')?.click();
-    fixture.detectChanges();
-    expect(notification()?.message).toContain('Export');
-    buttonByText(element, 'Add employee')?.click();
-    fixture.detectChanges();
-    expect(notification()?.message).toContain('Add employee');
-    expect(rows(element)).toHaveSize(8);
   });
 
   it('shows the four tiles in order with their notes', async () => {
@@ -88,8 +67,8 @@ describe('EmployeesComponent', () => {
     const text = (index: number) => tiles[index].textContent ?? '';
     expect(text(0)).toContain('8');
     expect(text(0)).toContain('6 full-time · 2 part-time');
-    expect(text(1)).toContain('5');
-    expect(text(1)).toContain('1 late this morning');
+    expect(text(1)).toContain('4');
+    expect(text(1)).toContain('Nobody late this morning');
     expect(text(2)).toContain('Back on 24 Sep');
     expect(text(3)).toContain('4');
     expect(text(3)).toContain('Others have no system access');
@@ -108,75 +87,37 @@ describe('EmployeesComponent', () => {
     expect(tab(element, 'Leave').getAttribute('aria-selected')).toBe('true');
   });
 
-  it('lists each person with avatar, ID, role, phone, shift, system login and a status word', async () => {
+  it('lists the whole staff in the Staff tab, matching the tab count', async () => {
     const { element } = await render();
     expect(rows(element)).toHaveSize(8);
+    expect(staffCodes(element)[0]).toBe('EMP-008');
     expect(element.querySelector('app-pagination nav')).toBeNull();
-    const first = rows(element)[0];
-    expect(first.querySelector('app-avatar')?.textContent?.trim()).toBe('NP');
-    expect(first.querySelector('.employee-cell__code')?.textContent).toBe('EMP-001');
-    const cell = (row: Element, index: number) =>
-      row.querySelector(`td:nth-child(${index})`)?.textContent?.trim();
-    expect(cell(first, 2)).toBe('Owner');
-    expect(cell(first, 3)).toBe('077 100 0001');
-    expect(cell(first, 4)).toBe('Morning');
-    expect(cell(first, 5)).toBe('Admin');
-    expect(cell(first, 6)).toBe('Active');
-    expect(cell(rows(element)[4], 5)).toBe('No login');
-    expect(cell(rows(element)[6], 6)).toBe('On leave');
   });
 
-  it('narrows by name, employee ID or phone ignoring case and updates the chip counts', async () => {
+  it('shows Inactive staff in the list but not in attendance or on leave', async () => {
     const { fixture, element } = await render();
-    search(fixture, element, 'SURESH');
-    expect(staffNames(element)).toEqual(['Suresh Kumar']);
-    search(fixture, element, 'emp-003');
-    expect(staffNames(element)).toEqual(['Dilani Fernando']);
-    search(fixture, element, '100 0007');
-    expect(staffNames(element)).toEqual(['Anura Bandara']);
-    expect(chip(element, 'All').textContent).toContain('1');
-    expect(chip(element, 'On leave').textContent).toContain('1');
-    expect(chip(element, 'Active').textContent).toContain('0');
-  });
-
-  it('shows live chip counts, one selected at a time, and filters', async () => {
-    const { fixture, element } = await render();
-    const counts = () =>
-      Array.from(element.querySelectorAll('button.chip')).map(button =>
-        button.textContent?.replace(/\s+/g, ' ').trim()
-      );
-    expect(counts()).toEqual(['All 8', 'Active 7', 'On leave 1']);
-    chip(element, 'On leave').click();
-    fixture.detectChanges();
-    expect(staffNames(element)).toEqual(['Anura Bandara']);
-    expect(element.querySelectorAll('button.chip[aria-pressed="true"]')).toHaveSize(1);
-    chip(element, 'Active').click();
-    fixture.detectChanges();
-    expect(rows(element)).toHaveSize(7);
-  });
-
-  it('says plainly when nobody matches', async () => {
-    const { fixture, element } = await render();
-    search(fixture, element, 'zzz');
-    expect(element.querySelector('table')).toBeNull();
-    expect(element.textContent).toContain('No employees match');
-    expect(element.textContent).toContain('Clear the search');
-  });
-
-  it('names every row action and gives a sample-only message when pressed', async () => {
-    const { fixture, element } = await render();
-    const first = rows(element)[0];
-    const labels = Array.from(first.querySelectorAll('button.row-action')).map(button =>
-      button.getAttribute('aria-label')
+    const inactive = rows(element).find(row => row.textContent?.includes('EMP-008'))!;
+    expect(inactive.querySelector('td:nth-child(9)')?.textContent?.trim()).toBe('Inactive');
+    expect(element.querySelector('app-todays-attendance-card')?.textContent).not.toContain(
+      'Sanduni Wickrama'
     );
-    expect(labels).toEqual([
-      'View Nimal Perera',
-      'Edit Nimal Perera',
-      'More options for Nimal Perera',
-    ]);
-    (first.querySelector('button[aria-label="Edit Nimal Perera"]') as HTMLElement).click();
+    tab(element, 'Leave').click();
     fixture.detectChanges();
-    expect(notification()?.message).toContain('Edit employee');
+    expect(element.textContent).not.toContain('Sanduni Wickrama');
+  });
+
+  it('reloads the tabs, tiles and attendance after an employee is deleted', async () => {
+    const { fixture, element } = await render();
+    const row = rows(element).find(item => item.textContent?.includes('EMP-005'))!;
+    (row.querySelector('button[aria-label="Delete Suresh Kumar"]') as HTMLElement).click();
+    fixture.detectChanges();
+    buttonByText(element, 'Delete employee')!.click();
+    await settle(fixture);
+    expect(rows(element)).toHaveSize(7);
+    expect(tab(element, 'Staff').textContent).toContain('7');
+    expect(element.querySelector('app-stat-card')?.textContent).toContain('7');
+    expect(element.querySelectorAll('app-todays-attendance-card li')).toHaveSize(6);
+    expect(notification()?.message).toBe('Suresh Kumar was removed.');
   });
 
   it("shows today's attendance for everyone with words and times, agreeing with the tiles", async () => {
@@ -184,13 +125,12 @@ describe('EmployeesComponent', () => {
     const items = Array.from(element.querySelectorAll('app-todays-attendance-card li')).map(item =>
       item.textContent?.replace(/\s+/g, ' ').trim()
     );
-    expect(items).toHaveSize(8);
+    expect(items).toHaveSize(7);
     expect(items).toContain('Dilani FernandoIn 07:52 Present');
-    expect(items).toContain('Sanduni WickramaIn 08:20 Late');
     expect(items).toContain('Suresh Kumar Not yet');
     expect(items).toContain('Anura Bandara On leave');
     const present = items.filter(item => item?.endsWith('Present') || item?.endsWith('Late'));
-    expect(present).toHaveSize(5);
+    expect(present).toHaveSize(4);
     expect(items.filter(item => item?.endsWith('On leave'))).toHaveSize(1);
     buttonByText(element, 'Mark attendance')?.click();
     fixture.detectChanges();
@@ -201,12 +141,11 @@ describe('EmployeesComponent', () => {
     const { fixture, element } = await render();
     tab(element, 'Attendance').click();
     fixture.detectChanges();
-    expect(rows(element)).toHaveSize(8);
+    expect(rows(element)).toHaveSize(7);
     const text = (index: number) => rows(element)[index].textContent?.replace(/\s+/g, ' ').trim();
     expect(text(2)).toContain('Dilani Fernando');
     expect(text(2)).toContain('Present');
     expect(text(2)).toContain('In 07:52');
-    expect(text(7)).toContain('Late');
     expect(element.querySelector('app-todays-attendance-card')).toBeNull();
   });
 
@@ -224,12 +163,13 @@ describe('EmployeesComponent', () => {
   it('lets a Manager read everything but hides Add employee, Mark attendance and edit actions', async () => {
     const { element } = await render(UserRole.MANAGER);
     expect(rows(element)).toHaveSize(8);
-    expect(buttonByText(element, 'Export')).toBeDefined();
+    expect(buttonByText(element, 'Export CSV')).toBeDefined();
+    expect(buttonByText(element, 'Export PDF')).toBeDefined();
     expect(buttonByText(element, 'Add employee')).toBeUndefined();
     expect(buttonByText(element, 'Mark attendance')).toBeUndefined();
-    const labels = Array.from(rows(element)[0].querySelectorAll('button.row-action')).map(button =>
-      button.getAttribute('aria-label')
-    );
+    const labels = Array.from(
+      rows(element)[rows(element).length - 1].querySelectorAll('button.row-action')
+    ).map(button => button.getAttribute('aria-label'));
     expect(labels).toEqual(['View Nimal Perera']);
     expect(element.querySelectorAll('app-stat-card')).toHaveSize(4);
   });

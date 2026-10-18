@@ -19,6 +19,7 @@ export class PaginationComponent {
   readonly page = model(1);
   readonly pageSize = input(DEFAULT_PAGE_SIZE);
   readonly itemLabel = input('items');
+  readonly showSummary = input(true);
 
   protected readonly visible = computed(() => this.total() > PAGINATION_THRESHOLD);
   protected readonly effectivePageSize = computed(() =>

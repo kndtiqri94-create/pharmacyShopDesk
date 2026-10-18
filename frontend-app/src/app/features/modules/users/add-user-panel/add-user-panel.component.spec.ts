@@ -114,6 +114,29 @@ describe('AddUserPanelComponent', () => {
     expect(toggle().getAttribute('aria-checked')).toBe('true');
   });
 
+  it('chooses the preselected employee when opened, and clears it on close', async () => {
+    const { fixture, field } = await render();
+    fixture.componentRef.setInput('open', false);
+    fixture.detectChanges();
+    fixture.componentRef.setInput('preselectedEmployeeId', 'emp-006');
+    fixture.componentRef.setInput('open', true);
+    fixture.detectChanges();
+    expect(field('employeeId').value).toBe('emp-006');
+    fixture.componentRef.setInput('open', false);
+    fixture.detectChanges();
+    expect(field('employeeId').value).toBe('');
+  });
+
+  it('ignores a preselected employee that is not in the offered list', async () => {
+    const { fixture, field } = await render();
+    fixture.componentRef.setInput('open', false);
+    fixture.detectChanges();
+    fixture.componentRef.setInput('preselectedEmployeeId', 'emp-001');
+    fixture.componentRef.setInput('open', true);
+    fixture.detectChanges();
+    expect(field('employeeId').value).toBe('');
+  });
+
   it('clears the form and raises cancelled on Cancel', async () => {
     const { field, button, fill, cancelled } = await render();
     fill('username', 'someone');

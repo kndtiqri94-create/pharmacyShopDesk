@@ -1,93 +1,258 @@
 import { Employee } from '../../../../models/domain/employee.model';
 import { EmployeeStatus } from '../../../../models/enums/employee-status.enum';
+import { EmployeeTitle } from '../../../../models/enums/employee-title.enum';
+import { SalaryType } from '../../../../models/enums/salary-type.enum';
+
+const LOCATION = 'Main Pharmacy';
+
+type RequiredSeedFields = Pick<
+  Employee,
+  | 'id'
+  | 'code'
+  | 'name'
+  | 'jobTitle'
+  | 'phone'
+  | 'shift'
+  | 'employmentType'
+  | 'status'
+  | 'userId'
+  | 'title'
+  | 'firstName'
+  | 'lastName'
+  | 'email'
+  | 'dateOfBirth'
+  | 'addressLine1'
+  | 'city'
+  | 'salaryType'
+  | 'basicSalaryCents'
+  | 'allowances'
+  | 'createdAt'
+>;
+
+function seedEmployee(fields: RequiredSeedFields & Partial<Employee>): Employee {
+  return {
+    middleName: '',
+    location: LOCATION,
+    addressLine2: '',
+    suburb: '',
+    state: 'Western',
+    country: 'Sri Lanka',
+    zip: '10100',
+    calculateEpf: true,
+    calculateEtf: true,
+    overTimeRateCents: 0,
+    commissionRate: 0,
+    productDiscountRate: 0,
+    invoiceDiscountRate: 0,
+    monthlyTargetCents: 0,
+    considerAsCustomer: false,
+    createUserAccount: fields.userId !== null,
+    customField1: '',
+    customField2: '',
+    customField3: '',
+    customField4: '',
+    photoDataUrl: null,
+    ...fields,
+  };
+}
 
 export const EMPLOYEE_SEED: readonly Employee[] = [
-  {
+  seedEmployee({
     id: 'emp-001',
     code: 'EMP-001',
     name: 'Nimal Perera',
     jobTitle: 'Owner',
-    phone: '077 100 0001',
+    phone: '77 100 0001',
     shift: 'Morning',
     employmentType: 'Full-time',
     status: EmployeeStatus.ACTIVE,
     userId: 'usr-001',
-  },
-  {
+    title: EmployeeTitle.MR,
+    firstName: 'Nimal',
+    lastName: 'Perera',
+    email: 'nimal.perera@example.com',
+    dateOfBirth: '1976-03-14',
+    addressLine1: '12 Lake Road',
+    city: 'Colombo',
+    salaryType: SalaryType.MONTHLY,
+    basicSalaryCents: 25000000,
+    allowances: [{ id: 'alw-001-1', name: 'Management allowance', amountCents: 5000000 }],
+    monthlyTargetCents: 150000000,
+    customField1: 'Owner',
+    createdAt: '2026-01-05T09:00:00.000Z',
+  }),
+  seedEmployee({
     id: 'emp-002',
     code: 'EMP-002',
     name: 'Kamal Silva',
     jobTitle: 'Manager',
-    phone: '077 100 0002',
+    phone: '77 100 0002',
     shift: 'Morning',
     employmentType: 'Full-time',
     status: EmployeeStatus.ACTIVE,
     userId: 'usr-002',
-  },
-  {
+    title: EmployeeTitle.MR,
+    firstName: 'Kamal',
+    lastName: 'Silva',
+    email: 'kamal.silva@example.com',
+    dateOfBirth: '1984-07-22',
+    addressLine1: '45 Temple Lane',
+    city: 'Nugegoda',
+    salaryType: SalaryType.MONTHLY,
+    basicSalaryCents: 15000000,
+    allowances: [
+      { id: 'alw-002-1', name: 'Transport', amountCents: 1500000 },
+      { id: 'alw-002-2', name: 'Phone', amountCents: 500000 },
+    ],
+    overTimeRateCents: 75000,
+    commissionRate: 2,
+    monthlyTargetCents: 80000000,
+    createdAt: '2026-01-12T09:30:00.000Z',
+  }),
+  seedEmployee({
     id: 'emp-003',
     code: 'EMP-003',
     name: 'Dilani Fernando',
     jobTitle: 'Pharmacist',
-    phone: '077 100 0003',
+    phone: '77 100 0003',
     shift: 'Morning',
     employmentType: 'Full-time',
     status: EmployeeStatus.ACTIVE,
     userId: 'usr-003',
-  },
-  {
+    title: EmployeeTitle.MS,
+    firstName: 'Dilani',
+    lastName: 'Fernando',
+    email: 'dilani.fernando@example.com',
+    dateOfBirth: '1990-11-02',
+    addressLine1: '8 Garden Street',
+    city: 'Dehiwala',
+    salaryType: SalaryType.MONTHLY,
+    basicSalaryCents: 12000000,
+    allowances: [{ id: 'alw-003-1', name: 'Professional allowance', amountCents: 2000000 }],
+    overTimeRateCents: 60000,
+    productDiscountRate: 5,
+    createdAt: '2026-02-03T10:00:00.000Z',
+  }),
+  seedEmployee({
     id: 'emp-004',
     code: 'EMP-004',
     name: 'Ruwani Jayawardena',
     jobTitle: 'Cashier',
-    phone: '077 100 0004',
+    phone: '77 100 0004',
     shift: 'Morning',
     employmentType: 'Full-time',
     status: EmployeeStatus.ACTIVE,
     userId: 'usr-004',
-  },
-  {
+    title: EmployeeTitle.MISS,
+    firstName: 'Ruwani',
+    lastName: 'Jayawardena',
+    email: 'ruwani.j@example.com',
+    dateOfBirth: '1996-05-30',
+    addressLine1: '77 Hill Street',
+    city: 'Maharagama',
+    salaryType: SalaryType.MONTHLY,
+    basicSalaryCents: 6500000,
+    allowances: [],
+    overTimeRateCents: 40000,
+    invoiceDiscountRate: 2,
+    createdAt: '2026-03-18T08:45:00.000Z',
+  }),
+  seedEmployee({
     id: 'emp-005',
     code: 'EMP-005',
     name: 'Suresh Kumar',
     jobTitle: 'Sales assistant',
-    phone: '077 100 0005',
+    phone: '77 100 0005',
     shift: 'Evening',
     employmentType: 'Part-time',
     status: EmployeeStatus.ACTIVE,
     userId: null,
-  },
-  {
+    title: EmployeeTitle.MR,
+    firstName: 'Suresh',
+    lastName: 'Kumar',
+    email: 'suresh.kumar@example.com',
+    dateOfBirth: '1999-09-09',
+    addressLine1: '3 Beach Road',
+    city: 'Mount Lavinia',
+    salaryType: SalaryType.DAILY,
+    basicSalaryCents: 250000,
+    allowances: [{ id: 'alw-005-1', name: 'Meal', amountCents: 30000 }],
+    calculateEpf: false,
+    calculateEtf: false,
+    commissionRate: 1.5,
+    considerAsCustomer: true,
+    createdAt: '2026-04-21T14:00:00.000Z',
+  }),
+  seedEmployee({
     id: 'emp-006',
     code: 'EMP-006',
     name: 'Tharindu Silva',
     jobTitle: 'Sales assistant',
-    phone: '077 100 0006',
+    phone: '77 100 0006',
     shift: 'Evening',
     employmentType: 'Part-time',
     status: EmployeeStatus.ACTIVE,
     userId: null,
-  },
-  {
+    title: EmployeeTitle.MR,
+    firstName: 'Tharindu',
+    lastName: 'Silva',
+    email: 'tharindu.silva@example.com',
+    dateOfBirth: '2000-01-17',
+    addressLine1: '19 Park Avenue',
+    city: 'Kottawa',
+    salaryType: SalaryType.DAILY,
+    basicSalaryCents: 240000,
+    allowances: [],
+    calculateEtf: false,
+    createdAt: '2026-05-27T11:15:00.000Z',
+  }),
+  seedEmployee({
     id: 'emp-007',
     code: 'EMP-007',
     name: 'Anura Bandara',
     jobTitle: 'Stock keeper',
-    phone: '077 100 0007',
+    phone: '77 100 0007',
     shift: 'Morning',
     employmentType: 'Full-time',
     status: EmployeeStatus.ON_LEAVE,
     userId: null,
-  },
-  {
+    title: EmployeeTitle.MR,
+    firstName: 'Anura',
+    lastName: 'Bandara',
+    email: 'anura.bandara@example.com',
+    dateOfBirth: '1981-12-05',
+    addressLine1: '60 Station Road',
+    city: 'Piliyandala',
+    salaryType: SalaryType.MONTHLY,
+    basicSalaryCents: 7500000,
+    allowances: [
+      { id: 'alw-007-1', name: 'Transport', amountCents: 800000 },
+      { id: 'alw-007-2', name: 'Attendance', amountCents: 300000 },
+    ],
+    overTimeRateCents: 45000,
+    customField2: 'Warehouse key holder',
+    createdAt: '2026-06-09T09:20:00.000Z',
+  }),
+  seedEmployee({
     id: 'emp-008',
     code: 'EMP-008',
     name: 'Sanduni Wickrama',
     jobTitle: 'Dispenser',
-    phone: '077 100 0008',
+    phone: '77 100 0008',
     shift: 'Morning',
     employmentType: 'Full-time',
-    status: EmployeeStatus.ACTIVE,
+    status: EmployeeStatus.INACTIVE,
     userId: null,
-  },
+    title: EmployeeTitle.MRS,
+    firstName: 'Sanduni',
+    lastName: 'Wickrama',
+    email: 'sanduni.w@example.com',
+    dateOfBirth: '1992-04-25',
+    addressLine1: '5 Church Road',
+    city: 'Moratuwa',
+    salaryType: SalaryType.MONTHLY,
+    basicSalaryCents: 9000000,
+    allowances: [{ id: 'alw-008-1', name: 'Transport', amountCents: 1000000 }],
+    createdAt: '2026-07-14T10:40:00.000Z',
+  }),
 ];

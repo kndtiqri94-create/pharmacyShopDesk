@@ -115,14 +115,17 @@ describe('user-validation.util', () => {
     );
   });
 
+  it('does not offer inactive employees', () => {
+    const inactive = EMPLOYEE_SEED.find(employee => employee.status === 'INACTIVE');
+    expect(inactive).toBeDefined();
+    expect(availableEmployees(EMPLOYEE_SEED, USER_SEED).map(employee => employee.id)).not.toContain(
+      inactive!.id
+    );
+  });
+
   it('offers only employees without a sign-in, shown with name and ID', () => {
     const available = availableEmployees(EMPLOYEE_SEED, USER_SEED);
-    expect(available.map(employee => employee.code)).toEqual([
-      'EMP-005',
-      'EMP-006',
-      'EMP-007',
-      'EMP-008',
-    ]);
+    expect(available.map(employee => employee.code)).toEqual(['EMP-005', 'EMP-006', 'EMP-007']);
     expect(employeeOption(available[0])).toBe('Suresh Kumar (EMP-005)');
   });
 });

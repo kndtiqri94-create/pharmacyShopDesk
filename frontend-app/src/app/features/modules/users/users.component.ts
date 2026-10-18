@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CanWriteDirective } from '../../../core/directives/permission-write.directive';
 import { AppUser } from '../../../core/models/domain/app-user.model';
@@ -40,6 +41,7 @@ import { UsersCardComponent } from './users-card/users-card.component';
   styleUrl: './users.component.scss',
 })
 export class UsersComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly permissionService = inject(PermissionService);
@@ -53,6 +55,8 @@ export class UsersComponent implements OnInit {
   protected readonly editingId = signal<string | null>(null);
   protected readonly lockingId = signal<string | null>(null);
   protected readonly lockBusy = signal(false);
+  protected readonly preselectedEmployeeId = signal<string | null>(null);
+  private requestHandled = false;
 
   private readonly users = signal<readonly AppUser[]>([]);
   private readonly employees = signal<readonly Employee[]>([]);
@@ -153,5 +157,17 @@ export class UsersComponent implements OnInit {
     ]);
     this.users.set(users);
     this.employees.set(employees);
+    this.openForRequestedEmployee();
+  }
+
+  private openForRequestedEmployee(): void {
+    if (this.requestHandled) return;
+    this.requestHandled = true;
+    const requested = this.route.snapshot.queryParamMap.get('employeeId');
+    if (requested === null || !this.canEdit()) return;
+    if (this.unlinkedEmployees().some(employee => employee.id === requested)) {
+      this.preselectedEmployeeId.set(requested);
+      this.addOpen.set(true);
+    }
   }
 }

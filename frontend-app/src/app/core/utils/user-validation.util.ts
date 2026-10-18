@@ -1,5 +1,6 @@
 import { AppUser } from '../models/domain/app-user.model';
 import { Employee } from '../models/domain/employee.model';
+import { EmployeeStatus } from '../models/enums/employee-status.enum';
 import { ALL_USER_ROLES, UserRole } from '../models/enums/user-role.enum';
 
 export const USER_FIELD_LIMITS = {
@@ -55,7 +56,10 @@ export function availableEmployees(
   users: readonly AppUser[]
 ): Employee[] {
   return employees.filter(
-    employee => employee.userId === null && !users.some(user => user.employeeId === employee.id)
+    employee =>
+      employee.status !== EmployeeStatus.INACTIVE &&
+      employee.userId === null &&
+      !users.some(user => user.employeeId === employee.id)
   );
 }
 

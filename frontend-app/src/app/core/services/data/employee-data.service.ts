@@ -5,4 +5,5 @@ export abstract class EmployeeDataService {
   abstract getAll(): Observable<readonly Employee[]>;
   abstract getById(id: string): Observable<Employee | null>;
   abstract save(employee: Employee): Observable<Employee>;
+  abstract delete(id: string): Observable<boolean>;
 }

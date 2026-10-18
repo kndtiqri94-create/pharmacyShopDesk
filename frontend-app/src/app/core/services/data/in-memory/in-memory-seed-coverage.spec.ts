@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 import { AttendanceStatus } from '../../../models/enums/attendance-status.enum';
+import { EmployeeStatus } from '../../../models/enums/employee-status.enum';
+import { SalaryType } from '../../../models/enums/salary-type.enum';
 import { GrnStatus } from '../../../models/enums/grn-status.enum';
 import { PaymentStatus } from '../../../models/enums/payment-status.enum';
 import { PoStatus } from '../../../models/enums/po-status.enum';
@@ -82,6 +84,34 @@ describe('in-memory seed coverage', () => {
     expect(leave.map(record => record.employeeId)).toEqual(['emp-007']);
     const payments = await firstValueFrom(TestBed.inject(SupplierPaymentDataService).getAll());
     expect(payments.length).toBeGreaterThan(0);
+  });
+
+  it('has complete employee records with unique codes, both salary types and one inactive employee', async () => {
+    const employees = await firstValueFrom(TestBed.inject(EmployeeDataService).getAll());
+    const codes = employees.map(employee => employee.code.toLowerCase());
+    expect(new Set(codes).size).toBe(codes.length);
+    expect(new Set(employees.map(employee => employee.salaryType))).toEqual(
+      new Set(Object.values(SalaryType))
+    );
+    expect(employees.filter(employee => employee.status === EmployeeStatus.INACTIVE).length).toBe(
+      1
+    );
+    expect(employees.some(employee => employee.allowances.length > 0)).toBeTrue();
+    expect(employees.some(employee => employee.calculateEpf && employee.calculateEtf)).toBeTrue();
+    expect(new Set(employees.map(employee => employee.createdAt)).size).toBe(employees.length);
+    for (const employee of employees) {
+      expect(employee.name).toBe(`${employee.firstName} ${employee.lastName}`);
+    }
+  });
+
+  it('deletes an employee and returns copies from the employee data service', async () => {
+    const service = TestBed.inject(EmployeeDataService);
+    const first = (await firstValueFrom(service.getAll()))[0];
+    first.name = 'Changed';
+    expect((await firstValueFrom(service.getById('emp-001')))?.name).toBe('Nimal Perera');
+    expect(await firstValueFrom(service.delete('emp-005'))).toBeTrue();
+    expect(await firstValueFrom(service.getById('emp-005'))).toBeNull();
+    expect(await firstValueFrom(service.delete('emp-005'))).toBeFalse();
   });
 
   it('has the named employees', async () => {

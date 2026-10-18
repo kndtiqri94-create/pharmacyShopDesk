@@ -13,10 +13,10 @@ describe('moduleWriteGuard', () => {
 
   afterEach(clearBrowserStorage);
 
-  const run = (module: unknown) =>
+  const run = (module: unknown, viewOnlyRedirect?: string, params: Record<string, string> = {}) =>
     TestBed.runInInjectionContext(() =>
       moduleWriteGuard(
-        { data: { module } } as unknown as ActivatedRouteSnapshot,
+        { data: { module, viewOnlyRedirect }, params } as unknown as ActivatedRouteSnapshot,
         {} as RouterStateSnapshot
       )
     );
@@ -45,5 +45,39 @@ describe('moduleWriteGuard', () => {
 
   it('denies a signed-out visitor', () => {
     expect(serialize(run(ModuleKey.PRODUCTS))).toBe('/access-denied');
+  });
+
+  describe('with a view-only redirect', () => {
+    it('sends a View-only role to the redirect with the route id filled in', async () => {
+      await signInAs(UserRole.MANAGER);
+      expect(serialize(run(ModuleKey.EMPLOYEES, '/employees/:id', { id: 'emp-002' }))).toBe(
+        '/employees/emp-002'
+      );
+      expect(serialize(run(ModuleKey.EMPLOYEES, '/employees'))).toBe('/employees');
+    });
+
+    it('encodes a hostile id instead of building a different path', async () => {
+      await signInAs(UserRole.MANAGER);
+      expect(serialize(run(ModuleKey.EMPLOYEES, '/employees/:id', { id: '../admin' }))).toBe(
+        '/employees/..%2Fadmin'
+      );
+    });
+
+    it('denies when the id is missing', async () => {
+      await signInAs(UserRole.MANAGER);
+      expect(serialize(run(ModuleKey.EMPLOYEES, '/employees/:id'))).toBe('/access-denied');
+    });
+
+    it('still sends a role with no access to access denied', async () => {
+      await signInAs(UserRole.CASHIER);
+      expect(serialize(run(ModuleKey.EMPLOYEES, '/employees/:id', { id: 'emp-002' }))).toBe(
+        '/access-denied'
+      );
+    });
+
+    it('lets an Admin through', async () => {
+      await signInAs(UserRole.ADMIN);
+      expect(run(ModuleKey.EMPLOYEES, '/employees/:id', { id: 'emp-002' })).toBeTrue();
+    });
   });
 });

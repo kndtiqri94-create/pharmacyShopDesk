@@ -26,4 +26,13 @@ export class InMemoryCollection<T extends { id: string }> {
     }
     return cloneValue(copy);
   }
+
+  remove(id: string): boolean {
+    const index = this.items.findIndex(item => item.id === id);
+    if (index === -1) {
+      return false;
+    }
+    this.items.splice(index, 1);
+    return true;
+  }
 }

@@ -1,10 +1,10 @@
 # Solution Tasks (Backlog) — ShopDesk
 
 > **Status:** Draft
-> **Version:** v0.2
-> **Last updated:** 2026-10-03
+> **Version:** v0.3
+> **Last updated:** 2026-10-17
 > **Owner:** Product Owner (agent: product-owner)
-> **Source PRD:** `docs/SOLUTION_PRD.md` (v0.2)
+> **Source PRD:** `docs/SOLUTION_PRD.md` (v0.3)
 
 ## How to read this document
 
@@ -27,7 +27,9 @@
 
 | Epic | Title | Phase | PRD FR groups |
 |---|---|---|---|
-| E-2 | ShopDesk back office frontend | 1 | FR-FND, FR-SHELL, FR-AUTH, FR-DASH, FR-PROD, FR-GRN, FR-PO, FR-SUP, FR-EMP, FR-USR, FR-SVC, FR-SET |
+| E-2 | ShopDesk back office frontend | 1 | FR-FND, FR-SHELL, FR-AUTH, FR-DASH, FR-PROD, FR-GRN, FR-PO, FR-SUP, FR-EMP, FR-USR, FR-SVC, FR-SET, plus HR amendment FR-EMP-2 to 5, FR-LVE, FR-PAY, FR-AUTH-5 (F-2.6 to F-2.8) |
+
+HR amendment sequencing: F-2.6 Employee master, then F-2.7 Leave management, then F-2.8 Payroll (payroll reads employees and leave).
 
 Sequencing: F-2.1 first (everything depends on it); F-2.2 next (the product and batch data model is reused by stock-in); F-2.3 after F-2.2; F-2.4 and F-2.5 can follow F-2.1 and F-2.3 in either order (Suppliers payment uses GRN data from F-2.3; Reload threshold reads Settings, delivered in F-2.5, so use the mock settings default until then).
 
@@ -69,8 +71,34 @@ Sequencing: F-2.1 first (everything depends on it); F-2.2 next (the product and 
 
 ### F-2.5 Services and settings (WEB)
 
-- [ ] **S-2.5.1** [WEB] Reload & Utility: operator tiles, reload form with commission preview, float tracking with low-float warning, bill payment and Recent transactions. — _Traces: FR-SVC-1, FR-SVC-2, FR-SVC-3_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
-- [ ] **S-2.5.2** [WEB] Settings with grouped sections, Save changes / Discard, and instant-apply Backup & sync toggles; values feed alert window, reorder level and float threshold. — _Traces: FR-SET-1, FR-SET-2, FR-SET-3_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.5.1** [WEB] Reload & Utility: operator tiles, reload form with commission preview, float tracking with low-float warning, bill payment and Recent transactions. — _Traces: FR-SVC-1, FR-SVC-2, FR-SVC-3_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.5.2** [WEB] Settings with grouped sections, Save changes / Discard, and instant-apply Backup & sync toggles; values feed alert window, reorder level and float threshold. — _Traces: FR-SET-1, FR-SET-2, FR-SET-3_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+
+### F-2.6 Employee master (WEB)
+
+> HR amendment (PRD 5.8). Reference screenshots are layout/field references only; ShopDesk design system governs styling. The screenshot copies named below must be placed in `docs/design/hr-reference/` (originals are in the session temp folder `C:\Users\knd\AppData\Local\Temp\claude\d--Pharmacy-pharmacyShopDesk\8d1e2a27-8f64-491b-9b13-4e0ce26cccfe\images\`). Access defaults (PRD FR-AUTH-5) are an assumption awaiting user confirmation. Commission, discount, target and Consider-as-Customer are stored fields only.
+
+- [x] **S-2.6.1** [WEB] Extend the mock employee model and service (EMP code, title, names, DOB, location, address, EPF/ETF flags, salary type, rates, target, customer flag, create-user flag, custom fields 1-4, status, image, basic salary, allowances) and seed data; unique EMP code. — _Traces: FR-EMP-3, FR-EMP-4_ — _Weight: 3_ — _Design: docs/design/hr-reference/2.png_
+- [x] **S-2.6.2** [WEB] Employee list (replaces the Staff table): Keyword/Location/Created at/Status filters with Filter and Reset, table with image, code, name, address, mobile, email, DOB, location, status, edit/delete row actions, page size and "Showing a to b of N entries" pagination; delete asks to confirm and deactivates when history exists. — _Traces: FR-EMP-2, FR-EMP-1_ — _Weight: 5_ — _Design: docs/design/hr-reference/1.png_
+- [x] **S-2.6.3** [WEB] Create/Edit employee form: Basic details, Address and More Information groups with validation (required names and mobile, unique EMP code), Save/Cancel, optional Create user account flag that points to Users, view-only mode for View access. — _Traces: FR-EMP-3, FR-EMP-4_ — _Weight: 5_ — _Design: docs/design/hr-reference/2.png, docs/design/hr-reference/3.png_
+- [x] **S-2.6.4** [WEB] Employee Salaries and Allowances sections (basic salary, add/edit/remove allowance lines) hidden or read-only per role, and employee image upload with preview and type/size validation (in memory). — _Traces: FR-EMP-3, FR-EMP-5, FR-AUTH-5_ — _Weight: 3_ — _Design: docs/design/hr-reference/3.png, docs/design/hr-reference/4.png_
+- [x] **S-2.6.5** [WEB] Export CSV and Export PDF of the filtered employee list (mock, in-browser; see OQ10). — _Traces: FR-EMP-5_ — _Weight: 3_ — _Design: docs/design/hr-reference/1.png_
+
+### F-2.7 Leave management (WEB)
+
+- [ ] **S-2.7.1** [WEB] Mock leave model and service: leave types and per-employee yearly entitlements, balance (entitlement - utilized - pending), leave requests with Pending/Approved/Rejected/Cancelled, seeded with the screenshot's leave types; Employees "On leave" counts read from it. — _Traces: FR-LVE-2, FR-LVE-3, FR-EMP-1_ — _Weight: 3_ — _Design: docs/design/hr-reference/9.png_
+- [ ] **S-2.7.2** [WEB] Leave application page: Leave Year with period, Leave Type, From/To, Attachment (mock), Reason, Comments, Covering Employee search, Approver, Apply/Reset, validation (date order, overlap, balance, covering employee) and the Leave Balance table. — _Traces: FR-LVE-1, FR-LVE-2_ — _Weight: 5_ — _Design: docs/design/hr-reference/9.png_
+- [ ] **S-2.7.3** [WEB] Leave approval: approver or Admin approves/rejects pending leave with optional comment; balances and Pending Approval update; Leave tab lists requests. — _Traces: FR-LVE-3_ — _Weight: 3_ — _Design: docs/design/hr-reference/9.png_
+
+### F-2.8 Payroll (WEB)
+
+> Depends on F-2.6 and F-2.7. Daily Pay content, Nopay fields, Paid transition and statutory rates are open questions in the PRD (OQ12 to OQ19); build to the stated assumptions.
+
+- [ ] **S-2.8.1** [WEB] Payroll calculation service (mock): gross, over time, commission from stored rate, EPF/ETF flags, Payee Tax slabs, nopay, advances, net (not below zero), configurable placeholder rates in mock settings; unit-testable pure logic. — _Traces: FR-PAY-3, FR-EMP-4_ — _Weight: 8_ — _Design: docs/design/hr-reference/5.png_
+- [ ] **S-2.8.2** [WEB] Employees Salaries page: Monthly Pay / Daily Pay tabs, Keyword/Location/Year/Month filters with Filter and Reset, full payroll table with money formatting and N/A cells, Payment Status badge, page size and pagination, role gating (Manager view-only). — _Traces: FR-PAY-1, FR-PAY-6, FR-AUTH-5_ — _Weight: 5_ — _Design: docs/design/hr-reference/5.png_
+- [ ] **S-2.8.3** [WEB] Row action menu with Add Leave (quick one-day leave modal), Add Salary Advance (Counter, Date, Advance Amount with validation) and Add Nopay Amount modals; payroll row recalculates after each. — _Traces: FR-PAY-2, FR-PAY-4, FR-PAY-5, FR-LVE-4_ — _Weight: 5_ — _Design: docs/design/hr-reference/6.png, docs/design/hr-reference/7.png, docs/design/hr-reference/8.png_
+- [ ] **S-2.8.4** [WEB] Export CSV and Export PDF of filtered payroll rows (mock, in-browser). — _Traces: FR-PAY-7_ — _Weight: 3_ — _Design: docs/design/hr-reference/5.png_
+- [ ] **S-2.8.5** [WEB] Wire Employees, Leave and Payroll routes, tabs and permission matrix row so Admin is Full, Manager View, others No access (assumption, PRD FR-AUTH-5). — _Traces: FR-AUTH-5, FR-USR-2, FR-SHELL-3_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
 
 ---
 
@@ -88,4 +116,5 @@ The previous HireFlow job-application scope was replaced by ShopDesk. Listed her
 | Version | Date | Author | Change |
 |---|---|---|---|
 | v0.1 | 2026-08-13 | Shiham (PO) | Initial draft: E-1 HireFlow Job Application Screen. |
+| v0.3 | 2026-10-17 | Shiham (PO) | Added F-2.6 Employee master (S-2.6.1 to 5), F-2.7 Leave management (S-2.7.1 to 3), F-2.8 Payroll (S-2.8.1 to 5) from the HR screenshots; PRD v0.3 section 5.8. |
 | v0.2 | 2026-10-03 | Shiham (PO) | Replaced HireFlow with E-2 ShopDesk back office frontend: 5 features, 20 stories (weights 3 to 5). Added mock data layer story S-2.1.4 and separated role gating S-2.1.7. HireFlow archived above. |

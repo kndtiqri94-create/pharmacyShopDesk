@@ -11,6 +11,7 @@ import { EmployeesComponent } from './employees/employees.component';
 import { GrnListComponent } from './grn/grn-list/grn-list.component';
 import { PurchaseOrderFormComponent } from './purchase-orders/purchase-order-form/purchase-order-form.component';
 import { SuppliersComponent } from './suppliers/suppliers.component';
+import { UsersComponent } from './users/users.component';
 
 describe('Suppliers and people: the same figure everywhere', () => {
   beforeEach(() => clearBrowserStorage());
@@ -104,11 +105,14 @@ describe('Suppliers and people: the same figure everywhere', () => {
       Array.from(element.querySelectorAll('app-stat-card'))
         .find(tile => tile.textContent?.includes('Can log in'))
         ?.textContent?.replace(/\s+/g, ' ');
-    const loginOf = (element: HTMLElement, name: string) =>
-      Array.from(element.querySelectorAll('tbody tr'))
-        .find(row => row.textContent?.includes(name))
-        ?.querySelector('td:nth-child(5)')
-        ?.textContent?.trim();
+    const loginOf = (element: HTMLElement, name: string) => {
+      const row = Array.from(element.querySelectorAll('app-users-card tbody tr')).find(candidate =>
+        candidate.textContent?.includes(name)
+      );
+      const role = row?.querySelector('td:nth-child(2)')?.textContent?.trim();
+      const status = row?.querySelector('td:nth-child(4)')?.textContent?.trim();
+      return status === 'Disabled' ? `${role} · Disabled` : role;
+    };
     expect(tileText(await show(EmployeesComponent))).toContain('4');
 
     const created = await TestBed.inject(UserAdminService).createUser({
@@ -122,11 +126,11 @@ describe('Suppliers and people: the same figure everywhere', () => {
     expect(created.ok).toBeTrue();
     const afterCreate = await show(EmployeesComponent);
     expect(tileText(afterCreate)).toContain('Can log in5');
-    expect(loginOf(afterCreate, 'Suresh Kumar')).toBe('Cashier');
+    expect(loginOf(await show(UsersComponent), 'Suresh Kumar')).toBe('Cashier');
 
     await TestBed.inject(UserAdminService).setDisabled('usr-005', true);
     const afterDisable = await show(EmployeesComponent);
     expect(tileText(afterDisable)).toContain('Can log in4');
-    expect(loginOf(afterDisable, 'Suresh Kumar')).toBe('Cashier · Disabled');
+    expect(loginOf(await show(UsersComponent), 'Suresh Kumar')).toBe('Cashier · Disabled');
   });
 });

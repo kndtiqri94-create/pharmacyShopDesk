@@ -50,4 +50,14 @@ describe('PaginationComponent', () => {
     const { element } = render(1000);
     expect(element.querySelectorAll('button[aria-label^="Page "]')).toHaveSize(5);
   });
+
+  it('can hide its own summary so the page can word it', () => {
+    const fixture = TestBed.createComponent(PaginationComponent);
+    fixture.componentRef.setInput('total', 25);
+    fixture.componentRef.setInput('showSummary', false);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('[data-testid="pagination-summary"]')).toBeNull();
+    expect(element.querySelector('nav')).not.toBeNull();
+  });
 });

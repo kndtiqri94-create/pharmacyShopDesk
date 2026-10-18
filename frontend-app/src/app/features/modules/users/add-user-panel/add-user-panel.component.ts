@@ -41,6 +41,7 @@ const FIELD_ID_PREFIX = 'add-user-';
 export class AddUserPanelComponent {
   readonly open = input(false);
   readonly employees = input.required<readonly Employee[]>();
+  readonly preselectedEmployeeId = input<string | null>(null);
   readonly created = output<AppUser>();
   readonly cancelled = output<void>();
 
@@ -66,7 +67,14 @@ export class AddUserPanelComponent {
 
   constructor() {
     effect(() => {
-      if (!this.open()) this.clear();
+      if (!this.open()) {
+        this.clear();
+        return;
+      }
+      const requested = this.preselectedEmployeeId();
+      if (requested !== null && this.employees().some(employee => employee.id === requested)) {
+        this.form.patchValue({ employeeId: requested });
+      }
     });
   }
 

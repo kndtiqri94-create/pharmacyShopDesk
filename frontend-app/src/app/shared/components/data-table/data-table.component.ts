@@ -40,6 +40,7 @@ export class DataTableComponent<T> {
   readonly actions = input<readonly DataTableRowAction[]>([]);
   readonly ariaLabel = input.required<string>();
   readonly stack = input(false);
+  readonly paginate = input(true);
   readonly pageSize = input(DEFAULT_PAGE_SIZE);
   readonly itemLabel = input('items');
   readonly emptyTitle = input('Nothing to show yet');
@@ -64,7 +65,9 @@ export class DataTableComponent<T> {
   protected readonly effectivePageSize = computed(() =>
     Math.min(Math.max(1, Math.floor(this.pageSize())), MAX_PAGE_SIZE)
   );
-  protected readonly showPagination = computed(() => this.rows().length > PAGINATION_THRESHOLD);
+  protected readonly showPagination = computed(
+    () => this.paginate() && this.rows().length > PAGINATION_THRESHOLD
+  );
   protected readonly page = computed(() => {
     const lastPage = Math.max(1, Math.ceil(this.rows().length / this.effectivePageSize()));
     return Math.min(this.pageNumber(), lastPage);

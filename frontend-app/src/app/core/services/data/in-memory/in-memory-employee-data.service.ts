@@ -20,4 +20,8 @@ export class InMemoryEmployeeDataService extends EmployeeDataService {
   save(item: Employee): Observable<Employee> {
     return of(this.collection.upsert(item));
   }
+
+  delete(id: string): Observable<boolean> {
+    return of(this.collection.remove(id));
+  }
 }

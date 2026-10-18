@@ -14,7 +14,7 @@ describe('TodaysAttendanceCardComponent', () => {
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     const items = Array.from(element.querySelectorAll('li'));
-    expect(items).toHaveSize(8);
+    expect(items).toHaveSize(7);
     expect(items[0].textContent).toContain('In 07:45');
     expect(items[4].textContent).not.toContain('In ');
     expect(items[4].querySelector('app-badge')?.textContent).toContain('Not yet');

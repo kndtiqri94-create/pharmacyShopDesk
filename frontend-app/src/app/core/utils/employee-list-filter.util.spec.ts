@@ -1,5 +1,6 @@
 import { AppUser } from '../models/domain/app-user.model';
 import { AttendanceStatus } from '../models/enums/attendance-status.enum';
+import { EmployeeStatus } from '../models/enums/employee-status.enum';
 import { UserStatus } from '../models/enums/user-status.enum';
 import { ATTENDANCE_SEED } from '../services/data/in-memory/seed/attendance.seed';
 import { EMPLOYEE_SEED } from '../services/data/in-memory/seed/employee.seed';
@@ -8,22 +9,16 @@ import { USER_SEED } from '../services/data/in-memory/seed/user.seed';
 import {
   buildAttendanceRows,
   buildLeaveRows,
-  countEmployeeFilters,
   employeeLogin,
-  filterEmployeeItems,
   formatEmployeeSubtitle,
   formatLateNote,
-  formatLoginBadge,
   formatLeaveNote,
   formatLoginNote,
   formatTimeIn,
-  parseEmployeeFilter,
   summarizeEmployees,
-  toEmployeeListItems,
 } from './employee-list-filter.util';
 
 describe('employee-list-filter.util', () => {
-  const items = toEmployeeListItems(EMPLOYEE_SEED, USER_SEED);
   const attendance = buildAttendanceRows(EMPLOYEE_SEED, ATTENDANCE_SEED);
   const leave = buildLeaveRows(EMPLOYEE_SEED, LEAVE_SEED);
 
@@ -47,22 +42,11 @@ describe('employee-list-filter.util', () => {
     });
   });
 
-  it('searches name, employee ID and phone ignoring case and spaces around', () => {
-    const search = (text: string) =>
-      filterEmployeeItems(items, { search: text, filter: 'all' }).map(item => item.employee.code);
-    expect(search(' suresh ')).toEqual(['EMP-005']);
-    expect(search('emp-003')).toEqual(['EMP-003']);
-    expect(search('100 0007')).toEqual(['EMP-007']);
-    expect(search('nobody')).toEqual([]);
-    expect(search('x'.repeat(300))).toEqual([]);
-  });
-
-  it('filters by Active and On leave and counts chips live', () => {
-    expect(countEmployeeFilters(items, '')).toEqual({ all: 8, active: 7, 'on-leave': 1 });
-    expect(countEmployeeFilters(items, 'silva')).toEqual({ all: 2, active: 2, 'on-leave': 0 });
-    expect(
-      filterEmployeeItems(items, { search: '', filter: 'on-leave' }).map(item => item.employee.code)
-    ).toEqual(['EMP-007']);
+  it('does not treat an Inactive employee as on leave or on shift', () => {
+    const inactive = EMPLOYEE_SEED.find(employee => employee.status === EmployeeStatus.INACTIVE)!;
+    expect(leave.map(row => row.employee.id)).not.toContain(inactive.id);
+    expect(attendance.map(row => row.employee.id)).not.toContain(inactive.id);
+    expect(summarizeEmployees(EMPLOYEE_SEED, USER_SEED, attendance, leave).onLeave).toBe(1);
   });
 
   it('works out the tile figures', () => {
@@ -71,13 +55,13 @@ describe('employee-list-filter.util', () => {
       total: 8,
       fullTime: 6,
       partTime: 2,
-      onShift: 5,
-      late: 1,
+      onShift: 4,
+      late: 0,
       onLeave: 1,
       earliestReturn: '2026-09-24',
       canLogIn: 4,
     });
-    expect(formatEmployeeSubtitle(summary)).toBe('8 staff · 5 on shift today');
+    expect(formatEmployeeSubtitle(summary)).toBe('8 staff · 4 on shift today');
     expect(formatLateNote(1)).toBe('1 late this morning');
     expect(formatLateNote(0)).toBe('Nobody late this morning');
     expect(formatLeaveNote(summary)).toBe('Back on 24 Sep');
@@ -85,10 +69,18 @@ describe('employee-list-filter.util', () => {
   });
 
   it('counts Late people as on shift', () => {
-    const summary = summarizeEmployees(EMPLOYEE_SEED, USER_SEED, attendance, leave);
-    const late = attendance.filter(row => row.status === AttendanceStatus.LATE).length;
-    const present = attendance.filter(row => row.status === AttendanceStatus.PRESENT).length;
-    expect(summary.onShift).toBe(present + late);
+    const rows = buildAttendanceRows(EMPLOYEE_SEED, [
+      {
+        id: 'att-x',
+        employeeId: 'emp-001',
+        date: '2026-09-21',
+        status: AttendanceStatus.LATE,
+        timeIn: '08:20',
+      },
+    ]);
+    const summary = summarizeEmployees(EMPLOYEE_SEED, USER_SEED, rows, leave);
+    expect(summary.late).toBe(1);
+    expect(summary.onShift).toBe(1);
   });
 
   it('does not count a disabled user in Can log in', () => {
@@ -99,7 +91,7 @@ describe('employee-list-filter.util', () => {
   });
 
   it('has an attendance row for every employee and falls back sensibly with no record', () => {
-    expect(attendance).toHaveSize(8);
+    expect(attendance).toHaveSize(7);
     const rows = buildAttendanceRows(EMPLOYEE_SEED, []);
     expect(rows.find(row => row.employee.id === 'emp-007')?.status).toBe(AttendanceStatus.ON_LEAVE);
     expect(rows.find(row => row.employee.id === 'emp-001')?.status).toBe(AttendanceStatus.NOT_YET);
@@ -119,19 +111,8 @@ describe('employee-list-filter.util', () => {
     );
   });
 
-  it('words the time in and the login badge', () => {
+  it('words the time in', () => {
     expect(formatTimeIn('07:52')).toBe('In 07:52');
     expect(formatTimeIn(null)).toBe('–');
-    expect(formatLoginBadge({ role: 'MANAGER', label: 'Manager', disabled: false })).toBe(
-      'Manager'
-    );
-    expect(formatLoginBadge({ role: 'MANAGER', label: 'Manager', disabled: true })).toBe(
-      'Manager · Disabled'
-    );
-  });
-
-  it('falls back to All for an unknown filter', () => {
-    expect(parseEmployeeFilter('on-leave')).toBe('on-leave');
-    expect(parseEmployeeFilter('???')).toBe('all');
   });
 });

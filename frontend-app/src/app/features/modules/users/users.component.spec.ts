@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { clearBrowserStorage, signInAs, TEST_PROVIDERS } from '../../../../testing/auth-test.util';
 import { UserRole } from '../../../core/models/enums/user-role.enum';
 import { NotificationService } from '../../../core/services/notification.service';
+import { EMPLOYEE_SEED } from '../../../core/services/data/in-memory/seed/employee.seed';
 import { PermissionService } from '../../../core/services/permission.service';
 import { UsersComponent } from './users.component';
 
@@ -22,8 +24,15 @@ describe('UsersComponent', () => {
     fixture.detectChanges();
   }
 
-  async function render(role: UserRole = UserRole.ADMIN) {
-    TestBed.configureTestingModule({ providers: TEST_PROVIDERS });
+  function routeWith(query: Record<string, string>) {
+    return {
+      provide: ActivatedRoute,
+      useValue: { snapshot: { queryParamMap: convertToParamMap(query) } },
+    };
+  }
+
+  async function render(role: UserRole = UserRole.ADMIN, query: Record<string, string> = {}) {
+    TestBed.configureTestingModule({ providers: [...TEST_PROVIDERS, routeWith(query)] });
     await signInAs(role);
     const fixture = TestBed.createComponent(UsersComponent);
     fixture.detectChanges();
@@ -219,7 +228,6 @@ describe('UsersComponent', () => {
         'Suresh Kumar (EMP-005)',
         'Tharindu Silva (EMP-006)',
         'Anura Bandara (EMP-007)',
-        'Sanduni Wickrama (EMP-008)',
       ]);
     });
 
@@ -298,6 +306,37 @@ describe('UsersComponent', () => {
       expect(field(element, 'username').value).toBe('');
       expect(field(element, 'password').value).toBe('');
       expect(userRows(element)).toHaveSize(4);
+    });
+  });
+
+  describe('employee preselected from the Employees form (AC-35)', () => {
+    const panelOpen = (element: HTMLElement) => dialogOf(element, 'app-add-user-panel').open;
+
+    it('opens Add user with a valid unlinked Active employee chosen', async () => {
+      const { element } = await render(UserRole.ADMIN, { employeeId: 'emp-006' });
+      expect(panelOpen(element)).toBeTrue();
+      expect(field(element, 'employeeId').value).toBe('emp-006');
+    });
+
+    for (const value of ['', 'emp-999', 'emp-001', '<script>', 'EMP-006', ' emp-006']) {
+      it(`ignores the invalid or already linked value "${value}"`, async () => {
+        const { element } = await render(UserRole.ADMIN, { employeeId: value });
+        expect(panelOpen(element)).toBeFalse();
+        expect(field(element, 'employeeId').value).toBe('');
+      });
+    }
+
+    it('ignores an Inactive employee', async () => {
+      const inactive = EMPLOYEE_SEED.find(employee => employee.status === 'INACTIVE');
+      expect(inactive).toBeDefined();
+      const { element } = await render(UserRole.ADMIN, { employeeId: inactive?.id ?? '' });
+      expect(panelOpen(element)).toBeFalse();
+      expect(field(element, 'employeeId').value).toBe('');
+    });
+
+    it('does not open the panel for someone who cannot change users', async () => {
+      const { element } = await render(UserRole.MANAGER, { employeeId: 'emp-006' });
+      expect(element.querySelector('app-add-user-panel')).toBeNull();
     });
   });
 
@@ -387,7 +426,7 @@ describe('UsersComponent', () => {
   });
 
   it('hides every change action from a signed-in person who can only view users', async () => {
-    TestBed.configureTestingModule({ providers: TEST_PROVIDERS });
+    TestBed.configureTestingModule({ providers: [...TEST_PROVIDERS, routeWith({})] });
     await signInAs(UserRole.ADMIN);
     spyOn(TestBed.inject(PermissionService), 'canWrite').and.returnValue(false);
     const fixture = TestBed.createComponent(UsersComponent);

@@ -50,6 +50,7 @@ export const RELOAD_TYPE_LABEL: Record<ReloadTransactionType, string> = {
 
 export const EMPLOYEE_STATUS_DISPLAY: Record<EmployeeStatus, StatusDisplay> = {
   ACTIVE: { label: 'Active', tone: 'success' },
+  INACTIVE: { label: 'Inactive', tone: 'neutral' },
   ON_LEAVE: { label: 'On leave', tone: 'warning' },
 };
 

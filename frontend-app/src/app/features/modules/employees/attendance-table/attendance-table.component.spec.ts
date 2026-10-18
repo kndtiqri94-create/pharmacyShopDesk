@@ -10,7 +10,7 @@ describe('AttendanceTableComponent', () => {
     fixture.componentRef.setInput('rows', buildAttendanceRows(EMPLOYEE_SEED, ATTENDANCE_SEED));
     fixture.detectChanges();
     const rows = (fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr');
-    expect(rows).toHaveSize(8);
+    expect(rows).toHaveSize(7);
     expect(rows[0].textContent).toContain('Nimal Perera');
     expect(rows[0].textContent).toContain('Present');
     expect(rows[0].textContent).toContain('In 07:45');

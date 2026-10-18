@@ -54,6 +54,10 @@ describe('status-display.util', () => {
     expect(ATTENDANCE_STATUS_DISPLAY[AttendanceStatus.NOT_YET].label).toBe('Not yet');
     expect(ATTENDANCE_STATUS_DISPLAY[AttendanceStatus.ON_LEAVE].label).toBe('On leave');
     expect(EMPLOYEE_STATUS_DISPLAY[EmployeeStatus.ON_LEAVE].label).toBe('On leave');
+    expect(EMPLOYEE_STATUS_DISPLAY[EmployeeStatus.INACTIVE]).toEqual({
+      label: 'Inactive',
+      tone: 'neutral',
+    });
     expect(USER_STATUS_DISPLAY[UserStatus.DISABLED]).toEqual({
       label: 'Disabled',
       tone: 'neutral',
