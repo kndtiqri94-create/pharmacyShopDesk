@@ -26,7 +26,7 @@ describe('RolePermissionsCardComponent', () => {
   it('shows words, never colour alone, for every module and role', async () => {
     const { element } = await render(UserRole.ADMIN);
     const badges = Array.from(element.querySelectorAll('tbody app-badge'));
-    expect(badges).toHaveSize(36);
+    expect(badges).toHaveSize(40);
     expect(
       badges.every(badge => ['Full', 'View', 'No access'].includes(badge.textContent!.trim()))
     ).toBeTrue();

@@ -19,7 +19,12 @@ describe('EmployeeFormComponent', () => {
     TestBed.inject(NotificationService).dismiss();
   });
 
-  async function render(role: UserRole, mode: EmployeeFormMode, id?: string) {
+  async function render(
+    role: UserRole,
+    mode: EmployeeFormMode,
+    id?: string,
+    expectRedirect = false
+  ) {
     TestBed.configureTestingModule({
       providers: [
         ...TEST_PROVIDERS,
@@ -44,9 +49,10 @@ describe('EmployeeFormComponent', () => {
       notFound(): boolean;
     };
     fixture.detectChanges();
+    // A redirected read-only user never loads the form, so polling loaded()/notFound() cannot succeed.
     for (
       let attempt = 0;
-      attempt < 400 && !component.loaded() && !component.notFound();
+      !expectRedirect && attempt < 400 && !component.loaded() && !component.notFound();
       attempt++
     ) {
       await new Promise(resolve => setTimeout(resolve, 5));
@@ -286,7 +292,7 @@ describe('EmployeeFormComponent', () => {
   });
 
   it('sends a read-only user away from the create page', async () => {
-    const { navigate } = await render(UserRole.MANAGER, 'create');
+    const { navigate } = await render(UserRole.MANAGER, 'create', undefined, true);
     expect(navigate).toHaveBeenCalledWith(['/employees']);
   });
 

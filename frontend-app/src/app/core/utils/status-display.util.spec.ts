@@ -1,7 +1,9 @@
 import { AttendanceStatus } from '../models/enums/attendance-status.enum';
 import { EmployeeStatus } from '../models/enums/employee-status.enum';
 import { GrnStatus } from '../models/enums/grn-status.enum';
+import { LeaveStatus } from '../models/enums/leave-status.enum';
 import { PaymentStatus } from '../models/enums/payment-status.enum';
+import { PayrollPaymentStatus } from '../models/enums/payroll-payment-status.enum';
 import { PoStatus } from '../models/enums/po-status.enum';
 import { ProductStatus } from '../models/enums/product-status.enum';
 import { ReloadStatus } from '../models/enums/reload-status.enum';
@@ -11,8 +13,10 @@ import {
   ATTENDANCE_STATUS_DISPLAY,
   EMPLOYEE_STATUS_DISPLAY,
   GRN_STATUS_DISPLAY,
+  LEAVE_STATUS_DISPLAY,
   getActiveDisplay,
   PAYMENT_STATUS_DISPLAY,
+  PAYROLL_PAYMENT_STATUS_DISPLAY,
   PO_STATUS_DISPLAY,
   PRODUCT_STATUS_DISPLAY,
   RELOAD_STATUS_DISPLAY,
@@ -64,6 +68,36 @@ describe('status-display.util', () => {
     });
   });
 
+  it('uses the words and tones for leave status', () => {
+    expect(LEAVE_STATUS_DISPLAY[LeaveStatus.PENDING]).toEqual({
+      label: 'Pending',
+      tone: 'warning',
+    });
+    expect(LEAVE_STATUS_DISPLAY[LeaveStatus.APPROVED]).toEqual({
+      label: 'Approved',
+      tone: 'success',
+    });
+    expect(LEAVE_STATUS_DISPLAY[LeaveStatus.REJECTED]).toEqual({
+      label: 'Rejected',
+      tone: 'danger',
+    });
+    expect(LEAVE_STATUS_DISPLAY[LeaveStatus.CANCELLED]).toEqual({
+      label: 'Cancelled',
+      tone: 'neutral',
+    });
+  });
+
+  it('uses the words and tones for payroll payment status', () => {
+    expect(PAYROLL_PAYMENT_STATUS_DISPLAY[PayrollPaymentStatus.UNPAID]).toEqual({
+      label: 'Unpaid',
+      tone: 'warning',
+    });
+    expect(PAYROLL_PAYMENT_STATUS_DISPLAY[PayrollPaymentStatus.PAID]).toEqual({
+      label: 'Paid',
+      tone: 'success',
+    });
+  });
+
   it('never leaves a status without a word', () => {
     const all = [
       ...Object.values(PRODUCT_STATUS_DISPLAY),
@@ -73,7 +107,9 @@ describe('status-display.util', () => {
       ...Object.values(RELOAD_STATUS_DISPLAY),
       ...Object.values(ATTENDANCE_STATUS_DISPLAY),
       ...Object.values(EMPLOYEE_STATUS_DISPLAY),
+      ...Object.values(LEAVE_STATUS_DISPLAY),
       ...Object.values(USER_STATUS_DISPLAY),
+      ...Object.values(PAYROLL_PAYMENT_STATUS_DISPLAY),
     ];
     expect(all.every(display => display.label.length > 0)).toBeTrue();
   });

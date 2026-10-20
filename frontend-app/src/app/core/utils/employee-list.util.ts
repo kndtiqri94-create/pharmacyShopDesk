@@ -23,11 +23,6 @@ export interface EmployeePage {
   entriesText: string;
 }
 
-const STATUS_FILTER_TO_STATUS: Record<Exclude<EmployeeStatusFilter, 'all'>, EmployeeStatus> = {
-  active: EmployeeStatus.ACTIVE,
-  inactive: EmployeeStatus.INACTIVE,
-};
-
 export function defaultEmployeeCriteria(): EmployeeTableCriteria {
   return { keyword: '', location: '', createdFrom: '', createdTo: '', status: 'all' };
 }
@@ -89,6 +84,12 @@ function matchesCreatedRange(employee: Employee, from: string, to: string): bool
   return (from === '' || day >= from) && (to === '' || day <= to);
 }
 
+function matchesStatus(employee: Employee, filter: EmployeeStatusFilter): boolean {
+  if (filter === 'all') return true;
+  const inactive = employee.status === EmployeeStatus.INACTIVE;
+  return filter === 'inactive' ? inactive : !inactive;
+}
+
 export function filterEmployees(
   employees: readonly Employee[],
   criteria: EmployeeTableCriteria
@@ -99,7 +100,7 @@ export function filterEmployees(
       matchesKeyword(employee, term) &&
       (criteria.location === '' || employee.location === criteria.location) &&
       matchesCreatedRange(employee, criteria.createdFrom, criteria.createdTo) &&
-      (criteria.status === 'all' || employee.status === STATUS_FILTER_TO_STATUS[criteria.status])
+      matchesStatus(employee, criteria.status)
   );
 }
 

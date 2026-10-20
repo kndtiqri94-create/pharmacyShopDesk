@@ -3,7 +3,9 @@
     <h2 class="sd-section-title" [id]="titleId">{{ title() }}</h2>
     <div class="confirm__body"><ng-content /></div>
     <div class="confirm__actions">
-      <app-button [disabled]="busy()" (click)="cancelled.emit()">{{ cancelLabel() }}</app-button>
+      @if (showCancel()) {
+        <app-button [disabled]="busy()" (click)="cancelled.emit()">{{ cancelLabel() }}</app-button>
+      }
       <app-button
         [variant]="danger() ? 'danger' : 'primary'"
         [disabled]="busy()"

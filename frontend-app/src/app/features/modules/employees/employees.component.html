@@ -1,5 +1,11 @@
 <div class="sd-stack">
-  <app-page-header title="Employees" [subtitle]="subtitle()" />
+  <app-page-header title="Employees" [subtitle]="subtitle()">
+    @if (canViewPayroll()) {
+      <div pageActions class="sd-row">
+        <app-button (click)="openPayroll()">Payroll</app-button>
+      </div>
+    }
+  </app-page-header>
 
   @if (summary(); as summary) {
     <app-employee-tiles [summary]="summary" />
@@ -19,10 +25,26 @@
         <app-attendance-table [rows]="attendanceRows()" />
       }
       @case ('leave') {
-        <app-leave-table [rows]="leaveRows()" />
+        <div class="sd-row" *appCanWrite="employeesModule">
+          <app-button variant="primary" icon="plus" (click)="applyForLeave()">
+            Apply for leave
+          </app-button>
+        </div>
+        <app-leave-requests
+          [requests]="leaveRequests()"
+          [employees]="employees()"
+          [users]="users()"
+          [types]="leaveTypes()"
+          (changed)="reload()"
+        />
       }
       @default {
-        <app-employee-list [employees]="employees()" [users]="users()" (changed)="reload()" />
+        <app-employee-list
+          [employees]="employees()"
+          [users]="users()"
+          [onLeaveIds]="onLeaveIds()"
+          (changed)="reload()"
+        />
         <app-todays-attendance-card
           [rows]="attendanceRows()"
           (markAttendance)="showSampleMessage('Mark attendance')"

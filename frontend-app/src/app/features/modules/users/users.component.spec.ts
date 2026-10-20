@@ -360,6 +360,7 @@ describe('UsersComponent', () => {
         'Purchase orders',
         'Suppliers',
         'Employees',
+        'Payroll',
         'Reload & Utility',
         'Users',
         'Settings',
@@ -367,7 +368,8 @@ describe('UsersComponent', () => {
       expect(rows[0]).toEqual(['Dashboard', 'Full', 'Full', 'View', 'No access']);
       expect(rows[4]).toEqual(['Suppliers', 'Full', 'Full', 'View', 'No access']);
       expect(rows[5]).toEqual(['Employees', 'Full', 'View', 'No access', 'No access']);
-      expect(rows[7]).toEqual(['Users', 'Full', 'No access', 'No access', 'No access']);
+      expect(rows[6]).toEqual(['Payroll', 'Full', 'View', 'No access', 'No access']);
+      expect(rows[8]).toEqual(['Users', 'Full', 'No access', 'No access', 'No access']);
     });
 
     it('opens Edit roles with the Admin column fixed at Full and Discard returns to the saved matrix', async () => {
@@ -376,8 +378,8 @@ describe('UsersComponent', () => {
       fixture.detectChanges();
       const dialog = dialogOf(element, 'app-edit-roles-panel');
       expect(dialog.open).toBeTrue();
-      expect(dialog.querySelectorAll('[data-testid="admin-fixed"]')).toHaveSize(9);
-      expect(dialog.querySelectorAll('select')).toHaveSize(27);
+      expect(dialog.querySelectorAll('[data-testid="admin-fixed"]')).toHaveSize(10);
+      expect(dialog.querySelectorAll('select')).toHaveSize(30);
       const select = dialog.querySelector(
         'select[aria-label="Cashier access to Settings"]'
       ) as HTMLSelectElement;
@@ -385,7 +387,7 @@ describe('UsersComponent', () => {
       buttonByText(dialog, 'Discard')?.click();
       fixture.detectChanges();
       expect(dialogOf(element, 'app-edit-roles-panel').open).toBeFalse();
-      expect(matrixRows(element)[8]).toEqual([
+      expect(matrixRows(element)[9]).toEqual([
         'Settings',
         'Full',
         'No access',
@@ -402,6 +404,23 @@ describe('UsersComponent', () => {
           ) as HTMLSelectElement
         ).value
       ).toBe('NONE');
+    });
+
+    it('saves a Payroll change and applies it in the same session', async () => {
+      const { fixture, element } = await render();
+      buttonByText(element, 'Edit roles')?.click();
+      fixture.detectChanges();
+      const dialog = dialogOf(element, 'app-edit-roles-panel');
+      type(
+        fixture,
+        dialog.querySelector('select[aria-label="Manager access to Payroll"]') as HTMLSelectElement,
+        'FULL'
+      );
+      buttonByText(dialog, 'Save changes')?.click();
+      await settle(fixture);
+      expect(matrixRows(element)[6]).toEqual(['Payroll', 'Full', 'Full', 'No access', 'No access']);
+      const permissions = TestBed.inject(PermissionService);
+      expect(permissions.matrix()?.MANAGER.payroll).toBe('FULL');
     });
 
     it('saves changes, updates the card and applies them to the live permissions', async () => {

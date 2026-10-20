@@ -1,0 +1,230 @@
+<div class="sd-stack">
+  <app-breadcrumb [items]="breadcrumb" />
+  <app-page-header
+    title="Apply for leave"
+    subtitle="Choose who is going on leave and when. Fields marked * are required."
+  >
+    <div pageActions class="sd-row">
+      <app-button [disabled]="saving()" (click)="back()">Back to leave</app-button>
+    </div>
+  </app-page-header>
+
+  @if (loadFailed()) {
+    <app-alert tone="warning" title="Leave details did not load">
+      Go back to Employees and open this page again.
+    </app-alert>
+  }
+
+  @if (loaded() && emptyMessage(); as message) {
+    <app-card>
+      <app-empty-state title="Leave cannot be applied yet" [message]="message" />
+    </app-card>
+  } @else if (loaded()) {
+    <div class="sd-with-summary">
+      <form class="sd-stack" novalidate (submit)="$event.preventDefault()">
+        <app-card title="Leave details" subtitle="Who is away, for what and who covers them.">
+          <div class="sd-form-grid">
+            <app-field
+              label="Employee"
+              [fieldId]="fieldId('employeeId')"
+              [required]="true"
+              [span]="8"
+              [error]="error('employeeId')"
+            >
+              <select
+                appFieldControl
+                [value]="draft().employeeId"
+                (change)="update({ employeeId: valueOf($event) })"
+              >
+                <option value="">Choose an employee</option>
+                @for (employee of activeEmployees(); track employee.id) {
+                  <option [value]="employee.id" [selected]="draft().employeeId === employee.id">
+                    {{ optionLabel(employee) }}
+                  </option>
+                }
+              </select>
+            </app-field>
+            <app-field
+              label="Leave Year"
+              [fieldId]="fieldId('year')"
+              [required]="true"
+              [span]="4"
+              [error]="error('year')"
+              [hint]="'Leave period: ' + periodText()"
+            >
+              <select
+                appFieldControl
+                [value]="draft().year"
+                (change)="update({ year: +valueOf($event) })"
+              >
+                @for (year of yearChoices; track year) {
+                  <option [value]="year" [selected]="draft().year === year">{{ year }}</option>
+                }
+              </select>
+            </app-field>
+            <app-field
+              label="Leave Type"
+              [fieldId]="fieldId('leaveTypeId')"
+              [required]="true"
+              [span]="6"
+              [error]="error('leaveTypeId')"
+            >
+              <select
+                appFieldControl
+                [value]="draft().leaveTypeId"
+                (change)="update({ leaveTypeId: valueOf($event) })"
+              >
+                <option value="">Choose a leave type</option>
+                @for (type of types(); track type.id) {
+                  <option
+                    [value]="type.id"
+                    [disabled]="!typeSelectable(type.id)"
+                    [selected]="draft().leaveTypeId === type.id"
+                  >
+                    {{ type.name }}{{ typeSelectable(type.id) ? '' : ' (no balance)' }}
+                  </option>
+                }
+              </select>
+            </app-field>
+            <app-field
+              label="Reason for Leave"
+              [fieldId]="fieldId('reason')"
+              [required]="true"
+              [span]="6"
+              [error]="error('reason')"
+            >
+              <select
+                appFieldControl
+                [value]="draft().reason"
+                (change)="update({ reason: valueOf($event) })"
+              >
+                <option value="">Choose a reason</option>
+                @for (reason of reasons; track reason) {
+                  <option [value]="reason" [selected]="draft().reason === reason">
+                    {{ reason }}
+                  </option>
+                }
+              </select>
+            </app-field>
+            <app-field
+              label="From Date"
+              [fieldId]="fieldId('fromDate')"
+              [required]="true"
+              [span]="6"
+              [error]="error('fromDate')"
+            >
+              <input
+                appFieldControl
+                type="date"
+                [value]="draft().fromDate"
+                [attr.min]="bounds().start"
+                [attr.max]="bounds().end"
+                (input)="update({ fromDate: valueOf($event) })"
+              />
+            </app-field>
+            <app-field
+              label="To Date"
+              [fieldId]="fieldId('toDate')"
+              [required]="true"
+              [span]="6"
+              [error]="error('toDate')"
+            >
+              <input
+                appFieldControl
+                type="date"
+                [value]="draft().toDate"
+                [attr.min]="draft().fromDate || bounds().start"
+                [attr.max]="bounds().end"
+                (input)="update({ toDate: valueOf($event) })"
+              />
+            </app-field>
+            <p class="sd-col-12 sd-caption" data-testid="days-requested" aria-live="polite">
+              @if (daysRequested(); as days) {
+                Days requested: <strong>{{ days }}</strong>
+              } @else {
+                Days requested: choose a From and To date.
+              }
+            </p>
+            <div class="sd-col-12">
+              <app-leave-attachment-field
+                [fileName]="draft().attachment?.name ?? null"
+                [error]="error('attachment')"
+                (changed)="update({ attachment: $event })"
+              />
+            </div>
+            <app-field
+              label="Comments"
+              [fieldId]="fieldId('comments')"
+              [span]="12"
+              [error]="error('comments')"
+              [hint]="draft().comments.length + ' of ' + commentsMax + ' characters'"
+            >
+              <textarea
+                appFieldControl
+                rows="3"
+                [attr.maxlength]="commentsMax"
+                [value]="draft().comments"
+                (input)="update({ comments: valueOf($event) })"
+              ></textarea>
+            </app-field>
+            <div class="sd-col-12">
+              <app-covering-employee-picker
+                [employees]="employees()"
+                [applicantId]="draft().employeeId"
+                [value]="draft().coveringEmployeeId"
+                [error]="error('coveringEmployeeId')"
+                (changed)="update({ coveringEmployeeId: $event })"
+              />
+              @if (coveringWarning(); as warning) {
+                <app-alert tone="warning">{{ warning }}</app-alert>
+              }
+            </div>
+            <app-field
+              label="Approver"
+              [fieldId]="fieldId('approverEmployeeId')"
+              [required]="true"
+              [span]="8"
+              [error]="error('approverEmployeeId')"
+            >
+              <select
+                appFieldControl
+                [value]="draft().approverEmployeeId"
+                (change)="update({ approverEmployeeId: valueOf($event) })"
+              >
+                <option value="">Choose an approver</option>
+                @for (approver of approvers(); track approver.id) {
+                  <option
+                    [value]="approver.id"
+                    [selected]="draft().approverEmployeeId === approver.id"
+                  >
+                    {{ optionLabel(approver) }}
+                  </option>
+                }
+              </select>
+            </app-field>
+          </div>
+          <div cardFooter class="sd-row">
+            <app-button variant="primary" [disabled]="saving()" (click)="apply()">Apply</app-button>
+            <app-button [disabled]="saving()" (click)="reset()">Reset</app-button>
+          </div>
+        </app-card>
+      </form>
+      <app-leave-balance-card
+        [rows]="balanceRows()"
+        [hasEmployee]="draft().employeeId !== ''"
+        [year]="draft().year"
+      />
+    </div>
+  }
+</div>
+
+<app-confirm-dialog
+  [title]="confirmTitle()"
+  [confirmLabel]="confirmLabel()"
+  [cancelLabel]="confirmCancelLabel()"
+  [open]="confirm() !== null"
+  (confirmed)="confirmed()"
+  (cancelled)="keepEditing()"
+>
+  <p>Your changes have not been sent and will be lost.</p>
+</app-confirm-dialog>

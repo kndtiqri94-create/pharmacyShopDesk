@@ -43,3 +43,13 @@ export function formatThousands(cents: number): string {
 export function formatPercent(value: number): string {
   return `${Math.round(value * 10) / 10}%`;
 }
+
+/**
+ * The single rounding rule for payroll money: exact integer division of two
+ * non-negative integers, rounded half up (0.5 goes up). Works on integers only,
+ * so there is no floating point drift. Negative or non-finite input gives 0.
+ */
+export function divideRoundHalfUp(numerator: number, denominator: number): number {
+  if (!Number.isFinite(numerator) || !(denominator > 0) || numerator <= 0) return 0;
+  return Math.floor((2 * numerator + denominator) / (2 * denominator));
+}

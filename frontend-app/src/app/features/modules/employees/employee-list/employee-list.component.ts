@@ -25,6 +25,7 @@ import {
   parseEmployeePageSize,
   parseEmployeeStatusFilter,
 } from '../../../../core/utils/employee-list.util';
+import { derivedEmployeeStatus } from '../../../../core/utils/leave-presence.util';
 import { SEARCH_MAX_LENGTH } from '../../../../core/utils/product-list-filter.util';
 import { EMPLOYEE_STATUS_DISPLAY } from '../../../../core/utils/status-display.util';
 import { AvatarComponent } from '../../../../shared/components/avatar/avatar.component';
@@ -70,6 +71,7 @@ const NO_VALUE = '–';
 export class EmployeeListComponent {
   readonly employees = input.required<readonly Employee[]>();
   readonly users = input.required<readonly AppUser[]>();
+  readonly onLeaveIds = input<ReadonlySet<string>>(new Set<string>());
   readonly changed = output<void>();
 
   private readonly router = inject(Router);
@@ -132,7 +134,8 @@ export class EmployeeListComponent {
     { key: 'status', label: 'Status' },
   ];
   protected readonly rowKey = (employee: Employee): string => employee.id;
-  protected readonly statusOf = (employee: Employee) => EMPLOYEE_STATUS_DISPLAY[employee.status];
+  protected readonly statusOf = (employee: Employee) =>
+    EMPLOYEE_STATUS_DISPLAY[derivedEmployeeStatus(employee, this.onLeaveIds())];
 
   protected onKeyword(event: Event): void {
     this.keyword.set((event.target as HTMLInputElement).value.slice(0, SEARCH_MAX_LENGTH));

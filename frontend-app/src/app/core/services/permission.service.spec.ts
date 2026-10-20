@@ -78,6 +78,63 @@ describe('PermissionService', () => {
     expect(service().firstAllowedPath()).toBe('/dashboard');
   });
 
+  it('gives payroll Full to admin, View to manager and nothing to pharmacist and cashier', async () => {
+    await signInAs(UserRole.ADMIN);
+    expect(service().canWrite(ModuleKey.PAYROLL)).toBeTrue();
+    await signInAs(UserRole.MANAGER);
+    expect(service().canView(ModuleKey.PAYROLL)).toBeTrue();
+    expect(service().canWrite(ModuleKey.PAYROLL)).toBeFalse();
+    await signInAs(UserRole.PHARMACIST);
+    expect(service().canView(ModuleKey.PAYROLL)).toBeFalse();
+    await signInAs(UserRole.CASHIER);
+    expect(service().canView(ModuleKey.PAYROLL)).toBeFalse();
+  });
+
+  it('keeps payroll out of the sidebar list and the landing path', async () => {
+    await signInAs(UserRole.ADMIN);
+    expect(
+      service()
+        .allowedModules()
+        .map(item => item.key)
+    ).not.toContain(ModuleKey.PAYROLL);
+    expect(service().landingPathFor('/employees/payroll')).toBe('/employees/payroll');
+  });
+
+  it('tolerates a matrix without payroll: Admin Full, others no access', async () => {
+    const legacyOf = (matrix: Record<string, Record<string, string>>) => {
+      for (const role of Object.keys(matrix)) delete matrix[role][ModuleKey.PAYROLL];
+      return matrix;
+    };
+    await signInAs(UserRole.MANAGER);
+    const legacy = legacyOf(structuredClone(service().matrix()) as never);
+    service()['matrixSignal'].set(legacy as never);
+    expect(service().canView(ModuleKey.PAYROLL)).toBeFalse();
+    await signInAs(UserRole.ADMIN);
+    service()['matrixSignal'].set(legacy as never);
+    expect(service().canWrite(ModuleKey.PAYROLL)).toBeTrue();
+  });
+
+  it('applies a payroll change made in Users and roles in the same session', async () => {
+    await signInAs(UserRole.MANAGER);
+    expect(service().canWrite(ModuleKey.PAYROLL)).toBeFalse();
+    const roleDataService = TestBed.inject(RoleDataService);
+    const matrix = await firstValueFrom(roleDataService.getMatrix());
+    await firstValueFrom(
+      roleDataService.saveMatrix({
+        ...matrix,
+        MANAGER: { ...matrix.MANAGER, [ModuleKey.PAYROLL]: PermissionLevel.FULL },
+      })
+    );
+    expect(service().canWrite(ModuleKey.PAYROLL)).toBeTrue();
+    await firstValueFrom(
+      roleDataService.saveMatrix({
+        ...matrix,
+        MANAGER: { ...matrix.MANAGER, [ModuleKey.PAYROLL]: PermissionLevel.NONE },
+      })
+    );
+    expect(service().canView(ModuleKey.PAYROLL)).toBeFalse();
+  });
+
   it('denies everything when the matrix has not loaded', async () => {
     await signInAs(UserRole.ADMIN);
     TestBed.inject(PermissionService)['matrixSignal'].set(null);

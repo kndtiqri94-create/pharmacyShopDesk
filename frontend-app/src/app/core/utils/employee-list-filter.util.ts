@@ -1,12 +1,13 @@
 import { AppUser } from '../models/domain/app-user.model';
 import { AttendanceRecord } from '../models/domain/attendance-record.model';
 import { Employee } from '../models/domain/employee.model';
-import { LeaveRecord } from '../models/domain/leave-record.model';
+import { LeaveRequest } from '../models/domain/leave-request.model';
 import { AttendanceStatus } from '../models/enums/attendance-status.enum';
 import { EmployeeStatus } from '../models/enums/employee-status.enum';
 import { UserRole } from '../models/enums/user-role.enum';
 import { UserStatus } from '../models/enums/user-status.enum';
 import { formatDayMonth } from './date.util';
+import { latestReturnDate, onLeaveEmployeeIds } from './leave-presence.util';
 import { pluralize } from './text.util';
 import { formatUserRoleLabel } from './user-role-label.util';
 
@@ -52,23 +53,24 @@ export function employeeLogin(employee: Employee, users: readonly AppUser[]): Em
   };
 }
 
-function fallbackAttendance(employee: Employee): AttendanceStatus {
-  return employee.status === EmployeeStatus.ON_LEAVE
-    ? AttendanceStatus.ON_LEAVE
-    : AttendanceStatus.NOT_YET;
+function fallbackAttendance(employee: Employee, onLeaveIds: ReadonlySet<string>): AttendanceStatus {
+  return onLeaveIds.has(employee.id) ? AttendanceStatus.ON_LEAVE : AttendanceStatus.NOT_YET;
 }
 
 export function buildAttendanceRows(
   employees: readonly Employee[],
-  records: readonly AttendanceRecord[]
+  records: readonly AttendanceRecord[],
+  leaves: readonly LeaveRequest[],
+  today: string
 ): AttendanceRow[] {
+  const onLeaveIds = onLeaveEmployeeIds(leaves, today);
   return employees
     .filter(employee => employee.status !== EmployeeStatus.INACTIVE)
     .map(employee => {
       const record = records.find(candidate => candidate.employeeId === employee.id);
       return {
         employee,
-        status: record?.status ?? fallbackAttendance(employee),
+        status: record?.status ?? fallbackAttendance(employee, onLeaveIds),
         timeIn: record?.timeIn ?? null,
       };
     });
@@ -76,13 +78,15 @@ export function buildAttendanceRows(
 
 export function buildLeaveRows(
   employees: readonly Employee[],
-  leaves: readonly LeaveRecord[]
+  leaves: readonly LeaveRequest[],
+  today: string
 ): LeaveRow[] {
+  const onLeaveIds = onLeaveEmployeeIds(leaves, today);
   return employees
-    .filter(employee => employee.status === EmployeeStatus.ON_LEAVE)
+    .filter(employee => employee.status !== EmployeeStatus.INACTIVE && onLeaveIds.has(employee.id))
     .map(employee => ({
       employee,
-      returnDate: leaves.find(leave => leave.employeeId === employee.id)?.returnDate ?? null,
+      returnDate: latestReturnDate(employee.id, leaves, today),
     }));
 }
 

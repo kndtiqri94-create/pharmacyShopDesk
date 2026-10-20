@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { RolePermissionMatrix } from '../models/domain/role-permission-matrix.model';
 import { ModuleKey } from '../models/enums/module-key.enum';
 import { PermissionLevel } from '../models/enums/permission-level.enum';
+import { UserRole } from '../models/enums/user-role.enum';
 import { MODULE_DEFINITIONS, moduleKeyFromUrl } from '../utils/module-definitions.util';
 import { sanitizeReturnUrl } from '../utils/return-url.util';
 import { AuthService } from './auth/auth.service';
@@ -19,7 +20,10 @@ export class PermissionService {
 
   readonly matrix = this.matrixSignal.asReadonly();
   readonly allowedModules = computed(() =>
-    MODULE_DEFINITIONS.filter(definition => this.levelFor(definition.key) !== PermissionLevel.NONE)
+    MODULE_DEFINITIONS.filter(
+      definition =>
+        !definition.hideFromSidebar && this.levelFor(definition.key) !== PermissionLevel.NONE
+    )
   );
 
   constructor() {
@@ -36,7 +40,8 @@ export class PermissionService {
     const user = this.authService.currentUser();
     const matrix = this.matrixSignal();
     if (user === null || matrix === null) return PermissionLevel.NONE;
-    return matrix[user.role]?.[module] ?? PermissionLevel.NONE;
+    const fallback = user.role === UserRole.ADMIN ? PermissionLevel.FULL : PermissionLevel.NONE;
+    return matrix[user.role]?.[module] ?? fallback;
   }
 
   canView(module: ModuleKey): boolean {

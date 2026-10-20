@@ -5,6 +5,7 @@ export const ModuleKey = {
   PURCHASE_ORDERS: 'purchase-orders',
   SUPPLIERS: 'suppliers',
   EMPLOYEES: 'employees',
+  PAYROLL: 'payroll',
   RELOAD_UTILITY: 'reload-utility',
   USERS: 'users',
   SETTINGS: 'settings',

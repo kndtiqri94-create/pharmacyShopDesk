@@ -72,7 +72,14 @@ describe('employee list', () => {
       status: 'active',
       createdFrom: '2026-05-01',
     });
-    expect(result.map(employee => employee.id)).toEqual(['emp-006']);
+    expect(result.map(employee => employee.id)).toEqual(['emp-006', 'emp-007']);
+  });
+
+  it('keeps a stored On leave employee under Active, never Inactive', () => {
+    const idsFor = (status: 'active' | 'inactive') =>
+      filterEmployees(EMPLOYEE_SEED, { ...criteria, status }).map(employee => employee.id);
+    expect(idsFor('active')).toContain('emp-007');
+    expect(idsFor('inactive')).toEqual(['emp-008']);
   });
 
   it('sorts newest created first without changing the input', () => {

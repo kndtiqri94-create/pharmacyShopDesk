@@ -21,6 +21,23 @@ export const EMPLOYEES_ROUTES: Routes = [
     loadComponent: loadForm,
   },
   {
+    path: 'leave/apply',
+    title: 'Apply for leave',
+    canActivate: [moduleAccessActivateGuard, moduleWriteGuard],
+    data: { module: ModuleKey.EMPLOYEES, viewOnlyRedirect: '/employees' },
+    loadComponent: () =>
+      import('./leave-application/leave-application.component').then(
+        file => file.LeaveApplicationComponent
+      ),
+  },
+  {
+    path: 'payroll',
+    title: 'Employees salaries',
+    canActivate: [moduleAccessActivateGuard],
+    data: { module: ModuleKey.PAYROLL },
+    loadComponent: () => import('./payroll/payroll.component').then(file => file.PayrollComponent),
+  },
+  {
     path: ':id/edit',
     title: 'Edit employee',
     canActivate: [moduleAccessActivateGuard, moduleWriteGuard],

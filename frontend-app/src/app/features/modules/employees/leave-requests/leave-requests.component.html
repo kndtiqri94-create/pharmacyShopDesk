@@ -1,0 +1,143 @@
+<app-card
+  title="Leave requests"
+  subtitle="Every request, newest first. Pending ones wait for an approver."
+  [flush]="true"
+>
+  <div class="chip-bar">
+    <app-field label="Search" fieldId="leave-search">
+      <input
+        appFieldControl
+        type="search"
+        autocomplete="off"
+        placeholder="Employee name or code"
+        [attr.maxlength]="keywordMaxLength"
+        [value]="keyword()"
+        (input)="onKeyword($event)"
+      />
+    </app-field>
+    <app-chips
+      ariaLabel="Filter by status"
+      [items]="chips()"
+      [value]="status()"
+      (valueChange)="onStatus($event)"
+    />
+  </div>
+
+  @if (filtered().length === 0) {
+    @if (requests().length === 0) {
+      <app-empty-state
+        title="No leave requests yet"
+        message="Requests will show here once someone applies for leave."
+      />
+    } @else {
+      <app-empty-state
+        title="No leave requests match"
+        message="Try another name, code or status to see more requests."
+      >
+        <app-button (click)="resetFilters()">Reset filters</app-button>
+      </app-empty-state>
+    }
+  } @else {
+    <app-data-table
+      ariaLabel="Leave requests"
+      itemLabel="requests"
+      [paginate]="false"
+      [columns]="columns"
+      [rows]="pageData().rows"
+      [rowKey]="rowKey"
+    >
+      <ng-template appDataTableCell="status" let-row>
+        <app-badge [label]="statusOf(row).label" [tone]="statusOf(row).tone" />
+      </ng-template>
+      <ng-template appDataTableCell="action" let-row>
+        <div class="row-actions">
+          <app-button
+            size="sm"
+            variant="ghost"
+            [ariaLabel]="'View details of leave for ' + row.employeeName"
+            (click)="openDetails(row)"
+          >
+            View details
+          </app-button>
+          @if (canDecide(row)) {
+            <app-button
+              size="sm"
+              icon="check"
+              [ariaLabel]="'Approve leave for ' + row.employeeName"
+              (click)="startDecision(row, 'APPROVE')"
+            >
+              Approve
+            </app-button>
+            <app-button
+              size="sm"
+              icon="x"
+              [ariaLabel]="'Reject leave for ' + row.employeeName"
+              (click)="startDecision(row, 'REJECT')"
+            >
+              Reject
+            </app-button>
+          }
+          @if (canCancel(row)) {
+            <app-button
+              size="sm"
+              variant="ghost"
+              [ariaLabel]="'Cancel leave for ' + row.employeeName"
+              (click)="startCancel(row)"
+            >
+              Cancel request
+            </app-button>
+          }
+        </div>
+      </ng-template>
+    </app-data-table>
+  }
+
+  <div class="footer">
+    <div class="footer__size">
+      <label class="sd-label" for="leave-page-size">Page size</label>
+      <div class="sd-field-box footer__select">
+        <select id="leave-page-size" class="sd-field-control" (change)="onPageSize($event)">
+          @for (size of pageSizes; track size) {
+            <option [value]="size" [selected]="size === pageSize()">{{ size }}</option>
+          }
+        </select>
+      </div>
+      <p class="sd-caption" data-testid="entries-text" aria-live="polite">
+        {{ pageData().entriesText }}
+      </p>
+    </div>
+    <app-pagination
+      [total]="filtered().length"
+      [pageSize]="pageSize()"
+      [showSummary]="false"
+      [(page)]="page"
+    />
+  </div>
+</app-card>
+
+@if (viewing(); as viewed) {
+  <app-leave-details-dialog [row]="viewed" (closed)="closeDetails()" />
+}
+
+@if (pendingDecision(); as pending) {
+  <app-leave-decision-dialog
+    [row]="pending.row"
+    [decision]="pending.decision"
+    [busy]="working()"
+    (confirmed)="confirmDecision($event)"
+    (cancelled)="closeDecision()"
+  />
+}
+
+<app-confirm-dialog
+  confirmLabel="Cancel request"
+  cancelLabel="Keep request"
+  [danger]="true"
+  [title]="cancelTitle()"
+  [open]="pendingCancel() !== null"
+  [busy]="working()"
+  (confirmed)="confirmCancel()"
+  (cancelled)="closeCancel()"
+>
+  <p>{{ cancelMessage() }}</p>
+</app-confirm-dialog>

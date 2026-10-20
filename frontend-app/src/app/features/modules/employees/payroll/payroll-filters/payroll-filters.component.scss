@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.filters {
+  align-items: end;
+  padding: var(--sd-space-4) var(--sd-space-5);
+  border-bottom: 1px solid var(--sd-border);
+}
+
+.filters__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sd-space-2);
+}

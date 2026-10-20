@@ -1,6 +1,11 @@
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { clearBrowserStorage, signInAs, TEST_PROVIDERS } from '../../../../testing/auth-test.util';
+import { firstValueFrom } from 'rxjs';
+import { ModuleKey } from '../../../core/models/enums/module-key.enum';
+import { PermissionLevel } from '../../../core/models/enums/permission-level.enum';
 import { UserRole } from '../../../core/models/enums/user-role.enum';
+import { RoleDataService } from '../../../core/services/data/role-data.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { EmployeesComponent } from './employees.component';
 
@@ -55,6 +60,39 @@ describe('EmployeesComponent', () => {
     expect(element.querySelectorAll('button[data-variant="primary"]')).toHaveSize(1);
   });
 
+  it('shows a non-primary Payroll button to Admin and Manager that opens the salaries page', async () => {
+    for (const role of [UserRole.ADMIN, UserRole.MANAGER]) {
+      TestBed.resetTestingModule();
+      const { fixture, element } = await render(role);
+      const payroll = buttonByText(element, 'Payroll');
+      expect(payroll).withContext(role).toBeDefined();
+      expect(payroll?.getAttribute('data-variant')).not.toBe('primary');
+      const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+      payroll?.click();
+      fixture.detectChanges();
+      expect(navigate).toHaveBeenCalledWith(['/employees', 'payroll']);
+    }
+  });
+
+  it('hides Payroll when the role has Employees access but no Payroll access', async () => {
+    TestBed.configureTestingModule({ providers: TEST_PROVIDERS });
+    await signInAs(UserRole.MANAGER);
+    const roleData = TestBed.inject(RoleDataService);
+    const matrix = await firstValueFrom(roleData.getMatrix());
+    await firstValueFrom(
+      roleData.saveMatrix({
+        ...matrix,
+        MANAGER: { ...matrix.MANAGER, [ModuleKey.PAYROLL]: PermissionLevel.NONE },
+      })
+    );
+    const fixture = TestBed.createComponent(EmployeesComponent);
+    fixture.detectChanges();
+    await settle(fixture);
+    const element = fixture.nativeElement as HTMLElement;
+    expect(buttonByText(element, 'Payroll')).toBeUndefined();
+    expect(rows(element).length).toBeGreaterThan(0);
+  });
+
   it('shows the four tiles in order with their notes', async () => {
     const { element } = await render();
     const tiles = Array.from(element.querySelectorAll('app-stat-card'));
@@ -79,7 +117,7 @@ describe('EmployeesComponent', () => {
     const labels = Array.from(element.querySelectorAll('[role="tab"]')).map(item =>
       item.textContent?.replace(/\s+/g, ' ').trim()
     );
-    expect(labels).toEqual(['Staff 8', 'Attendance', 'Leave 1']);
+    expect(labels).toEqual(['Staff 8', 'Attendance', 'Leave 10']);
     expect(element.querySelectorAll('[role="tab"][aria-selected="true"]')).toHaveSize(1);
     tab(element, 'Leave').click();
     fixture.detectChanges();
@@ -149,15 +187,39 @@ describe('EmployeesComponent', () => {
     expect(element.querySelector('app-todays-attendance-card')).toBeNull();
   });
 
-  it('shows the people on leave with role and return date, matching the tab count and tile', async () => {
+  it('lists every leave request on the Leave tab, matching the tab count, and keeps the On leave tile', async () => {
     const { fixture, element } = await render();
     tab(element, 'Leave').click();
     fixture.detectChanges();
-    expect(rows(element)).toHaveSize(1);
-    const text = rows(element)[0].textContent?.replace(/\s+/g, ' ').trim();
-    expect(text).toContain('Anura Bandara');
-    expect(text).toContain('Stock keeper');
+    expect(rows(element)).toHaveSize(10);
+    const text = rows(element)
+      .find(row => row.textContent?.includes('Anura Bandara'))
+      ?.textContent?.replace(/\s+/g, ' ');
+    expect(text).toContain('Medical Leave');
     expect(text).toContain('24 Sep 2026');
+    expect(text).toContain('Approved');
+    expect(element.querySelectorAll('app-stat-card')[2].textContent).toContain('Back on 24 Sep');
+  });
+
+  it('refreshes the tab count, chips and tiles after a leave request is cancelled', async () => {
+    const { fixture, element } = await render();
+    tab(element, 'Leave').click();
+    fixture.detectChanges();
+    (
+      element.querySelector('button[aria-label="Cancel leave for Kamal Silva"]') as HTMLElement
+    ).click();
+    fixture.detectChanges();
+    const confirm = Array.from(element.querySelectorAll('dialog button')).find(
+      button => button.textContent?.trim() === 'Cancel request'
+    ) as HTMLElement;
+    confirm.click();
+    await settle(fixture);
+    expect(element.querySelector('[data-testid="entries-text"]')?.textContent).toContain('of 10');
+    const chips = Array.from(element.querySelectorAll('.chip')).map(chip =>
+      chip.textContent?.replace(/\s+/g, ' ').trim()
+    );
+    expect(chips).toEqual(['All 10', 'Pending 2', 'Approved 4', 'Rejected 1', 'Cancelled 3']);
+    expect(notification()?.message).toBe("Kamal Silva's leave was cancelled.");
   });
 
   it('lets a Manager read everything but hides Add employee, Mark attendance and edit actions', async () => {
@@ -172,5 +234,25 @@ describe('EmployeesComponent', () => {
     ).map(button => button.getAttribute('aria-label'));
     expect(labels).toEqual(['View Nimal Perera']);
     expect(element.querySelectorAll('app-stat-card')).toHaveSize(4);
+  });
+
+  it('gives an Admin one primary Apply for leave on the Leave tab that opens the application page', async () => {
+    const { fixture, element } = await render();
+    const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+    tab(element, 'Leave').click();
+    fixture.detectChanges();
+    const apply = buttonByText(element, 'Apply for leave')!;
+    expect(apply.getAttribute('data-variant')).toBe('primary');
+    expect(element.querySelectorAll('button[data-variant="primary"]')).toHaveSize(1);
+    apply.click();
+    expect(navigate).toHaveBeenCalledWith(['/employees', 'leave', 'apply']);
+  });
+
+  it('hides Apply for leave from a View-only Manager and on the other tabs', async () => {
+    const { fixture, element } = await render(UserRole.MANAGER);
+    expect(buttonByText(element, 'Apply for leave')).toBeUndefined();
+    tab(element, 'Leave').click();
+    fixture.detectChanges();
+    expect(buttonByText(element, 'Apply for leave')).toBeUndefined();
   });
 });

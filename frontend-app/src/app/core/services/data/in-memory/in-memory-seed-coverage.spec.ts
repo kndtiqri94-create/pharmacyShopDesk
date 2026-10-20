@@ -4,6 +4,8 @@ import { AttendanceStatus } from '../../../models/enums/attendance-status.enum';
 import { EmployeeStatus } from '../../../models/enums/employee-status.enum';
 import { SalaryType } from '../../../models/enums/salary-type.enum';
 import { GrnStatus } from '../../../models/enums/grn-status.enum';
+import { LeaveStatus } from '../../../models/enums/leave-status.enum';
+import { PayrollPaymentStatus } from '../../../models/enums/payroll-payment-status.enum';
 import { PaymentStatus } from '../../../models/enums/payment-status.enum';
 import { PoStatus } from '../../../models/enums/po-status.enum';
 import { ReloadStatus } from '../../../models/enums/reload-status.enum';
@@ -16,6 +18,7 @@ import { AttendanceDataService } from '../attendance-data.service';
 import { EmployeeDataService } from '../employee-data.service';
 import { GrnDataService } from '../grn-data.service';
 import { LeaveDataService } from '../leave-data.service';
+import { PayrollDataService } from '../payroll-data.service';
 import { PurchaseOrderDataService } from '../purchase-order-data.service';
 import { ReloadDataService } from '../reload-data.service';
 import { SettingsDataService } from '../settings-data.service';
@@ -69,7 +72,7 @@ describe('in-memory seed coverage', () => {
     expect(new Set(unpaid.map(grn => grn.receivedDate)).size).toBe(unpaid.length);
   });
 
-  it('has attendance for today for every employee, one leave record and seeded payments', async () => {
+  it('has attendance for today for every employee, approved leave covering today and seeded payments', async () => {
     const employees = await firstValueFrom(TestBed.inject(EmployeeDataService).getAll());
     const attendance = await firstValueFrom(
       TestBed.inject(AttendanceDataService).getForDate(SAMPLE_TODAY)
@@ -80,8 +83,16 @@ describe('in-memory seed coverage', () => {
     expect(new Set(attendance.map(record => record.status))).toEqual(
       new Set(Object.values(AttendanceStatus))
     );
-    const leave = await firstValueFrom(TestBed.inject(LeaveDataService).getAll());
-    expect(leave.map(record => record.employeeId)).toEqual(['emp-007']);
+    const leave = await firstValueFrom(TestBed.inject(LeaveDataService).getRequests());
+    expect(
+      leave.some(
+        request =>
+          request.employeeId === 'emp-007' &&
+          request.status === LeaveStatus.APPROVED &&
+          request.fromDate <= SAMPLE_TODAY &&
+          SAMPLE_TODAY <= request.toDate
+      )
+    ).toBeTrue();
     const payments = await firstValueFrom(TestBed.inject(SupplierPaymentDataService).getAll());
     expect(payments.length).toBeGreaterThan(0);
   });
@@ -181,5 +192,114 @@ describe('in-memory seed coverage', () => {
     expect((await firstValueFrom(TestBed.inject(SettingsDataService).get())).expiryAlertDays).toBe(
       60
     );
+  });
+
+  it('has leave types, entitlements and requests in every status across years', async () => {
+    const service = TestBed.inject(LeaveDataService);
+    const employees = await firstValueFrom(TestBed.inject(EmployeeDataService).getAll());
+    const users = await firstValueFrom(TestBed.inject(UserDataService).getAll());
+    const types = await firstValueFrom(service.getTypes());
+    expect(types.map(type => type.name)).toEqual([
+      'Annual Leave',
+      'Carry Forward - Annual Leave',
+      'Casual Leave',
+      'Christmas Day',
+      'Medical Leave',
+    ]);
+    const entitlements = await firstValueFrom(service.getEntitlements());
+    expect(entitlements.length).toBe(employees.length * types.length * 3);
+    const forEmployee = entitlements.filter(
+      entitlement => entitlement.employeeId === 'emp-001' && entitlement.year === 2026
+    );
+    expect(forEmployee.map(entitlement => entitlement.days)).toEqual([14, 0, 7, 1, 7]);
+    const requests = await firstValueFrom(service.getRequests());
+    expect(new Set(requests.map(request => request.status))).toEqual(
+      new Set(Object.values(LeaveStatus))
+    );
+    expect(new Set(requests.map(request => request.fromDate.slice(0, 4))).size).toBeGreaterThan(1);
+    const approverRoles = new Set<string>([UserRole.ADMIN, UserRole.MANAGER]);
+    for (const request of requests) {
+      const approver = users.find(user => user.employeeId === request.approverEmployeeId);
+      expect(approver && approverRoles.has(approver.role)).toBeTrue();
+    }
+  });
+
+  it('saves a leave request as an upsert and returns copies', async () => {
+    const service = TestBed.inject(LeaveDataService);
+    const first = (await firstValueFrom(service.getRequests()))[0];
+    first.comments = 'Changed';
+    const stored = (await firstValueFrom(service.getRequests()))[0];
+    expect(stored.comments).toBe('');
+    await firstValueFrom(service.saveRequest({ ...stored, status: LeaveStatus.CANCELLED }));
+    const after = await firstValueFrom(service.getRequests());
+    expect(after.length).toBe(10);
+    expect(after[0].status).toBe(LeaveStatus.CANCELLED);
+  });
+
+  it('has payroll settings, inputs, advances, nopay and payments covering the sample employees', async () => {
+    const service = TestBed.inject(PayrollDataService);
+    const employees = await firstValueFrom(TestBed.inject(EmployeeDataService).getAll());
+    const settings = await firstValueFrom(service.getSettings());
+    expect(settings.epfEmployeeRate).toBe(8);
+    expect(settings.epfEmployerRate).toBe(12);
+    expect(settings.etfEmployerRate).toBe(3);
+    expect(settings.dailyRateDivisor).toBe(30);
+    expect(settings.counters).toEqual(['Counter1', 'Counter2']);
+    expect(settings.note.toLowerCase()).toContain('not payroll law');
+    expect(settings.taxSlabs[settings.taxSlabs.length - 1].upToCents).toBeNull();
+
+    const active = employees.filter(employee => employee.status !== EmployeeStatus.INACTIVE);
+    expect(active.some(employee => employee.salaryType === SalaryType.DAILY)).toBeTrue();
+    expect(
+      active.some(employee => employee.basicSalaryCents === 0 && employee.allowances.length === 0)
+    ).toBeTrue();
+    expect(
+      active.some(
+        employee =>
+          employee.salaryType === SalaryType.MONTHLY &&
+          employee.basicSalaryCents + employee.allowances.reduce((s, a) => s + a.amountCents, 0) >
+            (settings.taxSlabs[0].upToCents ?? 0)
+      )
+    ).toBeTrue();
+    expect(active.some(employee => employee.calculateEpf && !employee.calculateEtf)).toBeTrue();
+    expect(active.some(employee => !employee.calculateEpf && !employee.calculateEtf)).toBeTrue();
+
+    const inputs = await firstValueFrom(service.getInputs());
+    const payments = await firstValueFrom(service.getPayments());
+    const months = new Set(inputs.map(input => input.month));
+    expect(months.has(SAMPLE_TODAY.slice(0, 7))).toBeTrue();
+    expect(months.size).toBeGreaterThan(2);
+    for (const employee of active) {
+      expect(inputs.filter(input => input.employeeId === employee.id).length).toBe(months.size);
+      expect(payments.filter(payment => payment.employeeId === employee.id).length).toBe(
+        months.size
+      );
+    }
+    for (const payment of payments) {
+      expect(payment.status).toBe(
+        payment.month === SAMPLE_TODAY.slice(0, 7)
+          ? PayrollPaymentStatus.UNPAID
+          : PayrollPaymentStatus.PAID
+      );
+    }
+    expect((await firstValueFrom(service.getAdvances())).length).toBeGreaterThan(0);
+    expect((await firstValueFrom(service.getNopayEntries())).length).toBeGreaterThan(0);
+  });
+
+  it('saves payroll advances and nopay as upserts and returns copies', async () => {
+    const service = TestBed.inject(PayrollDataService);
+    const advance = (await firstValueFrom(service.getAdvances()))[0];
+    advance.amountCents = 1;
+    expect((await firstValueFrom(service.getAdvances()))[0].amountCents).not.toBe(1);
+    const before = (await firstValueFrom(service.getAdvances())).length;
+    await firstValueFrom(service.saveAdvance({ ...advance, id: 'adv-new' }));
+    expect((await firstValueFrom(service.getAdvances())).length).toBe(before + 1);
+    const nopayBefore = (await firstValueFrom(service.getNopayEntries())).length;
+    const entry = (await firstValueFrom(service.getNopayEntries()))[0];
+    await firstValueFrom(service.saveNopay({ ...entry, id: 'nop-new' }));
+    expect((await firstValueFrom(service.getNopayEntries())).length).toBe(nopayBefore + 1);
+    const settings = await firstValueFrom(service.getSettings());
+    settings.epfEmployeeRate = 99;
+    expect((await firstValueFrom(service.getSettings())).epfEmployeeRate).toBe(8);
   });
 });

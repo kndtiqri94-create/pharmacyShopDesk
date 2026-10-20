@@ -1,0 +1,24 @@
+<app-confirm-dialog
+  [title]="title()"
+  [confirmLabel]="verb()"
+  [danger]="!approving()"
+  [open]="true"
+  [busy]="busy()"
+  (confirmed)="confirmed.emit(comment().trim())"
+  (cancelled)="cancelled.emit()"
+>
+  <p>{{ summary() }}</p>
+  <app-field
+    label="Comment (optional)"
+    [fieldId]="commentId"
+    [hint]="comment().length + ' of ' + commentMax + ' characters'"
+  >
+    <textarea
+      appFieldControl
+      rows="3"
+      [attr.maxlength]="commentMax"
+      [value]="comment()"
+      (input)="onComment($event)"
+    ></textarea>
+  </app-field>
+</app-confirm-dialog>

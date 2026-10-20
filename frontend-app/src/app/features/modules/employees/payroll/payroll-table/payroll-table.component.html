@@ -1,0 +1,87 @@
+@if (rows().length === 0) {
+  <app-empty-state
+    title="No employees match"
+    message="Change the filters, or reset them, to see every employee for the current month."
+  >
+    <app-button (click)="resetRequested.emit()">Reset filters</app-button>
+  </app-empty-state>
+} @else {
+  <app-data-table
+    ariaLabel="Employees salaries"
+    itemLabel="employees"
+    [paginate]="false"
+    [columns]="columns()"
+    [rows]="pageData().rows"
+    [rowKey]="rowKey"
+  >
+    <ng-template appDataTableCell="advance" let-row>
+      @if (row.pay.salaryAdvanceCents > 0) {
+        <button
+          type="button"
+          class="cell-link sd-num"
+          [attr.aria-label]="'View salary advances for ' + row.employee.name"
+          (click)="recordsRequested.emit({ row, kind: 'advance' })"
+        >
+          {{ money(row.pay.salaryAdvanceCents) }}
+        </button>
+      } @else {
+        <span class="sd-num">{{ money(row.pay.salaryAdvanceCents) }}</span>
+      }
+    </ng-template>
+    <ng-template appDataTableCell="leaves" let-row>
+      @if (row.pay.leaves !== null) {
+        <button
+          type="button"
+          class="cell-link sd-num"
+          [attr.aria-label]="'View leave records for ' + row.employee.name"
+          (click)="recordsRequested.emit({ row, kind: 'leaves' })"
+        >
+          {{ row.pay.leaves }}
+        </button>
+      } @else {
+        <span class="sd-num">N/A</span>
+      }
+    </ng-template>
+    <ng-template appDataTableCell="net" let-row>
+      <span class="sd-num">{{ net(row) }}</span>
+      @if (row.pay.shortfallWarning) {
+        <span class="warning sd-caption" data-testid="shortfall-warning">
+          Deductions are more than pay
+        </span>
+      }
+    </ng-template>
+    <ng-template appDataTableCell="status" let-row>
+      <app-badge [label]="statusOf(row).label" [tone]="statusOf(row).tone" />
+    </ng-template>
+    @if (canWrite()) {
+      <ng-template appDataTableCell="action" let-row>
+        <app-payroll-row-menu
+          [employeeName]="row.employee.name"
+          (selected)="rowAction.emit({ row, action: $event })"
+        />
+      </ng-template>
+    }
+  </app-data-table>
+}
+
+<div class="footer">
+  <div class="footer__size">
+    <label class="sd-label" for="payroll-page-size">Page size</label>
+    <div class="sd-field-box footer__select">
+      <select id="payroll-page-size" class="sd-field-control" (change)="onPageSize($event)">
+        @for (size of pageSizes; track size) {
+          <option [value]="size" [selected]="size === pageSize()">{{ size }}</option>
+        }
+      </select>
+    </div>
+    <p class="sd-caption" data-testid="entries-text" aria-live="polite">
+      {{ pageData().entriesText }}
+    </p>
+  </div>
+  <app-pagination
+    [total]="rows().length"
+    [pageSize]="pageSize()"
+    [showSummary]="false"
+    [(page)]="page"
+  />
+</div>

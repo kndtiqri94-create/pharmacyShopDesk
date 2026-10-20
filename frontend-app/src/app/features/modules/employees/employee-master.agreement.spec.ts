@@ -157,7 +157,7 @@ describe('Employee master: the same people everywhere', () => {
     expect(listRows(staff).some(row => row.includes('EMP-007'))).toBeFalse();
     expect(tile(staff, 'Total staff')).toContain('7');
     expect(tile(staff, 'On leave')).toContain('0');
-    expect(leaveCount(staff)).toBe('Leave 0');
+    expect(leaveCount(staff)).toBe('Leave 10');
     const attendance = await show(EmployeesComponent, 'Attendance');
     expect(attendanceRows(attendance).some(row => row.includes('Ruwani'))).toBeFalse();
     expect(attendanceRows(attendance).some(row => row.includes('Anura'))).toBeFalse();

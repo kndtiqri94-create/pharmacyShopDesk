@@ -1,0 +1,21 @@
+:host {
+  display: block;
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-3);
+}
+
+.picker__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--sd-space-3);
+}
+
+.picker__select {
+  flex: 1 1 240px;
+  min-width: 0;
+}

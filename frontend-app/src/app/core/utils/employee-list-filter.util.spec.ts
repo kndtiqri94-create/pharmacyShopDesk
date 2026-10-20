@@ -1,10 +1,11 @@
+import { SAMPLE_TODAY } from '../services/clock.service';
 import { AppUser } from '../models/domain/app-user.model';
 import { AttendanceStatus } from '../models/enums/attendance-status.enum';
 import { EmployeeStatus } from '../models/enums/employee-status.enum';
 import { UserStatus } from '../models/enums/user-status.enum';
 import { ATTENDANCE_SEED } from '../services/data/in-memory/seed/attendance.seed';
 import { EMPLOYEE_SEED } from '../services/data/in-memory/seed/employee.seed';
-import { LEAVE_SEED } from '../services/data/in-memory/seed/leave.seed';
+import { LEAVE_REQUEST_SEED } from '../services/data/in-memory/seed/leave.seed';
 import { USER_SEED } from '../services/data/in-memory/seed/user.seed';
 import {
   buildAttendanceRows,
@@ -19,8 +20,13 @@ import {
 } from './employee-list-filter.util';
 
 describe('employee-list-filter.util', () => {
-  const attendance = buildAttendanceRows(EMPLOYEE_SEED, ATTENDANCE_SEED);
-  const leave = buildLeaveRows(EMPLOYEE_SEED, LEAVE_SEED);
+  const attendance = buildAttendanceRows(
+    EMPLOYEE_SEED,
+    ATTENDANCE_SEED,
+    LEAVE_REQUEST_SEED,
+    SAMPLE_TODAY
+  );
+  const leave = buildLeaveRows(EMPLOYEE_SEED, LEAVE_REQUEST_SEED, SAMPLE_TODAY);
 
   it('shows the role as the system login, or No login', () => {
     expect(employeeLogin(EMPLOYEE_SEED[1], USER_SEED)).toEqual({
@@ -69,15 +75,20 @@ describe('employee-list-filter.util', () => {
   });
 
   it('counts Late people as on shift', () => {
-    const rows = buildAttendanceRows(EMPLOYEE_SEED, [
-      {
-        id: 'att-x',
-        employeeId: 'emp-001',
-        date: '2026-09-21',
-        status: AttendanceStatus.LATE,
-        timeIn: '08:20',
-      },
-    ]);
+    const rows = buildAttendanceRows(
+      EMPLOYEE_SEED,
+      [
+        {
+          id: 'att-x',
+          employeeId: 'emp-001',
+          date: '2026-09-21',
+          status: AttendanceStatus.LATE,
+          timeIn: '08:20',
+        },
+      ],
+      LEAVE_REQUEST_SEED,
+      SAMPLE_TODAY
+    );
     const summary = summarizeEmployees(EMPLOYEE_SEED, USER_SEED, rows, leave);
     expect(summary.late).toBe(1);
     expect(summary.onShift).toBe(1);
@@ -92,7 +103,7 @@ describe('employee-list-filter.util', () => {
 
   it('has an attendance row for every employee and falls back sensibly with no record', () => {
     expect(attendance).toHaveSize(7);
-    const rows = buildAttendanceRows(EMPLOYEE_SEED, []);
+    const rows = buildAttendanceRows(EMPLOYEE_SEED, [], LEAVE_REQUEST_SEED, SAMPLE_TODAY);
     expect(rows.find(row => row.employee.id === 'emp-007')?.status).toBe(AttendanceStatus.ON_LEAVE);
     expect(rows.find(row => row.employee.id === 'emp-001')?.status).toBe(AttendanceStatus.NOT_YET);
   });
@@ -100,7 +111,18 @@ describe('employee-list-filter.util', () => {
   it('lists the people on leave with their return date, matching the tile count', () => {
     expect(leave).toHaveSize(1);
     expect(leave[0].returnDate).toBe('2026-09-24');
-    expect(buildLeaveRows(EMPLOYEE_SEED, [])[0].returnDate).toBeNull();
+    expect(buildLeaveRows(EMPLOYEE_SEED, [], SAMPLE_TODAY)).toEqual([]);
+  });
+
+  it('ignores Pending, Rejected, Cancelled and out-of-range leave, and the stored On leave status', () => {
+    const others = LEAVE_REQUEST_SEED.filter(request => request.id !== 'leave-001');
+    expect(buildLeaveRows(EMPLOYEE_SEED, others, SAMPLE_TODAY)).toEqual([]);
+    const rows = buildAttendanceRows(EMPLOYEE_SEED, [], others, SAMPLE_TODAY);
+    expect(rows.find(row => row.employee.id === 'emp-007')?.status).toBe(AttendanceStatus.NOT_YET);
+    expect(buildLeaveRows(EMPLOYEE_SEED, LEAVE_REQUEST_SEED, '2026-09-25')).toEqual([]);
+    expect(buildLeaveRows(EMPLOYEE_SEED, LEAVE_REQUEST_SEED, '2026-09-24')[0].returnDate).toBe(
+      '2026-09-24'
+    );
   });
 
   it('describes nobody on leave and everybody with access', () => {

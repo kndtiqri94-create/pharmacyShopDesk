@@ -22,10 +22,13 @@ const MATRIX_ORDER: readonly ModuleKey[] = [
   ModuleKey.PURCHASE_ORDERS,
   ModuleKey.SUPPLIERS,
   ModuleKey.EMPLOYEES,
+  ModuleKey.PAYROLL,
   ModuleKey.RELOAD_UTILITY,
   ModuleKey.USERS,
   ModuleKey.SETTINGS,
 ];
+
+const OPTIONAL_MODULES: readonly ModuleKey[] = [ModuleKey.PAYROLL];
 
 export const MATRIX_MODULES: readonly ModuleDefinition[] = MATRIX_ORDER.map(getModuleDefinition);
 
@@ -47,7 +50,11 @@ export function normaliseMatrix(matrix: RolePermissionMatrix): NormaliseMatrixRe
   for (const role of ALL_USER_ROLES) {
     const row = {} as Record<ModuleKey, PermissionLevel>;
     for (const definition of MODULE_DEFINITIONS) {
-      const level = role === UserRole.ADMIN ? PermissionLevel.FULL : matrix[role]?.[definition.key];
+      const stored = matrix[role]?.[definition.key];
+      const level =
+        role === UserRole.ADMIN
+          ? PermissionLevel.FULL
+          : (stored ?? (OPTIONAL_MODULES.includes(definition.key) ? PermissionLevel.NONE : stored));
       if (!isPermissionLevel(level)) return { ok: false };
       row[definition.key] = level;
     }

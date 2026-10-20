@@ -55,6 +55,17 @@ describe('SidebarComponent', () => {
     ]);
   });
 
+  it('never lists Payroll in the sidebar, even for roles that can open it', async () => {
+    for (const role of [UserRole.ADMIN, UserRole.MANAGER]) {
+      const { labels, element } = await render(role);
+      expect(labels).not.toContain('Payroll');
+      const hrefs = Array.from(element.querySelectorAll('a.nav-link')).map(link =>
+        link.getAttribute('href')
+      );
+      expect(hrefs).not.toContain('/employees/payroll');
+    }
+  });
+
   it('hides modules the role has no access to', async () => {
     const manager = await render(UserRole.MANAGER);
     expect(manager.labels).not.toContain('Users');

@@ -86,19 +86,19 @@ Sequencing: F-2.1 first (everything depends on it); F-2.2 next (the product and 
 
 ### F-2.7 Leave management (WEB)
 
-- [ ] **S-2.7.1** [WEB] Mock leave model and service: leave types and per-employee yearly entitlements, balance (entitlement - utilized - pending), leave requests with Pending/Approved/Rejected/Cancelled, seeded with the screenshot's leave types; Employees "On leave" counts read from it. — _Traces: FR-LVE-2, FR-LVE-3, FR-EMP-1_ — _Weight: 3_ — _Design: docs/design/hr-reference/9.png_
-- [ ] **S-2.7.2** [WEB] Leave application page: Leave Year with period, Leave Type, From/To, Attachment (mock), Reason, Comments, Covering Employee search, Approver, Apply/Reset, validation (date order, overlap, balance, covering employee) and the Leave Balance table. — _Traces: FR-LVE-1, FR-LVE-2_ — _Weight: 5_ — _Design: docs/design/hr-reference/9.png_
-- [ ] **S-2.7.3** [WEB] Leave approval: approver or Admin approves/rejects pending leave with optional comment; balances and Pending Approval update; Leave tab lists requests. — _Traces: FR-LVE-3_ — _Weight: 3_ — _Design: docs/design/hr-reference/9.png_
+- [x] **S-2.7.1** [WEB] Mock leave model and service: leave types and per-employee yearly entitlements, balance (entitlement - utilized - pending), leave requests with Pending/Approved/Rejected/Cancelled, seeded with the screenshot's leave types; Employees "On leave" counts read from it. — _Traces: FR-LVE-2, FR-LVE-3, FR-EMP-1_ — _Weight: 3_ — _Design: docs/design/hr-reference/9.png_
+- [x] **S-2.7.2** [WEB] Leave application page: Leave Year with period, Leave Type, From/To, Attachment (mock), Reason, Comments, Covering Employee search, Approver, Apply/Reset, validation (date order, overlap, balance, covering employee) and the Leave Balance table. — _Traces: FR-LVE-1, FR-LVE-2_ — _Weight: 5_ — _Design: docs/design/hr-reference/9.png_
+- [x] **S-2.7.3** [WEB] Leave approval: approver or Admin approves/rejects pending leave with optional comment; balances and Pending Approval update; Leave tab lists requests. — _Traces: FR-LVE-3_ — _Weight: 3_ — _Design: docs/design/hr-reference/9.png_
 
 ### F-2.8 Payroll (WEB)
 
 > Depends on F-2.6 and F-2.7. Daily Pay content, Nopay fields, Paid transition and statutory rates are open questions in the PRD (OQ12 to OQ19); build to the stated assumptions.
 
-- [ ] **S-2.8.1** [WEB] Payroll calculation service (mock): gross, over time, commission from stored rate, EPF/ETF flags, Payee Tax slabs, nopay, advances, net (not below zero), configurable placeholder rates in mock settings; unit-testable pure logic. — _Traces: FR-PAY-3, FR-EMP-4_ — _Weight: 8_ — _Design: docs/design/hr-reference/5.png_
-- [ ] **S-2.8.2** [WEB] Employees Salaries page: Monthly Pay / Daily Pay tabs, Keyword/Location/Year/Month filters with Filter and Reset, full payroll table with money formatting and N/A cells, Payment Status badge, page size and pagination, role gating (Manager view-only). — _Traces: FR-PAY-1, FR-PAY-6, FR-AUTH-5_ — _Weight: 5_ — _Design: docs/design/hr-reference/5.png_
-- [ ] **S-2.8.3** [WEB] Row action menu with Add Leave (quick one-day leave modal), Add Salary Advance (Counter, Date, Advance Amount with validation) and Add Nopay Amount modals; payroll row recalculates after each. — _Traces: FR-PAY-2, FR-PAY-4, FR-PAY-5, FR-LVE-4_ — _Weight: 5_ — _Design: docs/design/hr-reference/6.png, docs/design/hr-reference/7.png, docs/design/hr-reference/8.png_
-- [ ] **S-2.8.4** [WEB] Export CSV and Export PDF of filtered payroll rows (mock, in-browser). — _Traces: FR-PAY-7_ — _Weight: 3_ — _Design: docs/design/hr-reference/5.png_
-- [ ] **S-2.8.5** [WEB] Wire Employees, Leave and Payroll routes, tabs and permission matrix row so Admin is Full, Manager View, others No access (assumption, PRD FR-AUTH-5). — _Traces: FR-AUTH-5, FR-USR-2, FR-SHELL-3_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.8.1** [WEB] Payroll calculation service (mock): gross, over time, commission from stored rate, EPF/ETF flags, Payee Tax slabs, nopay, advances, net (not below zero), configurable placeholder rates in mock settings; unit-testable pure logic. — _Traces: FR-PAY-3, FR-EMP-4_ — _Weight: 8_ — _Design: docs/design/hr-reference/5.png_
+- [x] **S-2.8.2** [WEB] Employees Salaries page: Monthly Pay / Daily Pay tabs, Keyword/Location/Year/Month filters with Filter and Reset, full payroll table with money formatting and N/A cells, Payment Status badge, page size and pagination, role gating (Manager view-only). — _Traces: FR-PAY-1, FR-PAY-6, FR-AUTH-5_ — _Weight: 5_ — _Design: docs/design/hr-reference/5.png_
+- [x] **S-2.8.3** [WEB] Row action menu with Add Leave (quick one-day leave modal), Add Salary Advance (Counter, Date, Advance Amount with validation) and Add Nopay Amount modals; payroll row recalculates after each. — _Traces: FR-PAY-2, FR-PAY-4, FR-PAY-5, FR-LVE-4_ — _Weight: 5_ — _Design: docs/design/hr-reference/6.png, docs/design/hr-reference/7.png, docs/design/hr-reference/8.png_
+- [x] **S-2.8.4** [WEB] Export CSV and Export PDF of filtered payroll rows (mock, in-browser). — _Traces: FR-PAY-7_ — _Weight: 3_ — _Design: docs/design/hr-reference/5.png_
+- [x] **S-2.8.5** [WEB] Wire Employees, Leave and Payroll routes, tabs and permission matrix row so Admin is Full, Manager View, others No access (assumption, PRD FR-AUTH-5). — _Traces: FR-AUTH-5, FR-USR-2, FR-SHELL-3_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
 
 ---
 

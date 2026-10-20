@@ -44,6 +44,7 @@ describe('EmployeeListComponent', () => {
     const fixture = TestBed.createComponent(EmployeeListComponent);
     fixture.componentRef.setInput('employees', employees);
     fixture.componentRef.setInput('users', USER_SEED);
+    fixture.componentRef.setInput('onLeaveIds', new Set(['emp-007']));
     const changed: number[] = [];
     fixture.componentInstance.changed.subscribe(() => changed.push(1));
     fixture.detectChanges();
@@ -145,6 +146,29 @@ describe('EmployeeListComponent', () => {
       'On leave'
     );
     expect(entries(element)).toBe('Showing 1 to 8 of 8 entries');
+  });
+
+  it('shows On leave only for someone away today and treats the stored status as Active otherwise', async () => {
+    const away = await render();
+    expect(
+      rowOf(away.element, 'EMP-007').querySelector('td:nth-child(9)')?.textContent?.trim()
+    ).toBe('On leave');
+    expect(
+      rowOf(away.element, 'EMP-001').querySelector('td:nth-child(9)')?.textContent?.trim()
+    ).toBe('Active');
+    away.fixture.componentRef.setInput('onLeaveIds', new Set<string>());
+    away.fixture.detectChanges();
+    expect(
+      rowOf(away.element, 'EMP-007').querySelector('td:nth-child(9)')?.textContent?.trim()
+    ).toBe('Active');
+  });
+
+  it('keeps someone on leave in the Active filter', async () => {
+    const rendered = await render();
+    type(rendered, 'employee-filter-status', 'active', 'change');
+    filter(rendered);
+    expect(codes(rendered.element)).toContain('EMP-007');
+    expect(codes(rendered.element)).not.toContain('EMP-008');
   });
 
   it('shows the photo when an employee has one', async () => {

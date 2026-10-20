@@ -5,6 +5,7 @@ import { UserRole } from '../models/enums/user-role.enum';
 import { ROLE_PERMISSION_SEED } from '../services/data/in-memory/seed/role-permission.seed';
 import {
   EDITABLE_ROLES,
+  MATRIX_MODULES,
   diffMatrix,
   normaliseMatrix,
   setMatrixCell,
@@ -50,6 +51,33 @@ describe('permission-matrix.util', () => {
     >;
     delete missingModule['MANAGER']['users'];
     expect(normaliseMatrix(missingModule as unknown as RolePermissionMatrix).ok).toBeFalse();
+  });
+
+  it('accepts a legacy matrix without payroll and defaults it to No access, Admin Full', () => {
+    const legacy = structuredClone(ROLE_PERMISSION_SEED) as unknown as Record<
+      string,
+      Record<string, string>
+    >;
+    for (const role of Object.keys(legacy)) delete legacy[role]['payroll'];
+    const result = normaliseMatrix(legacy as unknown as RolePermissionMatrix);
+    expect(result.ok).toBeTrue();
+    if (!result.ok) return;
+    expect(result.matrix.ADMIN.payroll).toBe('FULL');
+    expect(result.matrix.MANAGER.payroll).toBe('NONE');
+    expect(result.matrix.PHARMACIST.payroll).toBe('NONE');
+    expect(result.matrix.CASHIER.payroll).toBe('NONE');
+  });
+
+  it('seeds payroll as Admin Full, Manager View, others No access', () => {
+    expect(ROLE_PERMISSION_SEED.ADMIN.payroll).toBe('FULL');
+    expect(ROLE_PERMISSION_SEED.MANAGER.payroll).toBe('VIEW');
+    expect(ROLE_PERMISSION_SEED.PHARMACIST.payroll).toBe('NONE');
+    expect(ROLE_PERMISSION_SEED.CASHIER.payroll).toBe('NONE');
+  });
+
+  it('lists Payroll right after Employees in the matrix', () => {
+    const keys = MATRIX_MODULES.map(definition => definition.key);
+    expect(keys.indexOf(ModuleKey.PAYROLL)).toBe(keys.indexOf(ModuleKey.EMPLOYEES) + 1);
   });
 
   it('changes one cell without touching the original, and never the Admin column', () => {

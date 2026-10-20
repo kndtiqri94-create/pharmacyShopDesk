@@ -6,6 +6,7 @@ import { InMemoryAttendanceDataService } from './in-memory/in-memory-attendance-
 import { InMemoryEmployeeDataService } from './in-memory/in-memory-employee-data.service';
 import { InMemoryGrnDataService } from './in-memory/in-memory-grn-data.service';
 import { InMemoryLeaveDataService } from './in-memory/in-memory-leave-data.service';
+import { InMemoryPayrollDataService } from './in-memory/in-memory-payroll-data.service';
 import { InMemoryProductDataService } from './in-memory/in-memory-product-data.service';
 import { InMemoryPurchaseOrderDataService } from './in-memory/in-memory-purchase-order-data.service';
 import { InMemoryReloadDataService } from './in-memory/in-memory-reload-data.service';
@@ -17,6 +18,7 @@ import { InMemorySupplierPaymentDataService } from './in-memory/in-memory-suppli
 import { InMemorySyncDataService } from './in-memory/in-memory-sync-data.service';
 import { InMemoryUserDataService } from './in-memory/in-memory-user-data.service';
 import { LeaveDataService } from './leave-data.service';
+import { PayrollDataService } from './payroll-data.service';
 import { ProductDataService } from './product-data.service';
 import { PurchaseOrderDataService } from './purchase-order-data.service';
 import { ReloadDataService } from './reload-data.service';
@@ -45,6 +47,7 @@ const IN_MEMORY_BINDINGS: readonly [DataToken, new () => object][] = [
   [SupplierPaymentDataService, InMemorySupplierPaymentDataService],
   [AttendanceDataService, InMemoryAttendanceDataService],
   [LeaveDataService, InMemoryLeaveDataService],
+  [PayrollDataService, InMemoryPayrollDataService],
 ];
 
 function notConfigured(): never {

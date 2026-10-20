@@ -1,0 +1,41 @@
+<form class="filters sd-form-grid" aria-label="Filter salaries" (submit)="apply($event)">
+  <app-field label="Keyword" fieldId="payroll-filter-keyword" [span]="4">
+    <input
+      appFieldControl
+      type="search"
+      autocomplete="off"
+      placeholder="Name, code or mobile"
+      [attr.maxlength]="keywordMaxLength"
+      [value]="keyword()"
+      (input)="onKeyword($event)"
+    />
+  </app-field>
+  <app-field label="Location" fieldId="payroll-filter-location" [span]="2">
+    <select appFieldControl (change)="onLocation($event)">
+      <option value="" [selected]="location() === ''">All locations</option>
+      @for (name of locations(); track name) {
+        <option [value]="name" [selected]="name === location()">{{ name }}</option>
+      }
+    </select>
+  </app-field>
+  <app-field label="Year" fieldId="payroll-filter-year" [span]="2">
+    <select appFieldControl (change)="onYear($event)">
+      @for (value of yearOptions(); track value) {
+        <option [value]="value" [selected]="value === year()">{{ value }}</option>
+      }
+    </select>
+  </app-field>
+  <app-field label="Month" fieldId="payroll-filter-month" [span]="2">
+    <select appFieldControl (change)="onMonth($event)">
+      @for (choice of months; track choice.value) {
+        <option [value]="choice.value" [selected]="choice.value === month()">
+          {{ choice.label }}
+        </option>
+      }
+    </select>
+  </app-field>
+  <div class="filters__actions sd-col-2">
+    <app-button type="submit" variant="primary" icon="filter">Filter</app-button>
+    <app-button variant="ghost" (click)="reset()">Reset</app-button>
+  </div>
+</form>

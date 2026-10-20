@@ -1,0 +1,91 @@
+<div class="sd-stack">
+  <app-breadcrumb [items]="breadcrumb" />
+  <app-page-header title="Employees salaries" [subtitle]="subtitle()">
+    <div pageActions class="sd-row">
+      <app-button icon="download" [disabled]="exporting()" (click)="exportCsv()">
+        Export CSV
+      </app-button>
+      <app-button icon="download" [disabled]="exporting()" (click)="exportPdf()">
+        Export PDF
+      </app-button>
+      <app-button (click)="back()">Back to employees</app-button>
+    </div>
+  </app-page-header>
+
+  <app-tabs
+    ariaLabel="Salary sections"
+    [items]="tabItems"
+    [value]="tab()"
+    [panelId]="panelId"
+    (valueChange)="setTab($event)"
+  />
+
+  <div class="sd-stack" role="tabpanel" [id]="panelId">
+    <app-card [flush]="true">
+      <app-payroll-filters
+        [defaults]="defaults()"
+        [locations]="locations()"
+        [years]="years()"
+        (applied)="applyFilters($event)"
+      />
+
+      @if (loadFailed()) {
+        <app-alert tone="warning" title="Salaries did not load">
+          Go back to Employees and open this page again.
+        </app-alert>
+      } @else if (loaded()) {
+        <app-payroll-table
+          [rows]="rows()"
+          [tab]="tab()"
+          [canWrite]="canWrite()"
+          (resetRequested)="resetFilters()"
+          (rowAction)="startAction($event)"
+          (recordsRequested)="showRecords($event)"
+        />
+      }
+
+      <p class="note sd-caption" data-testid="sample-note">
+        Sample rates, not payroll law. Figures use sample values for demonstration only.
+      </p>
+    </app-card>
+  </div>
+</div>
+
+@if (openAction(); as current) {
+  @switch (current.action) {
+    @case ('leave') {
+      <app-quick-leave-dialog
+        [row]="current.row"
+        [month]="month()"
+        (finished)="finishAction()"
+        (cancelled)="closeAction()"
+      />
+    }
+    @case ('advance') {
+      <app-salary-advance-dialog
+        [row]="current.row"
+        [month]="month()"
+        (finished)="finishAction()"
+        (cancelled)="closeAction()"
+      />
+    }
+    @case ('nopay') {
+      <app-nopay-dialog
+        [row]="current.row"
+        [month]="month()"
+        (finished)="finishAction()"
+        (cancelled)="closeAction()"
+      />
+    }
+  }
+}
+
+@if (openRecords(); as current) {
+  <app-payroll-records-dialog
+    [row]="current.row"
+    [kind]="current.kind"
+    [monthKey]="month()"
+    [monthLabel]="subtitle()"
+    (closed)="closeRecords()"
+  />
+}

@@ -59,6 +59,15 @@ export const MODULE_DEFINITIONS: readonly ModuleDefinition[] = [
     subtitle: 'Your staff, their shifts and who can sign in.',
   },
   {
+    key: ModuleKey.PAYROLL,
+    path: 'employees/payroll',
+    label: 'Payroll',
+    icon: 'idcard',
+    group: 'PEOPLE',
+    subtitle: 'Monthly and daily pay for your staff, worked out from sample rates.',
+    hideFromSidebar: true,
+  },
+  {
     key: ModuleKey.USERS,
     path: 'users',
     label: 'Users',
@@ -97,6 +106,8 @@ export function isModuleKey(value: unknown): value is ModuleKey {
 export function moduleKeyFromUrl(url: string): ModuleKey | null {
   const pathOnly = url.split('?')[0].split('#')[0];
   const firstSegment = pathOnly.split('/').find(segment => segment.length > 0);
-  const match = MODULE_DEFINITIONS.find(candidate => candidate.path === firstSegment);
+  const match = MODULE_DEFINITIONS.find(
+    candidate => !candidate.path.includes('/') && candidate.path === firstSegment
+  );
   return match?.key ?? null;
 }
