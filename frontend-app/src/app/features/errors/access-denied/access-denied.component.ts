@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { ModuleKey } from '../../../core/models/enums/module-key.enum';
+import { PermissionService } from '../../../core/services/permission.service';
 import { FallbackPageComponent } from '../fallback-page/fallback-page.component';
 
 @Component({
@@ -7,4 +9,10 @@ import { FallbackPageComponent } from '../fallback-page/fallback-page.component'
   templateUrl: './access-denied.component.html',
   styleUrl: './access-denied.component.scss',
 })
-export class AccessDeniedComponent {}
+export class AccessDeniedComponent {
+  private readonly permissionService = inject(PermissionService);
+
+  protected readonly isPosDenied = computed(
+    () => this.permissionService.deniedModule() === ModuleKey.POS
+  );
+}

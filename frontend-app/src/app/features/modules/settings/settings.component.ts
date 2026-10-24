@@ -32,6 +32,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 import { BackupSyncSectionComponent } from './backup-sync-section/backup-sync-section.component';
 import { CurrencyRegionSectionComponent } from './currency-region-section/currency-region-section.component';
 import { InventoryAlertsSectionComponent } from './inventory-alerts-section/inventory-alerts-section.component';
+import { PointOfSaleSectionComponent } from './point-of-sale-section/point-of-sale-section.component';
 import { SettingsGroupListComponent } from './settings-group-list/settings-group-list.component';
 import { ShopProfileSectionComponent } from './shop-profile-section/shop-profile-section.component';
 
@@ -45,6 +46,7 @@ import { ShopProfileSectionComponent } from './shop-profile-section/shop-profile
     CurrencyRegionSectionComponent,
     InventoryAlertsSectionComponent,
     PageHeaderComponent,
+    PointOfSaleSectionComponent,
     SettingsGroupListComponent,
     ShopProfileSectionComponent,
   ],

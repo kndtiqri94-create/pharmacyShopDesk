@@ -1,0 +1,79 @@
+<div class="pos-settings">
+  <fieldset class="options" [disabled]="disabled()">
+    <legend class="sd-label">Discounts at the till</legend>
+    <label class="sd-checkbox">
+      <input
+        type="checkbox"
+        [id]="optionIdPrefix + 'posLineDiscountEnabled'"
+        [checked]="draft().posLineDiscountEnabled"
+        (change)="onOptionChange('posLineDiscountEnabled', $event)"
+      />
+      <span>Allow a discount on each item</span>
+    </label>
+    <label class="sd-checkbox">
+      <input
+        type="checkbox"
+        [id]="optionIdPrefix + 'posBillDiscountEnabled'"
+        [checked]="draft().posBillDiscountEnabled"
+        (change)="onOptionChange('posBillDiscountEnabled', $event)"
+      />
+      <span>Allow a discount on the whole bill</span>
+    </label>
+  </fieldset>
+
+  <div class="sd-form-grid">
+    <app-field
+      label="Default discount"
+      suffix="%"
+      hint="Pre-filled on every new item and bill. Any other value needs an Admin to sign in."
+      [fieldId]="fieldId('posDefaultDiscountPercent')"
+      [required]="true"
+      [span]="6"
+      [error]="error('posDefaultDiscountPercent')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [attr.maxlength]="percentMaxLength"
+        [disabled]="disabled()"
+        [value]="draft().posDefaultDiscountPercent"
+        (input)="onPercentInput('posDefaultDiscountPercent', $event)"
+      />
+    </app-field>
+    <app-field
+      label="Maximum discount"
+      suffix="%"
+      hint="The most anyone can give, including an Admin."
+      [fieldId]="fieldId('posMaxDiscountPercent')"
+      [required]="true"
+      [span]="6"
+      [error]="error('posMaxDiscountPercent')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [attr.maxlength]="percentMaxLength"
+        [disabled]="disabled()"
+        [value]="draft().posMaxDiscountPercent"
+        (input)="onPercentInput('posMaxDiscountPercent', $event)"
+      />
+    </app-field>
+  </div>
+
+  <fieldset class="options" [disabled]="disabled()">
+    <legend class="sd-label">Screen</legend>
+    <label class="sd-checkbox">
+      <input
+        type="checkbox"
+        [id]="optionIdPrefix + 'posHideSidebar'"
+        [checked]="draft().posHideSidebar"
+        (change)="onOptionChange('posHideSidebar', $event)"
+      />
+      <span>Hide sidebar when POS opens</span>
+    </label>
+  </fieldset>
+</div>

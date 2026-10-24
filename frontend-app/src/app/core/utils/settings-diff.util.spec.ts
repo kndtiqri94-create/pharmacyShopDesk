@@ -35,6 +35,35 @@ describe('settings diff', () => {
     expect(toDraft(saved)).toEqual(draft);
   });
 
+  it('carries the point of sale settings through the draft and back', () => {
+    const draft = {
+      ...toDraft(SETTINGS_SEED),
+      posDefaultDiscountPercent: '5',
+      posMaxDiscountPercent: '15.5',
+      posLineDiscountEnabled: false,
+      posHideSidebar: false,
+    };
+    const saved = fromDraft(validateSettings(draft).values!, SETTINGS_SEED);
+    expect(saved.posDefaultDiscountPercent).toBe(5);
+    expect(saved.posMaxDiscountPercent).toBe(15.5);
+    expect(saved.posLineDiscountEnabled).toBeFalse();
+    expect(saved.posBillDiscountEnabled).toBeTrue();
+    expect(saved.posHideSidebar).toBeFalse();
+    expect(toDraft(saved)).toEqual(draft);
+    expect(isSettingsDirty(draft, SETTINGS_SEED)).toBeTrue();
+  });
+
+  it('falls back to the POS sample values for settings saved before POS existed', () => {
+    const older: Partial<typeof SETTINGS_SEED> = { ...SETTINGS_SEED };
+    delete older.posMaxDiscountPercent;
+    delete older.posDefaultDiscountPercent;
+    delete older.posHideSidebar;
+    const draft = toDraft(older as typeof SETTINGS_SEED);
+    expect(draft.posMaxDiscountPercent).toBe('20');
+    expect(draft.posDefaultDiscountPercent).toBe('0');
+    expect(draft.posHideSidebar).toBeTrue();
+  });
+
   it('does not change the settings it is given', () => {
     const before = structuredClone(SETTINGS_SEED);
     fromDraft(validateSettings(toDraft(SETTINGS_SEED)).values!, SETTINGS_SEED);

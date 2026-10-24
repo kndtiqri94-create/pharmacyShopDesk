@@ -76,15 +76,26 @@ describe('SettingsComponent', () => {
       expect(discardButton(element).getAttribute('data-variant')).not.toBe('primary');
     });
 
-    it('lists the four groups with the current one marked and switches the right card', async () => {
+    it('lists the five groups with the current one marked and switches the right card', async () => {
       const { fixture, element } = await render();
       const list = element.querySelector('app-settings-group-list')!;
       expect(
         Array.from(list.querySelectorAll('button')).map(item => item.textContent?.trim())
-      ).toEqual(['Shop profile', 'Currency & region', 'Inventory alerts', 'Backup & sync']);
+      ).toEqual([
+        'Shop profile',
+        'Currency & region',
+        'Inventory alerts',
+        'Point of sale',
+        'Backup & sync',
+      ]);
       expect(list.querySelector('[aria-current=true]')?.textContent?.trim()).toBe('Shop profile');
       expect(text(element, 'app-card h2')).toBe('Shop profile');
-      for (const label of ['Currency & region', 'Inventory alerts', 'Backup & sync']) {
+      for (const label of [
+        'Currency & region',
+        'Inventory alerts',
+        'Point of sale',
+        'Backup & sync',
+      ]) {
         openGroup(fixture, element, label);
         expect(text(element, 'app-card h2')).toBe(label);
         expect(list.querySelector('[aria-current=true]')?.textContent?.trim()).toBe(label);
@@ -147,6 +158,27 @@ describe('SettingsComponent', () => {
       expect(options.every(option => option.checked)).toBeTrue();
     });
 
+    it('shows Point of sale with the fresh-session values', async () => {
+      const { fixture, element } = await render();
+      openGroup(fixture, element, 'Point of sale');
+      expect(field<HTMLInputElement>(element, 'posLineDiscountEnabled').checked).toBeTrue();
+      expect(field<HTMLInputElement>(element, 'posBillDiscountEnabled').checked).toBeTrue();
+      expect(field<HTMLInputElement>(element, 'posDefaultDiscountPercent').value).toBe('0');
+      expect(field<HTMLInputElement>(element, 'posMaxDiscountPercent').value).toBe('20');
+      expect(field<HTMLInputElement>(element, 'posHideSidebar').checked).toBeTrue();
+      expect(text(element, 'app-point-of-sale-section')).toContain('Hide sidebar when POS opens');
+    });
+
+    it('shows Point of sale read-only for a role that cannot change settings', async () => {
+      const { fixture, element } = await render(UserRole.MANAGER);
+      openGroup(fixture, element, 'Point of sale');
+      expect(field<HTMLInputElement>(element, 'posMaxDiscountPercent').disabled).toBeTrue();
+      expect(
+        field<HTMLInputElement>(element, 'posHideSidebar').closest('fieldset')?.disabled
+      ).toBeTrue();
+      expect(buttonByText(element, 'Save changes')).toBeUndefined();
+    });
+
     it('shows Backup & sync with the notice, the instant option and sample-only buttons', async () => {
       const { fixture, element } = await render();
       openGroup(fixture, element, 'Backup & sync');
@@ -163,6 +195,64 @@ describe('SettingsComponent', () => {
       buttonByText(section, 'Sync now')!.click();
       expect(notification()?.message).toBe('Sync now is sample only for now and does nothing yet.');
       expect(saveButton(element).disabled).toBeTrue();
+    });
+  });
+
+  describe('Point of sale changes', () => {
+    it('refuses a default above the maximum and saves nothing', async () => {
+      const { fixture, element } = await render();
+      openGroup(fixture, element, 'Point of sale');
+      type(fixture, field(element, 'posDefaultDiscountPercent'), '30');
+      await pressSave(fixture, element);
+      expect(
+        element.querySelector('#settings-posDefaultDiscountPercent-error')?.textContent
+      ).toContain('cannot be more than the maximum');
+      expect((await saved()).posDefaultDiscountPercent).toBe(0);
+      expect(notification()).toBeNull();
+    });
+
+    it('refuses negative, above 100 and non-numeric percentages', async () => {
+      const { fixture, element } = await render();
+      openGroup(fixture, element, 'Point of sale');
+      for (const bad of ['-1', '101', 'abc', '1.234']) {
+        type(fixture, field(element, 'posMaxDiscountPercent'), bad);
+        await pressSave(fixture, element);
+        expect(element.querySelector('#settings-posMaxDiscountPercent-error')?.textContent)
+          .withContext(bad)
+          .toContain('0 to 100');
+        expect((await saved()).posMaxDiscountPercent).toBe(20);
+      }
+    });
+
+    it('saves valid values and confirms', async () => {
+      const { fixture, element } = await render();
+      openGroup(fixture, element, 'Point of sale');
+      type(fixture, field(element, 'posMaxDiscountPercent'), '15');
+      type(fixture, field(element, 'posDefaultDiscountPercent'), '5');
+      field<HTMLInputElement>(element, 'posLineDiscountEnabled').click();
+      field<HTMLInputElement>(element, 'posHideSidebar').click();
+      fixture.detectChanges();
+      await pressSave(fixture, element);
+      expect(notification()?.tone).toBe('success');
+      const now = await saved();
+      expect(now.posMaxDiscountPercent).toBe(15);
+      expect(now.posDefaultDiscountPercent).toBe(5);
+      expect(now.posLineDiscountEnabled).toBeFalse();
+      expect(now.posBillDiscountEnabled).toBeTrue();
+      expect(now.posHideSidebar).toBeFalse();
+    });
+
+    it('returns the previous saved values on Discard', async () => {
+      const { fixture, element } = await render();
+      openGroup(fixture, element, 'Point of sale');
+      type(fixture, field(element, 'posMaxDiscountPercent'), '15');
+      field<HTMLInputElement>(element, 'posBillDiscountEnabled').click();
+      fixture.detectChanges();
+      discardButton(element).click();
+      fixture.detectChanges();
+      expect(field<HTMLInputElement>(element, 'posMaxDiscountPercent').value).toBe('20');
+      expect(field<HTMLInputElement>(element, 'posBillDiscountEnabled').checked).toBeTrue();
+      expect((await saved()).posMaxDiscountPercent).toBe(20);
     });
   });
 

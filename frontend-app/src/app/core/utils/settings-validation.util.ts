@@ -1,9 +1,11 @@
+import { parseDiscountPercent } from './pos-discount.util';
 import { parseNonNegativeNumber } from './product-validation.util';
 
 export const SETTINGS_GROUPS = [
   { id: 'shop-profile', label: 'Shop profile' },
   { id: 'currency-region', label: 'Currency & region' },
   { id: 'inventory-alerts', label: 'Inventory alerts' },
+  { id: 'point-of-sale', label: 'Point of sale' },
   { id: 'backup-sync', label: 'Backup & sync' },
 ] as const;
 
@@ -30,7 +32,9 @@ export type SettingsFieldKey =
   | 'email'
   | 'expiryAlertDays'
   | 'defaultReorderLevel'
-  | 'lowFloatRupees';
+  | 'lowFloatRupees'
+  | 'posDefaultDiscountPercent'
+  | 'posMaxDiscountPercent';
 
 export const SETTINGS_FIELD_ORDER: readonly SettingsFieldKey[] = [
   'shopName',
@@ -41,6 +45,8 @@ export const SETTINGS_FIELD_ORDER: readonly SettingsFieldKey[] = [
   'expiryAlertDays',
   'defaultReorderLevel',
   'lowFloatRupees',
+  'posDefaultDiscountPercent',
+  'posMaxDiscountPercent',
 ];
 
 export const SETTINGS_FIELD_GROUP: Record<SettingsFieldKey, SettingsGroupId> = {
@@ -52,6 +58,8 @@ export const SETTINGS_FIELD_GROUP: Record<SettingsFieldKey, SettingsGroupId> = {
   expiryAlertDays: 'inventory-alerts',
   defaultReorderLevel: 'inventory-alerts',
   lowFloatRupees: 'inventory-alerts',
+  posDefaultDiscountPercent: 'point-of-sale',
+  posMaxDiscountPercent: 'point-of-sale',
 };
 
 export interface SettingsDraft {
@@ -66,6 +74,11 @@ export interface SettingsDraft {
   sellEarliestExpiringFirst: boolean;
   blockExpiredSales: boolean;
   showLowStockCountInSidebar: boolean;
+  posLineDiscountEnabled: boolean;
+  posBillDiscountEnabled: boolean;
+  posDefaultDiscountPercent: string;
+  posMaxDiscountPercent: string;
+  posHideSidebar: boolean;
 }
 
 export interface ValidatedSettings {
@@ -80,6 +93,11 @@ export interface ValidatedSettings {
   sellEarliestExpiringFirst: boolean;
   blockExpiredSales: boolean;
   showLowStockCountInSidebar: boolean;
+  posLineDiscountEnabled: boolean;
+  posBillDiscountEnabled: boolean;
+  posDefaultDiscountPercent: number;
+  posMaxDiscountPercent: number;
+  posHideSidebar: boolean;
 }
 
 export type SettingsFieldErrors = Partial<Record<SettingsFieldKey, string>>;
@@ -156,10 +174,23 @@ function validateNumbers(errors: SettingsFieldErrors, draft: SettingsDraft): voi
   if (lowFloat !== null) errors.lowFloatRupees = lowFloat;
 }
 
+const PERCENT_MESSAGE = 'Enter a percentage from 0 to 100, with at most two decimals';
+
+function validatePosPercents(errors: SettingsFieldErrors, draft: SettingsDraft): void {
+  const maxPercent = parseDiscountPercent(draft.posMaxDiscountPercent);
+  const defaultPercent = parseDiscountPercent(draft.posDefaultDiscountPercent);
+  if (maxPercent === null) errors.posMaxDiscountPercent = PERCENT_MESSAGE;
+  if (defaultPercent === null) errors.posDefaultDiscountPercent = PERCENT_MESSAGE;
+  if (maxPercent !== null && defaultPercent !== null && defaultPercent > maxPercent) {
+    errors.posDefaultDiscountPercent = `The default discount cannot be more than the maximum (${maxPercent}%)`;
+  }
+}
+
 export function validateSettings(draft: SettingsDraft): SettingsValidationResult {
   const errors: SettingsFieldErrors = {};
   validateText(errors, draft);
   validateNumbers(errors, draft);
+  validatePosPercents(errors, draft);
   const firstErrorField = SETTINGS_FIELD_ORDER.find(key => errors[key] !== undefined) ?? null;
   if (firstErrorField !== null) return { errors, values: null, firstErrorField };
   return {
@@ -177,6 +208,11 @@ export function validateSettings(draft: SettingsDraft): SettingsValidationResult
       sellEarliestExpiringFirst: draft.sellEarliestExpiringFirst,
       blockExpiredSales: draft.blockExpiredSales,
       showLowStockCountInSidebar: draft.showLowStockCountInSidebar,
+      posLineDiscountEnabled: draft.posLineDiscountEnabled,
+      posBillDiscountEnabled: draft.posBillDiscountEnabled,
+      posDefaultDiscountPercent: parseDiscountPercent(draft.posDefaultDiscountPercent) ?? 0,
+      posMaxDiscountPercent: parseDiscountPercent(draft.posMaxDiscountPercent) ?? 0,
+      posHideSidebar: draft.posHideSidebar,
     },
   };
 }

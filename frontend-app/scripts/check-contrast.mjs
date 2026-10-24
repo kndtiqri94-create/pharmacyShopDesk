@@ -52,6 +52,7 @@ const textPairs = [
   ['danger', 'surface'],
   ['info', 'info-soft'],
   ['info', 'surface'],
+  ['on-info', 'info'],
   ['sidebar-ink', 'sidebar-bg'],
   ['sidebar-ink', 'sidebar-hover'],
   ['sidebar-label', 'sidebar-bg'],

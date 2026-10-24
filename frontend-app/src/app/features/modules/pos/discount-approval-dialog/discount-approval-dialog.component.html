@@ -1,0 +1,32 @@
+<dialog #dialog class="approval" [attr.aria-labelledby]="titleId" (cancel)="cancel($event)">
+  <form class="approval__surface" novalidate (submit)="submit($event)">
+    <h2 class="sd-section-title" [id]="titleId">Admin approval needed</h2>
+    <p class="sd-muted">{{ description() }}</p>
+    <app-field label="Admin username" fieldId="approval-username" size="xl" [required]="true">
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        [attr.maxlength]="maxLength"
+        [disabled]="checking()"
+      />
+    </app-field>
+    <app-field label="Admin password" fieldId="approval-password" size="xl" [required]="true">
+      <input
+        appFieldControl
+        type="password"
+        autocomplete="off"
+        [attr.maxlength]="maxLength"
+        [disabled]="checking()"
+      />
+    </app-field>
+    <div class="approval__actions">
+      <app-button size="xl" [disabled]="checking()" (click)="cancel()">Cancel</app-button>
+      <app-button variant="primary" size="xl" type="submit" [disabled]="checking()">
+        {{ checking() ? 'Checking' : 'Approve discount' }}
+      </app-button>
+    </div>
+  </form>
+</dialog>

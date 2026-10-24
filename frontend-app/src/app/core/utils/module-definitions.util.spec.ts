@@ -8,23 +8,25 @@ import {
 } from './module-definitions.util';
 
 describe('module-definitions.util', () => {
-  it('lists exactly ten modules with unique paths', () => {
-    expect(MODULE_DEFINITIONS).toHaveSize(10);
-    expect(new Set(MODULE_DEFINITIONS.map(definition => definition.path)).size).toBe(10);
+  it('lists exactly eleven modules with unique paths', () => {
+    expect(MODULE_DEFINITIONS).toHaveSize(11);
+    expect(new Set(MODULE_DEFINITIONS.map(definition => definition.path)).size).toBe(11);
   });
 
-  it('flags only Payroll as hidden from the sidebar', () => {
+  it('flags only Payroll and POS as hidden from the sidebar', () => {
     expect(
       MODULE_DEFINITIONS.filter(definition => definition.hideFromSidebar).map(d => d.key)
-    ).toEqual([ModuleKey.PAYROLL]);
+    ).toEqual([ModuleKey.PAYROLL, ModuleKey.POS]);
     expect(getModuleDefinition(ModuleKey.PAYROLL).path).toBe('employees/payroll');
+    expect(getModuleDefinition(ModuleKey.POS).path).toBe('pos');
+    expect(getModuleDefinition(ModuleKey.POS).label).toBe('POS');
   });
 
   it('places modules in the documented groups', () => {
     const byGroup = (group: string) =>
       MODULE_DEFINITIONS.filter(definition => definition.group === group).map(d => d.label);
     expect(MODULE_GROUP_ORDER).toEqual(['OVERVIEW', 'INVENTORY', 'PEOPLE', 'SERVICES', 'SYSTEM']);
-    expect(byGroup('OVERVIEW')).toEqual(['Dashboard']);
+    expect(byGroup('OVERVIEW')).toEqual(['Dashboard', 'POS']);
     expect(byGroup('INVENTORY')).toEqual(['Products', 'GRN', 'Purchase orders', 'Suppliers']);
     expect(byGroup('PEOPLE')).toEqual(['Employees', 'Payroll', 'Users']);
     expect(byGroup('SERVICES')).toEqual(['Reload & Utility']);
@@ -48,6 +50,8 @@ describe('module-definitions.util', () => {
     expect(moduleKeyFromUrl('/employees')).toBe(ModuleKey.EMPLOYEES);
     expect(moduleKeyFromUrl('/employees/payroll')).toBe(ModuleKey.EMPLOYEES);
     expect(moduleKeyFromUrl('/employees/12/edit?x=1')).toBe(ModuleKey.EMPLOYEES);
+    expect(moduleKeyFromUrl('/pos')).toBe(ModuleKey.POS);
+    expect(moduleKeyFromUrl('/pos?x=1')).toBe(ModuleKey.POS);
     expect(moduleKeyFromUrl('/payroll')).toBeNull();
     expect(moduleKeyFromUrl('/access-denied')).toBeNull();
     expect(moduleKeyFromUrl('/')).toBeNull();

@@ -1,0 +1,24 @@
+$not-receipt: ':not(.sd-receipt-sheet):not(.sd-receipt-sheet *):not(:has(.sd-receipt-sheet))';
+
+@media print {
+  body.sd-printing-receipt *#{$not-receipt} {
+    display: none !important;
+  }
+
+  body.sd-printing-receipt .sd-receipt-overlay {
+    position: static !important;
+    overflow: visible !important;
+    background: none !important;
+    padding: 0 !important;
+  }
+
+  body.sd-printing-receipt .sd-receipt-sheet {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+    color: #000000;
+    background: #ffffff;
+  }
+}

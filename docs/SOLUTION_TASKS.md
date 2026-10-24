@@ -1,10 +1,10 @@
 # Solution Tasks (Backlog) — ShopDesk
 
 > **Status:** Draft
-> **Version:** v0.3
-> **Last updated:** 2026-10-17
+> **Version:** v0.8
+> **Last updated:** 2026-10-24
 > **Owner:** Product Owner (agent: product-owner)
-> **Source PRD:** `docs/SOLUTION_PRD.md` (v0.3)
+> **Source PRD:** `docs/SOLUTION_PRD.md` (v0.8)
 
 ## How to read this document
 
@@ -28,6 +28,8 @@
 | Epic | Title | Phase | PRD FR groups |
 |---|---|---|---|
 | E-2 | ShopDesk back office frontend | 1 | FR-FND, FR-SHELL, FR-AUTH, FR-DASH, FR-PROD, FR-GRN, FR-PO, FR-SUP, FR-EMP, FR-USR, FR-SVC, FR-SET, plus HR amendment FR-EMP-2 to 5, FR-LVE, FR-PAY, FR-AUTH-5 (F-2.6 to F-2.8) |
+
+POS sequencing (PRD 5.9): F-2.9 Phase A (after F-2.2 and F-2.3, S-2.9.2 data layer first, S-2.9.1 button can ship any time), then F-2.10 Phase B only after Phase A is accepted.
 
 HR amendment sequencing: F-2.6 Employee master, then F-2.7 Leave management, then F-2.8 Payroll (payroll reads employees and leave).
 
@@ -100,6 +102,41 @@ Sequencing: F-2.1 first (everything depends on it); F-2.2 next (the product and 
 - [x] **S-2.8.4** [WEB] Export CSV and Export PDF of filtered payroll rows (mock, in-browser). — _Traces: FR-PAY-7_ — _Weight: 3_ — _Design: docs/design/hr-reference/5.png_
 - [x] **S-2.8.5** [WEB] Wire Employees, Leave and Payroll routes, tabs and permission matrix row so Admin is Full, Manager View, others No access (assumption, PRD FR-AUTH-5). — _Traces: FR-AUTH-5, FR-USR-2, FR-SHELL-3_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
 
+### F-2.9 POS till, Phase A (WEB)
+
+> PRD 5.9 (FR-POS-1 to 12 and FR-POS-16) and FR-SET-4. No POS screenshots will be supplied (PRD OQ30 closed): the written requirements are the specification and the ShopDesk design system governs styling, so stories cite the design-system file only. Single pharmacy: no wholesale pricing, no Transfer, no inline add customer. Depends on F-2.2 (products and batches), F-2.1 (shell, permissions) and F-2.5 (Settings). Confirmed: A12 (all four roles have full POS access). Closed in v0.7: OQ25 (payment methods are exactly Cash, Card, Online, Credit), OQ27 (Phase B bottom bar hidden in Phase A), OQ32 (default discount with Admin-credentials popup). Still open: OQ33 (Manager approval, Admin popup, default and cap seeds, sidebar setting: build to assumption A20).
+
+- [x] **S-2.9.1** [WEB] Header POS button: blue "POS" pill in the AppShell top bar, before the avatar, navigating to the POS route; active state on that route; hidden when the role has no POS access. — _Traces: FR-POS-1, FR-POS-12_ — _Weight: 2_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.9.2** [WEB] Mock sales data layer: sale, sale line, payment, held bill, customer (default Walk-in Customer) and rep models; sales service with FEFO stock deduction on save, hold/resume/discard, invoice numbering; Dashboard Today's sales/profit read from it. — _Traces: FR-POS-7, FR-POS-8, FR-POS-10, FR-POS-4_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.9.3** [WEB] POS route and layout: lazy-loaded; single fullscreen toggle button in the header beside dark-mode and refresh (browser Fullscreen API; maximise icon when not fullscreen, minimise icon when fullscreen; icon follows real fullscreen state incl. Esc/F11; accessible name states the action; hidden if unsupported; never auto-enters fullscreen, only on user click); sidebar hidden on open per Settings "Hide sidebar when POS opens" (S-2.9.10), openable via the shell menu control; Back to back office; header with date/time, dark-mode toggle and refresh (with unsaved-bill confirm); responsive reflow and 52px touch targets. — _Traces: FR-POS-2, FR-POS-11, FR-FND-7_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.9.4** [WEB] Bill header: Create New Bill, Hold Bill, bill date, Invoice type (no Transfer, no Retail/Wholesale), generated invoice number, customer select from mock list (default Walk-in Customer, no inline add) and optional rep select. — _Traces: FR-POS-3, FR-POS-4_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.9.5** [WEB] Product search (name, generic name, SKU, barcode, Enter-to-add) and line-items table (S/N, SKU, Rep, Barcode, Sale Price, Discount %, QTY, Action, Total; no Warranty/V.code/UOM/Code), editable qty and discount % (discount pre-filled from the Settings default, never above the maximum cap, any change from the default needs Admin credentials, S-2.9.11), remove action, stock limit and out-of-stock/expired blocking messages. — _Traces: FR-POS-5, FR-POS-6, FR-POS-16_ — _Weight: 8_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.9.6** [WEB] Totals panel: No. of Items, Sub Total, Discount (Rs.) and (%) linked, Total, Paid, Balance, live recalculation, discount cap, and bill discount fields gated by Settings (on/off, default %, maximum %; changes from the default need Admin credentials via S-2.9.11). — _Traces: FR-POS-7, FR-SET-4, FR-POS-16_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.9.7** [WEB] Payment panel: exactly four methods, Cash (F3), Card (F4), Online (F7) and Credit (no "More" dropdown); Cash Received with change, split payments across methods, optional card/online reference, Credit needs a named customer from the mock list and is blocked for Walk-in with a message (A16), Paid = Cash+Card+Online, Balance shown as Change or Credit due (FR-POS-8a), plus on-screen keypad (0-9, decimal, Backspace) writing into the active method's amount field. — _Traces: FR-POS-8, FR-POS-8a, FR-POS-9_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.9.8** [WEB] Bill actions and shortcuts: Save & Print (F1, browser receipt view), Save (F2), Hold (F10), New (F12), held-bills list with resume/discard, validation and stock-shortfall-at-save error, F-key handling scoped to the POS screen with visible hints. — _Traces: FR-POS-10, FR-POS-11_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.9.9** [WEB] POS access: add POS row to the permission matrix (Admin, Manager, Cashier, Pharmacist all Full; A12 confirmed by the user), route guard and blocked message, discount approval is by Admin credentials for every role (S-2.9.11). — _Traces: FR-POS-12, FR-AUTH-4, FR-USR-2_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.9.10** [WEB] Settings "Point of sale" section: line discount on/off, bill discount on/off, default discount % (pre-filled on new lines and the bill; validated not above the maximum; placeholder seed 0% per OQ33), maximum discount % (cap for everyone including Admin; placeholder seed 20% per OQ33; the per-role "approval above" levels are removed), and "Hide sidebar when POS opens" on/off (default on); saved with Save changes / Discard; read by the POS screen through the mock settings service. — _Traces: FR-SET-4, FR-SET-2, FR-POS-2, FR-POS-6, FR-POS-7, FR-POS-16_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
+- [x] **S-2.9.11** [WEB] Discount approval popup: when any user changes a line or bill discount % to a value different from the Settings default, open an accessible modal asking for an Admin username and password (checked against the mock Users data; account must be an active Admin, a Manager or other role is rejected with a message, A20); success applies the discount and stores approver name and time on the mock sale; wrong credentials, non-Admin account or Cancel reverts the discount to the default with a message; password never stored or shown; changing back to the default needs no approval; changes above the maximum cap are blocked before the popup; keyboard operable, 52px controls. — _Traces: FR-POS-16, FR-POS-6, FR-POS-7, FR-SET-4_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+
+### F-2.10 POS extras, Phase B (WEB)
+
+> PRD 5.9 [B] items (FR-POS-13 to 15). Start only after F-2.9 is accepted. The Phase B bottom-bar buttons stay hidden in Phase A (OQ27 closed v0.7), so Phase A needs no placeholder or disabled buttons (OQ28 closed: no Transfer; OQ29 closed: Reload & Utility sales are handled separately and excluded from the POS cash book and counter close). Not in the first release.
+
+- [ ] **S-2.10.1** [WEB] Returns: Return bill type with invoice-number and return-bill lookup, line selection, FEFO restock, refund or credit record. — _Traces: FR-POS-3, FR-POS-14_ — _Weight: 8_ — _Design: docs/design/ShopDesk-design-system.md_
+- [ ] **S-2.10.2** [WEB] Quotations: Save Quotation (F11), Quotations list, convert to invoice; no stock effect until converted. — _Traces: FR-POS-14, FR-POS-13_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [ ] **S-2.10.3** [WEB] Last Invoice button (re-open/reprint the last sale). Transfer bill type and the "Normal" view button are dropped (single pharmacy). — _Traces: FR-POS-13_ — _Weight: 2_ — _Design: docs/design/ShopDesk-design-system.md_
+- [ ] **S-2.10.4** [WEB] Cash Book, Add OB (opening balance) and Drawer (End); covers POS sales only, Reload & Utility sales are handled separately and excluded (OQ29 closed). — _Traces: FR-POS-13, FR-POS-15_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [ ] **S-2.10.5** [WEB] Counter Close: expected vs counted cash, difference, locked counter report; expected cash counts POS sales only, Reload & Utility sales excluded (OQ29 closed). — _Traces: FR-POS-15_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [ ] **S-2.10.6** [WEB] Due Amount (customers with unpaid balances, take payment), Update Products quick edit and Bill & Reload jump link (no inline add customer, OQ24 closed). — _Traces: FR-POS-13, FR-POS-15_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+
+### F-2.11 POS visual restyle (WEB)
+
+> PRD 5.9.2 (FR-POS-17 to 19). Style and presentation only, billing screen only (`frontend-app/src/app/features/modules/pos/`); inspired by a reference POS screenshot as a style guide, not a pixel or feature copy. Indigo primary and primary buttons are unchanged. No other behaviour or data changes. Depends on F-2.9 (done). Narrow exception to the "status colours are never decoration" rule in `docs/design/CLAUDE.md` for billing-screen secondary buttons only (PRD A21; the note in `docs/design/CLAUDE.md` is pending, see OQ34). Contrast must still pass in both themes (text 4.5:1, borders 3:1, `frontend-app/scripts/check-contrast.mjs`). Open: OQ34 (design-rule note, row size), OQ35 (cost price visibility in the details popup).
+
+- [ ] **S-2.11.1** [WEB] Billing screen surfaces and soft colour-coded secondary buttons, light and dark: muted grey page background and a slightly darker panel around the line items (token based, both themes); secondary buttons on this screen only (e.g. Hold amber, Save green) become soft tinted, colour-coded buttons with tokenised light and dark tints; primary buttons and the indigo palette unchanged; labels and icons still carry meaning (never colour alone); contrast checks extended and passing. — _Traces: FR-POS-17, FR-FND-7_ — _Weight: 5_ — _Design: docs/design/ShopDesk-design-system.md_
+- [ ] **S-2.11.2** [WEB] Line-item details popup: selecting a line item opens an accessible dialog (focus trapped, Esc and Close, keyboard operable) showing only the item details the app already holds for that product (no new fields, no data changes); cost price shown only where existing role rules already allow it (OQ35); selecting does not change the line, qty or discount. — _Traces: FR-POS-18, FR-AUTH-4_ — _Weight: 3_ — _Design: docs/design/ShopDesk-design-system.md_
+- [ ] **S-2.11.3** [WEB] Taller line-item rows with a bigger box: row height raised to the closest design-system size to the reference (proposed lg 46px or 52px, confirmed at the plan gate) while keeping the compact table feel, 52px touch targets, horizontal scroll on small screens and all existing columns and behaviour. — _Traces: FR-POS-19, FR-FND-7_ — _Weight: 2_ — _Design: docs/design/ShopDesk-design-system.md_
+
 ---
 
 ## Archived — HireFlow (replaced 2026-10-03)
@@ -116,5 +153,10 @@ The previous HireFlow job-application scope was replaced by ShopDesk. Listed her
 | Version | Date | Author | Change |
 |---|---|---|---|
 | v0.1 | 2026-08-13 | Shiham (PO) | Initial draft: E-1 HireFlow Job Application Screen. |
+| v0.8 | 2026-10-24 | Shiham (PO) | Added F-2.11 POS visual restyle (S-2.11.1 to 3, weights 5, 3, 2): soft colour-coded secondary buttons plus grey surfaces in both themes, line-item details popup, taller line-item rows. PRD v0.8 (FR-POS-17 to 19, A21, OQ34, OQ35). |
+| v0.7 | 2026-10-22 | Shiham (PO) | S-2.9.11 rewritten as a default-discount Admin-credentials popup (weight stays 5); S-2.9.10 swaps per-role approval levels for a default discount % plus the maximum cap; S-2.9.5, S-2.9.6, S-2.9.9 wording aligned; S-2.9.7 now exactly Cash, Card, Online, Credit (no More; traces add FR-POS-8a); F-2.9 and F-2.10 notes close OQ25, OQ27, OQ32 and open OQ33. PRD v0.7. |
+| v0.6 | 2026-10-22 | Shiham (PO) | S-2.9.3 now a single browser-fullscreen toggle (maximise/minimise icon, no auto-fullscreen); S-2.9.10 adds per-role "approval above" levels and renames the setting to "Hide sidebar when POS opens"; new S-2.9.11 Discount approval (weight 5); S-2.9.5, S-2.9.6 trace FR-POS-16; S-2.9.9 A12 confirmed; S-2.10.4 and S-2.10.5 exclude Reload & Utility (OQ29 closed). PRD v0.6. |
+| v0.5 | 2026-10-22 | Shiham (PO) | POS answers: removed Retail/Wholesale, Transfer, inline add customer, extra table columns and all pos-reference design references (stories now cite the design system); S-2.9.3 now a single maximise/minimise toggle; added S-2.9.10 Settings "Point of sale" (discounts, open maximised); S-2.10.3 reduced to Last Invoice (weight 3 to 2). PRD v0.5. |
+| v0.4 | 2026-10-21 | Shiham (PO) | Added F-2.9 POS till Phase A (S-2.9.1 to 9) and F-2.10 POS extras Phase B (S-2.10.1 to 6) from the POS request; PRD v0.4 section 5.9. |
 | v0.3 | 2026-10-17 | Shiham (PO) | Added F-2.6 Employee master (S-2.6.1 to 5), F-2.7 Leave management (S-2.7.1 to 3), F-2.8 Payroll (S-2.8.1 to 5) from the HR screenshots; PRD v0.3 section 5.8. |
 | v0.2 | 2026-10-03 | Shiham (PO) | Replaced HireFlow with E-2 ShopDesk back office frontend: 5 features, 20 stories (weights 3 to 5). Added mock data layer story S-2.1.4 and separated role gating S-2.1.7. HireFlow archived above. |

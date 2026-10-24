@@ -19,6 +19,7 @@
   --sd-danger-soft: #fce5e3;
   --sd-info: #1a5ca0;
   --sd-info-soft: #e2eefc;
+  --sd-on-info: #ffffff;
   --sd-focus-ring: #4a4db0;
   --sd-focus-ring-inverse: #ffffff;
   --sd-scrim: rgba(27, 32, 64, 0.55);
@@ -67,6 +68,7 @@
   --sd-control-md: 38px;
   --sd-control-lg: 46px;
   --sd-touch-min: 44px;
+  --sd-control-touch: 52px;
   --sd-sidebar-width: 232px;
   --sd-summary-width: 320px;
   --sd-disabled-opacity: 0.55;
@@ -93,6 +95,7 @@
   --sd-danger-soft: #3d1816;
   --sd-info: #7db5f2;
   --sd-info-soft: #14283f;
+  --sd-on-info: #10131f;
   --sd-focus-ring: #9396f2;
   --sd-scrim: rgba(0, 0, 0, 0.6);
   --sd-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3);

@@ -47,9 +47,9 @@ describe('EditRolesPanelComponent', () => {
 
   it('offers a choice only for Manager, Pharmacist and Cashier and shows Admin as fixed Full', async () => {
     const { element, select } = await render();
-    expect(element.querySelectorAll('select')).toHaveSize(30);
+    expect(element.querySelectorAll('select')).toHaveSize(33);
     expect(select('Admin', 'Users')).toBeNull();
-    expect(element.querySelectorAll('[data-testid="admin-fixed"]')).toHaveSize(10);
+    expect(element.querySelectorAll('[data-testid="admin-fixed"]')).toHaveSize(11);
     expect(select('Manager', 'Employees').value).toBe('VIEW');
     expect(select('Manager', 'Payroll').value).toBe('VIEW');
     expect(select('Cashier', 'Payroll').value).toBe('NONE');

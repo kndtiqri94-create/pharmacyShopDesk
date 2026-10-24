@@ -4,10 +4,13 @@
     <div class="confirm__body"><ng-content /></div>
     <div class="confirm__actions">
       @if (showCancel()) {
-        <app-button [disabled]="busy()" (click)="cancelled.emit()">{{ cancelLabel() }}</app-button>
+        <app-button [size]="buttonSize()" [disabled]="busy()" (click)="cancelled.emit()">{{
+          cancelLabel()
+        }}</app-button>
       }
       <app-button
         [variant]="danger() ? 'danger' : 'primary'"
+        [size]="buttonSize()"
         [disabled]="busy()"
         (click)="confirmed.emit()"
       >

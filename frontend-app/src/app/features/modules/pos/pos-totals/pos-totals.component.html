@@ -1,0 +1,68 @@
+<div class="totals">
+  <dl class="totals__list">
+    <div class="totals__row">
+      <dt>No. of items</dt>
+      <dd class="sd-num" data-testid="item-count">{{ count(posService.totals().itemCount) }}</dd>
+    </div>
+    <div class="totals__row">
+      <dt>Sub total</dt>
+      <dd class="sd-num" data-testid="sub-total">{{ money(posService.totals().subTotalCents) }}</dd>
+    </div>
+  </dl>
+
+  <div class="sd-form-grid">
+    <app-field
+      label="Discount (Rs.)"
+      fieldId="pos-discount-amount"
+      prefix="Rs."
+      size="xl"
+      [span]="6"
+    >
+      <input
+        appFieldControl
+        class="totals__input"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [attr.maxlength]="amountMaxLength"
+        [value]="discountAmountText()"
+        [disabled]="!discountEditable()"
+        (change)="onAmountChange($event)"
+      />
+    </app-field>
+    <app-field label="Discount (%)" fieldId="pos-discount-percent" suffix="%" size="xl" [span]="6">
+      <input
+        appFieldControl
+        class="totals__input"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [attr.maxlength]="percentMaxLength"
+        [value]="discountPercentText()"
+        [disabled]="!discountEditable()"
+        (change)="onPercentChange($event)"
+      />
+    </app-field>
+  </div>
+
+  @if (posService.discountProblem(); as problem) {
+    <app-alert tone="warning">{{ problem }}</app-alert>
+  }
+
+  <dl class="totals__list">
+    <div class="totals__row totals__row--total">
+      <dt>Total</dt>
+      <dd class="sd-stat-value" data-testid="total">{{ money(posService.totals().totalCents) }}</dd>
+    </div>
+    <div class="totals__row">
+      <dt>Paid</dt>
+      <dd class="sd-num" data-testid="paid">{{ money(posService.totals().paidCents) }}</dd>
+    </div>
+    <div class="totals__row">
+      <dt data-testid="balance-label">{{ balanceLabel() }}</dt>
+      <dd class="sd-num sd-body-strong" data-testid="balance">
+        {{ money(posService.totals().balanceCents) }}
+      </dd>
+    </div>
+  </dl>
+</div>

@@ -1,0 +1,43 @@
+<div class="actions" role="group" aria-label="Bill actions">
+  <app-button
+    variant="primary"
+    size="xl"
+    icon="printer"
+    [disabled]="!posService.canSell() || posService.working()"
+    (click)="saveAndPrintRequested.emit()"
+  >
+    Save &amp; print <kbd class="actions__key">{{ keys.SAVE_AND_PRINT }}</kbd>
+  </app-button>
+  <app-button
+    size="xl"
+    icon="check"
+    [disabled]="!posService.canSell() || posService.working()"
+    (click)="saveRequested.emit()"
+  >
+    Save <kbd class="actions__key">{{ keys.SAVE }}</kbd>
+  </app-button>
+  <app-button
+    size="xl"
+    icon="pause"
+    [disabled]="!posService.canSell() || posService.working()"
+    (click)="holdRequested.emit()"
+  >
+    Hold <kbd class="actions__key">{{ keys.HOLD }}</kbd>
+  </app-button>
+  <app-button
+    size="xl"
+    icon="plus"
+    [disabled]="posService.working()"
+    (click)="newBillRequested.emit()"
+  >
+    New <kbd class="actions__key">{{ keys.NEW_BILL }}</kbd>
+  </app-button>
+  <app-button
+    size="xl"
+    icon="clipboard"
+    [disabled]="posService.working()"
+    (click)="heldBillsRequested.emit()"
+  >
+    Held bills ({{ posService.heldBills().length }})
+  </app-button>
+</div>

@@ -19,7 +19,7 @@ import { ButtonComponent } from './button.component';
 })
 class HostComponent {
   variant: 'default' | 'primary' | 'soft' | 'danger' | 'ghost' = 'default';
-  size: 'sm' | 'md' | 'lg' = 'md';
+  size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
   icon: 'plus' | null = null;
   block = false;
   disabled = false;
@@ -46,11 +46,16 @@ describe('ButtonComponent', () => {
     }
   });
 
-  it('supports small, medium and large sizes', () => {
-    for (const size of ['sm', 'md', 'lg'] as const) {
+  it('supports small, medium, large and extra large sizes', () => {
+    for (const size of ['sm', 'md', 'lg', 'xl'] as const) {
       const { button } = render(host => (host.size = size));
       expect(button.getAttribute('data-size')).toBe(size);
     }
+  });
+
+  it('makes the extra large size at least 52px tall for touch screens', () => {
+    const { button } = render(host => (host.size = 'xl'));
+    expect(parseFloat(getComputedStyle(button).minHeight)).toBeGreaterThanOrEqual(52);
   });
 
   it('shows a leading icon when asked', () => {

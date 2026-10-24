@@ -21,6 +21,7 @@ import { LeaveDataService } from '../leave-data.service';
 import { PayrollDataService } from '../payroll-data.service';
 import { PurchaseOrderDataService } from '../purchase-order-data.service';
 import { ReloadDataService } from '../reload-data.service';
+import { SalesDataService } from '../sales-data.service';
 import { SettingsDataService } from '../settings-data.service';
 import { SupplierDataService } from '../supplier-data.service';
 import { SupplierPaymentDataService } from '../supplier-payment-data.service';
@@ -165,6 +166,27 @@ describe('in-memory seed coverage', () => {
     expect(settings.lowFloatCents).toBe(1_000_000);
     expect(settings.defaultReorderLevel).toBe(20);
     expect(settings.showLowStockCountInSidebar).toBeTrue();
+  });
+
+  it('has the point of sale sample settings: no default discount, a 20 percent cap, sidebar hidden', async () => {
+    const settings = await firstValueFrom(TestBed.inject(SettingsDataService).get());
+    expect(settings.posLineDiscountEnabled).toBeTrue();
+    expect(settings.posBillDiscountEnabled).toBeTrue();
+    expect(settings.posDefaultDiscountPercent).toBe(0);
+    expect(settings.posMaxDiscountPercent).toBe(20);
+    expect(settings.posHideSidebar).toBeTrue();
+  });
+
+  it('has sample customers with one Walk-in Customer, sample reps and no sales or held bills yet', async () => {
+    const sales = TestBed.inject(SalesDataService);
+    const customers = await firstValueFrom(sales.getCustomers());
+    expect(customers.filter(customer => customer.isWalkIn).map(customer => customer.name)).toEqual([
+      'Walk-in Customer',
+    ]);
+    expect(customers.length).toBeGreaterThan(2);
+    expect((await firstValueFrom(sales.getReps())).length).toBeGreaterThan(1);
+    expect(await firstValueFrom(sales.getSales())).toEqual([]);
+    expect(await firstValueFrom(sales.getHeldBills())).toEqual([]);
   });
 
   it('has the shop profile sample values', async () => {

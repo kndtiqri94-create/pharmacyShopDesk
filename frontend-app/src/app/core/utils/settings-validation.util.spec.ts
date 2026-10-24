@@ -135,8 +135,65 @@ describe('validateSettings', () => {
       'Shop profile',
       'Currency & region',
       'Inventory alerts',
+      'Point of sale',
       'Backup & sync',
     ]);
+  });
+
+  describe('point of sale settings', () => {
+    it('accepts the sample values and returns numbers and switches', () => {
+      const result = validateSettings(valid());
+      expect(result.values?.posDefaultDiscountPercent).toBe(0);
+      expect(result.values?.posMaxDiscountPercent).toBe(20);
+      expect(result.values?.posLineDiscountEnabled).toBeTrue();
+      expect(result.values?.posBillDiscountEnabled).toBeTrue();
+      expect(result.values?.posHideSidebar).toBeTrue();
+    });
+
+    it('accepts two decimals and the edges 0 and 100', () => {
+      const edges = validateSettings({
+        ...valid(),
+        posDefaultDiscountPercent: '0',
+        posMaxDiscountPercent: '100',
+      });
+      expect(edges.values?.posMaxDiscountPercent).toBe(100);
+      const decimals = validateSettings({
+        ...valid(),
+        posDefaultDiscountPercent: '2.5',
+        posMaxDiscountPercent: '12.25',
+      });
+      expect(decimals.values?.posMaxDiscountPercent).toBe(12.25);
+    });
+
+    it('refuses negative, above 100, not a number and too many decimals', () => {
+      for (const bad of ['-1', '100.01', '101', 'abc', '', '  ', '1.234', '1e2']) {
+        const result = validateSettings({ ...valid(), posMaxDiscountPercent: bad });
+        expect(result.values).withContext(bad).toBeNull();
+        expect(result.errors.posMaxDiscountPercent).withContext(bad).toContain('0 to 100');
+        const other = validateSettings({ ...valid(), posDefaultDiscountPercent: bad });
+        expect(other.errors.posDefaultDiscountPercent).withContext(bad).toContain('0 to 100');
+      }
+    });
+
+    it('refuses a default above the maximum and names the maximum', () => {
+      const result = validateSettings({
+        ...valid(),
+        posDefaultDiscountPercent: '25',
+        posMaxDiscountPercent: '20',
+      });
+      expect(result.values).toBeNull();
+      expect(result.errors.posDefaultDiscountPercent).toContain('maximum (20%)');
+      expect(result.firstErrorField).toBe('posDefaultDiscountPercent');
+    });
+
+    it('allows a default equal to the maximum', () => {
+      const result = validateSettings({
+        ...valid(),
+        posDefaultDiscountPercent: '20',
+        posMaxDiscountPercent: '20',
+      });
+      expect(result.values).not.toBeNull();
+    });
   });
 });
 

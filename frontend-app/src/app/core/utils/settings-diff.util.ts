@@ -1,8 +1,10 @@
 import { AppSettings } from '../models/domain/app-settings.model';
 import { rupeesToCents } from './money.util';
+import { toPosSettings } from './pos-settings.util';
 import { SettingsDraft, ValidatedSettings } from './settings-validation.util';
 
 export function toDraft(settings: AppSettings): SettingsDraft {
+  const pos = toPosSettings(settings);
   return {
     shopName: settings.shopName,
     registrationNo: settings.registrationNo,
@@ -15,6 +17,11 @@ export function toDraft(settings: AppSettings): SettingsDraft {
     sellEarliestExpiringFirst: settings.sellEarliestExpiringFirst,
     blockExpiredSales: settings.blockExpiredSales,
     showLowStockCountInSidebar: settings.showLowStockCountInSidebar,
+    posLineDiscountEnabled: pos.lineDiscountEnabled,
+    posBillDiscountEnabled: pos.billDiscountEnabled,
+    posDefaultDiscountPercent: String(pos.defaultDiscountPercent),
+    posMaxDiscountPercent: String(pos.maxDiscountPercent),
+    posHideSidebar: pos.hideSidebarOnOpen,
   };
 }
 
@@ -32,6 +39,11 @@ export function fromDraft(values: ValidatedSettings, saved: AppSettings): AppSet
     sellEarliestExpiringFirst: values.sellEarliestExpiringFirst,
     blockExpiredSales: values.blockExpiredSales,
     showLowStockCountInSidebar: values.showLowStockCountInSidebar,
+    posLineDiscountEnabled: values.posLineDiscountEnabled,
+    posBillDiscountEnabled: values.posBillDiscountEnabled,
+    posDefaultDiscountPercent: values.posDefaultDiscountPercent,
+    posMaxDiscountPercent: values.posMaxDiscountPercent,
+    posHideSidebar: values.posHideSidebar,
   };
 }
 

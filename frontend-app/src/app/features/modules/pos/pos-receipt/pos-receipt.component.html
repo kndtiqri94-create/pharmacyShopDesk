@@ -1,0 +1,117 @@
+@if (sale(); as receipt) {
+  <div
+    class="sd-receipt-overlay receipt-overlay"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="titleId"
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
+    (keydown.escape)="closed.emit()"
+  >
+    <div class="receipt-toolbar">
+      <app-button variant="primary" size="xl" icon="printer" (click)="print()"
+        >Print receipt</app-button
+      >
+      <app-button size="xl" (click)="closed.emit()">Close</app-button>
+    </div>
+    <article class="sd-receipt-sheet receipt">
+      <header class="receipt__header">
+        <h2 class="sd-section-title" [id]="titleId">{{ settings()?.shopName ?? 'Receipt' }}</h2>
+        @if (settings()?.address) {
+          <p class="sd-caption">{{ settings()?.address }}</p>
+        }
+        @if (settings()?.phone) {
+          <p class="sd-caption">{{ settings()?.phone }}</p>
+        }
+      </header>
+
+      <dl class="receipt__meta">
+        <div>
+          <dt>Invoice</dt>
+          <dd class="sd-code" data-testid="receipt-invoice">{{ receipt.invoiceNo }}</dd>
+        </div>
+        <div>
+          <dt>Date</dt>
+          <dd>{{ dateOf(receipt.date) }} {{ timeOf(receipt.createdAt) }}</dd>
+        </div>
+        <div>
+          <dt>Customer</dt>
+          <dd>{{ receipt.customerName }}</dd>
+        </div>
+        <div>
+          <dt>Served by</dt>
+          <dd>{{ receipt.cashierName }}</dd>
+        </div>
+        @if (receipt.repName) {
+          <div>
+            <dt>Rep</dt>
+            <dd>{{ receipt.repName }}</dd>
+          </div>
+        }
+      </dl>
+
+      <table class="receipt__lines" aria-label="Items sold">
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col" class="is-right">Qty</th>
+            <th scope="col" class="is-right">Price</th>
+            <th scope="col" class="is-right">Disc %</th>
+            <th scope="col" class="is-right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of receipt.lines; track line.productId) {
+            <tr>
+              <td>{{ line.name }}</td>
+              <td class="is-right sd-num">{{ line.quantity }}</td>
+              <td class="is-right sd-num">{{ cell(line.unitPriceCents) }}</td>
+              <td class="is-right sd-num">{{ line.discountPercent }}</td>
+              <td class="is-right sd-num">{{ cell(line.totalCents) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <dl class="receipt__totals">
+        <div>
+          <dt>Sub total</dt>
+          <dd class="sd-num">{{ money(receipt.subTotalCents) }}</dd>
+        </div>
+        <div>
+          <dt>Discount</dt>
+          <dd class="sd-num">{{ money(receipt.discountCents) }}</dd>
+        </div>
+        <div class="receipt__grand">
+          <dt>Total</dt>
+          <dd class="sd-num">{{ money(receipt.totalCents) }}</dd>
+        </div>
+        @for (payment of receipt.payments; track payment.method) {
+          <div>
+            <dt>
+              {{ methodLabel(payment.method) }}
+              @if (payment.reference) {
+                <span class="sd-caption">({{ payment.reference }})</span>
+              }
+            </dt>
+            <dd class="sd-num">{{ money(payment.amountCents) }}</dd>
+          </div>
+        }
+        @if (receipt.changeCents > 0) {
+          <div>
+            <dt>Change</dt>
+            <dd class="sd-num">{{ money(receipt.changeCents) }}</dd>
+          </div>
+        }
+        @if (receipt.creditCents > 0) {
+          <div>
+            <dt>Credit due</dt>
+            <dd class="sd-num">{{ money(receipt.creditCents) }}</dd>
+          </div>
+        }
+      </dl>
+
+      <p class="receipt__thanks sd-caption">Thank you for shopping with us.</p>
+    </article>
+  </div>
+}

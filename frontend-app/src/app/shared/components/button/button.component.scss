@@ -47,6 +47,11 @@
     padding: 0 var(--sd-space-5);
   }
 
+  &[data-size='xl'] {
+    min-height: var(--sd-control-touch);
+    padding: 0 var(--sd-space-5);
+  }
+
   &[data-variant='primary'] {
     background: var(--sd-primary);
     border-color: var(--sd-primary);

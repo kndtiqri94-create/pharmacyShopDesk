@@ -75,6 +75,40 @@ describe('permission-matrix.util', () => {
     expect(ROLE_PERMISSION_SEED.CASHIER.payroll).toBe('NONE');
   });
 
+  it('seeds POS as Full for all four roles', () => {
+    expect(ROLE_PERMISSION_SEED.ADMIN.pos).toBe('FULL');
+    expect(ROLE_PERMISSION_SEED.MANAGER.pos).toBe('FULL');
+    expect(ROLE_PERMISSION_SEED.PHARMACIST.pos).toBe('FULL');
+    expect(ROLE_PERMISSION_SEED.CASHIER.pos).toBe('FULL');
+  });
+
+  it('never silently grants POS: a matrix without it gives No access to everyone but Admin', () => {
+    const legacy = structuredClone(ROLE_PERMISSION_SEED) as unknown as Record<
+      string,
+      Record<string, string>
+    >;
+    for (const role of Object.keys(legacy)) delete legacy[role]['pos'];
+    const result = normaliseMatrix(legacy as unknown as RolePermissionMatrix);
+    expect(result.ok).toBeTrue();
+    if (!result.ok) return;
+    expect(result.matrix.ADMIN.pos).toBe('FULL');
+    expect(result.matrix.MANAGER.pos).toBe('NONE');
+    expect(result.matrix.PHARMACIST.pos).toBe('NONE');
+    expect(result.matrix.CASHIER.pos).toBe('NONE');
+  });
+
+  it('keeps every other module as it was when POS is added', () => {
+    expect(ROLE_PERMISSION_SEED.CASHIER.dashboard).toBe('NONE');
+    expect(ROLE_PERMISSION_SEED.CASHIER['reload-utility']).toBe('FULL');
+    expect(ROLE_PERMISSION_SEED.MANAGER.users).toBe('NONE');
+    expect(ROLE_PERMISSION_SEED.PHARMACIST.products).toBe('FULL');
+  });
+
+  it('lists POS right after Reload & Utility in the matrix', () => {
+    const keys = MATRIX_MODULES.map(definition => definition.key);
+    expect(keys.indexOf(ModuleKey.POS)).toBe(keys.indexOf(ModuleKey.RELOAD_UTILITY) + 1);
+  });
+
   it('lists Payroll right after Employees in the matrix', () => {
     const keys = MATRIX_MODULES.map(definition => definition.key);
     expect(keys.indexOf(ModuleKey.PAYROLL)).toBe(keys.indexOf(ModuleKey.EMPLOYEES) + 1);

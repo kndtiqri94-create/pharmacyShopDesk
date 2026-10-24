@@ -36,6 +36,14 @@
               (changed)="edit($event)"
             />
           }
+          @case ('point-of-sale') {
+            <app-point-of-sale-section
+              [draft]="currentDraft"
+              [errors]="errors()"
+              [disabled]="!canWrite()"
+              (changed)="edit($event)"
+            />
+          }
           @case ('backup-sync') {
             <app-backup-sync-section
               [autoSync]="autoSync()"

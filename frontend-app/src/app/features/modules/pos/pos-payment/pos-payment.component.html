@@ -1,0 +1,118 @@
+<div class="payment">
+  <div class="payment__tiles" role="group" aria-label="Payment method">
+    @for (tile of tiles; track tile.id) {
+      <button
+        type="button"
+        class="tile"
+        [attr.aria-pressed]="isPressed(tile)"
+        [attr.aria-label]="tileName(tile)"
+        [class.tile--active]="isPressed(tile)"
+        [disabled]="!posService.canSell()"
+        (click)="onTile(tile)"
+      >
+        <span>{{ tile.label }}</span>
+        @if (tile.shortcut) {
+          <kbd class="tile__key">{{ tile.shortcut }}</kbd>
+        }
+      </button>
+    }
+  </div>
+
+  <div class="sd-form-grid">
+    <app-field
+      label="Cash received"
+      fieldId="pos-pay-cash"
+      prefix="Rs."
+      size="xl"
+      [error]="error('cash')"
+    >
+      <input
+        appFieldControl
+        class="payment__input"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [attr.maxlength]="amountMaxLength"
+        [value]="posService.bill().payments.cash"
+        [disabled]="!posService.canSell()"
+        (focus)="posService.selectPaymentField('cash')"
+        (input)="onAmountInput('cash', $event)"
+      />
+    </app-field>
+    <app-field
+      label="Card amount"
+      fieldId="pos-pay-card"
+      prefix="Rs."
+      size="xl"
+      [error]="error('card')"
+    >
+      <input
+        appFieldControl
+        class="payment__input"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [attr.maxlength]="amountMaxLength"
+        [value]="posService.bill().payments.card"
+        [disabled]="!posService.canSell()"
+        (focus)="posService.selectPaymentField('card')"
+        (input)="onAmountInput('card', $event)"
+      />
+    </app-field>
+    <app-field label="Card reference" fieldId="pos-ref-card" size="xl" hint="Optional.">
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        [attr.maxlength]="referenceMaxLength"
+        [value]="posService.bill().payments.cardReference"
+        [disabled]="!posService.canSell()"
+        (input)="onReferenceInput('card', $event)"
+      />
+    </app-field>
+    <app-field
+      label="Online amount"
+      fieldId="pos-pay-online"
+      prefix="Rs."
+      size="xl"
+      [error]="error('online')"
+    >
+      <input
+        appFieldControl
+        class="payment__input"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [attr.maxlength]="amountMaxLength"
+        [value]="posService.bill().payments.online"
+        [disabled]="!posService.canSell()"
+        (focus)="posService.selectPaymentField('online')"
+        (input)="onAmountInput('online', $event)"
+      />
+    </app-field>
+    <app-field label="Online reference" fieldId="pos-ref-online" size="xl" hint="Optional.">
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        [attr.maxlength]="referenceMaxLength"
+        [value]="posService.bill().payments.onlineReference"
+        [disabled]="!posService.canSell()"
+        (input)="onReferenceInput('online', $event)"
+      />
+    </app-field>
+  </div>
+
+  @if (posService.bill().payments.creditSelected) {
+    <p class="payment__credit" data-testid="credit-note">
+      <span class="sd-body-strong">Credit due {{ money(posService.totals().creditCents) }}</span>
+      for {{ customerName() }}.
+    </p>
+  }
+
+  <app-pos-keypad
+    [targetLabel]="keypadTarget()"
+    [disabled]="!posService.canSell()"
+    (keyPressed)="onKey($event)"
+  />
+</div>

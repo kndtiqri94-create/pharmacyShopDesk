@@ -84,6 +84,15 @@ export const MODULE_DEFINITIONS: readonly ModuleDefinition[] = [
     subtitle: 'Sell mobile reloads and take bill payments at the counter.',
   },
   {
+    key: ModuleKey.POS,
+    path: 'pos',
+    label: 'POS',
+    icon: 'receipt',
+    group: 'OVERVIEW',
+    subtitle: 'Sell at the counter: build a bill, take payment, then save, print or hold it.',
+    hideFromSidebar: true,
+  },
+  {
     key: ModuleKey.SETTINGS,
     path: 'settings',
     label: 'Settings',

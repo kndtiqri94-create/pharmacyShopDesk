@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+.totals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+}
+
+.totals__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-2);
+  margin: 0;
+}
+
+.totals__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sd-space-3);
+
+  dt {
+    color: var(--sd-ink-muted);
+  }
+
+  dd {
+    margin: 0;
+    text-align: right;
+  }
+}
+
+.totals__row--total {
+  padding-top: var(--sd-space-2);
+  border-top: 1px solid var(--sd-border);
+
+  dt {
+    color: var(--sd-ink);
+    font-weight: 600;
+  }
+}
+
+.totals__input {
+  text-align: right;
+}

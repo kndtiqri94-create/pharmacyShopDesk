@@ -5,4 +5,5 @@ export abstract class ProductDataService {
   abstract getAll(): Observable<readonly Product[]>;
   abstract getById(id: string): Observable<Product | null>;
   abstract save(product: Product): Observable<Product>;
+  abstract saveAll(products: readonly Product[]): Observable<readonly Product[]>;
 }

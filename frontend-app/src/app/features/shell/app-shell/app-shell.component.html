@@ -1,10 +1,7 @@
 <div class="shell">
   <button type="button" class="skip-link" (click)="focusMain()">Skip to content</button>
-  <app-sidebar
-    [open]="shellStateService.menuOpen()"
-    [drawerMode]="viewportService.isDrawerMode()"
-  />
-  @if (viewportService.isDrawerMode() && shellStateService.menuOpen()) {
+  <app-sidebar [open]="shellStateService.menuOpen()" [drawerMode]="drawerMode()" />
+  @if (drawerMode() && shellStateService.menuOpen()) {
     <button
       type="button"
       class="shell__backdrop"

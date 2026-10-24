@@ -20,6 +20,11 @@ describe('ShopProfileSectionComponent', () => {
     sellEarliestExpiringFirst: true,
     blockExpiredSales: false,
     showLowStockCountInSidebar: true,
+    posLineDiscountEnabled: true,
+    posBillDiscountEnabled: true,
+    posDefaultDiscountPercent: '0',
+    posMaxDiscountPercent: '20',
+    posHideSidebar: true,
   };
 
   function render(errors: SettingsFieldErrors = {}, disabled = false) {

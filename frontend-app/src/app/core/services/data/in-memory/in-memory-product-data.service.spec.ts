@@ -102,4 +102,33 @@ describe('InMemoryProductDataService', () => {
     expect(all.find(candidate => candidate.id === 'prod-001')?.active).toBeFalse();
     expect(all).toHaveSize(10);
   });
+
+  describe('saveAll', () => {
+    it('writes every product it is given and returns them', async () => {
+      const first = (await firstValueFrom(service().getById('prod-001')))!;
+      const second = (await firstValueFrom(service().getById('prod-002')))!;
+      const saved = await firstValueFrom(
+        service().saveAll([
+          { ...first, name: 'First changed' },
+          { ...second, name: 'Second changed' },
+        ])
+      );
+      expect(saved.map(product => product.name)).toEqual(['First changed', 'Second changed']);
+      expect((await firstValueFrom(service().getById('prod-002')))?.name).toBe('Second changed');
+    });
+
+    it('changes nothing at all when one of the products does not exist', async () => {
+      const first = (await firstValueFrom(service().getById('prod-001')))!;
+      await expectAsync(
+        firstValueFrom(
+          service().saveAll([
+            { ...first, name: 'Changed' },
+            { ...first, id: 'prod-999' },
+          ])
+        )
+      ).toBeRejected();
+      expect((await firstValueFrom(service().getById('prod-001')))?.name).toBe('Paracetamol 500mg');
+      expect(await firstValueFrom(service().getById('prod-999'))).toBeNull();
+    });
+  });
 });

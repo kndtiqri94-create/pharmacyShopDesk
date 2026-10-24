@@ -1,0 +1,17 @@
+<div class="keypad" role="group" aria-label="Number keypad">
+  <p class="sd-caption keypad__target">Typing into: {{ targetLabel() }}</p>
+  <div class="keypad__grid">
+    @for (key of keys; track key) {
+      <button
+        type="button"
+        class="keypad__key"
+        [class.keypad__key--wide]="key === backspace"
+        [attr.aria-label]="keyAriaLabel(key)"
+        [disabled]="disabled()"
+        (click)="keyPressed.emit(key)"
+      >
+        {{ keyLabel(key) }}
+      </button>
+    }
+  </div>
+</div>

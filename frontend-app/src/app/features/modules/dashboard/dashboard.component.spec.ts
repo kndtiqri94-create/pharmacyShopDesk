@@ -5,6 +5,7 @@ import { clearBrowserStorage, signInAs, TEST_PROVIDERS } from '../../../../testi
 import { UserRole } from '../../../core/models/enums/user-role.enum';
 import { ProductDataService } from '../../../core/services/data/product-data.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { PosSaleService } from '../../../core/services/pos-sale.service';
 import { DashboardComponent } from './dashboard.component';
 
 describe('DashboardComponent', () => {
@@ -92,6 +93,47 @@ describe('DashboardComponent', () => {
     const tile = fixture.nativeElement.querySelectorAll('app-stat-card')[2] as HTMLElement;
     expect(tile.textContent).toContain('2 items');
     expect(tile.textContent).toContain('0 out of stock');
+  });
+
+  it('adds sales saved at the till today to Today sales and Today profit', async () => {
+    await signInAs(UserRole.ADMIN);
+    const saved = await TestBed.inject(PosSaleService).save({
+      invoiceNo: 'INV-0001',
+      date: '2026-09-21',
+      customerId: 'cus-001',
+      repId: null,
+      lines: [
+        {
+          productId: 'prod-001',
+          sku: 'PAR-500',
+          name: 'Paracetamol 500mg',
+          barcode: '4791000000011',
+          unitPriceCents: 250,
+          discountPercent: 0,
+          quantity: 4,
+          discountApproval: null,
+        },
+      ],
+      billDiscount: { mode: 'PERCENT', percent: 0 },
+      billDiscountApproval: null,
+      payments: {
+        cash: '10',
+        card: '',
+        online: '',
+        cardReference: '',
+        onlineReference: '',
+        creditSelected: false,
+      },
+    });
+    expect(saved.ok).toBeTrue();
+    const fixture = TestBed.createComponent(DashboardComponent);
+    fixture.detectChanges();
+    const tiles = Array.from(
+      fixture.nativeElement.querySelectorAll('app-stat-card')
+    ) as HTMLElement[];
+    expect(tiles[0].textContent).toContain('Rs. 84,260');
+    expect(tiles[1].textContent).toContain('Rs. 19,843');
+    expect(tiles[1].textContent).toContain('on 64 bills');
   });
 
   it('lists what needs attention with exactly one action button per row', async () => {

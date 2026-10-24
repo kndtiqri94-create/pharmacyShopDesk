@@ -7,6 +7,7 @@ export const ModuleKey = {
   EMPLOYEES: 'employees',
   PAYROLL: 'payroll',
   RELOAD_UTILITY: 'reload-utility',
+  POS: 'pos',
   USERS: 'users',
   SETTINGS: 'settings',
 } as const;

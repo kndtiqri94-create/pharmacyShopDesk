@@ -34,6 +34,13 @@ export class InMemoryProductDataService extends ProductDataService {
     return of(this.withOrderedBatches(this.collection.upsert({ ...product, id })));
   }
 
+  saveAll(products: readonly Product[]): Observable<readonly Product[]> {
+    const known = new Set(this.collection.all().map(product => product.id));
+    const unknown = products.find(product => !known.has(product.id));
+    if (unknown) return throwError(() => new Error('Cannot save a product that does not exist.'));
+    return of(products.map(product => this.withOrderedBatches(this.collection.upsert(product))));
+  }
+
   private nextId(): string {
     const highest = this.collection
       .all()

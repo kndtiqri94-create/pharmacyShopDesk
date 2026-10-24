@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+.keypad {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-2);
+}
+
+.keypad__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sd-space-2);
+}
+
+.keypad__key {
+  min-width: var(--sd-control-touch);
+  min-height: var(--sd-control-touch);
+  padding: 0 var(--sd-space-2);
+  border: 1px solid var(--sd-border-strong);
+  border-radius: var(--sd-radius-md);
+  background: var(--sd-surface);
+  color: var(--sd-ink);
+  font-size: var(--sd-fs-section-title);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+
+  &:hover:not(:disabled) {
+    background: var(--sd-surface-sunken);
+  }
+
+  &:disabled {
+    opacity: var(--sd-disabled-opacity);
+  }
+}
+
+.keypad__key--wide {
+  font-size: var(--sd-fs-body);
+}

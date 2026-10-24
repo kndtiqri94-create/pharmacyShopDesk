@@ -13,4 +13,9 @@ export const SETTINGS_SEED: AppSettings = {
   showLowStockCountInSidebar: true,
   sellEarliestExpiringFirst: true,
   blockExpiredSales: true,
+  posLineDiscountEnabled: true,
+  posBillDiscountEnabled: true,
+  posDefaultDiscountPercent: 0,
+  posMaxDiscountPercent: 20,
+  posHideSidebar: true,
 };

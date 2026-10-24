@@ -1,7 +1,7 @@
 import { Component, ElementRef, effect, input, output, viewChild } from '@angular/core';
 import { syncDialogState } from '../../utils/dialog.util';
 import { createUniqueId } from '../../utils/unique-id.util';
-import { ButtonComponent } from '../button/button.component';
+import { ButtonComponent, ButtonSize } from '../button/button.component';
 
 @Component({
   selector: 'app-confirm-dialog',
@@ -17,6 +17,7 @@ export class ConfirmDialogComponent {
   readonly open = input(false);
   readonly busy = input(false);
   readonly danger = input(false);
+  readonly buttonSize = input<ButtonSize>('md');
   readonly confirmed = output<void>();
   readonly cancelled = output<void>();
 

@@ -24,11 +24,12 @@ const MATRIX_ORDER: readonly ModuleKey[] = [
   ModuleKey.EMPLOYEES,
   ModuleKey.PAYROLL,
   ModuleKey.RELOAD_UTILITY,
+  ModuleKey.POS,
   ModuleKey.USERS,
   ModuleKey.SETTINGS,
 ];
 
-const OPTIONAL_MODULES: readonly ModuleKey[] = [ModuleKey.PAYROLL];
+const OPTIONAL_MODULES: readonly ModuleKey[] = [ModuleKey.PAYROLL, ModuleKey.POS];
 
 export const MATRIX_MODULES: readonly ModuleDefinition[] = MATRIX_ORDER.map(getModuleDefinition);
 

@@ -1,0 +1,71 @@
+<div class="till">
+  <app-pos-header (refreshRequested)="requestRefresh()" (backRequested)="goBack()" />
+
+  @if (!posService.canSell()) {
+    <app-alert tone="info" title="View only">
+      You can look at the till, but your role cannot sell. Ask the owner if you need full POS
+      access.
+    </app-alert>
+  }
+
+  @if (posService.ready()) {
+    <div class="till__grid">
+      <div class="till__main">
+        <app-card>
+          <app-pos-bill-header (newBillRequested)="requestNewBill()" (holdRequested)="hold()" />
+        </app-card>
+        <app-card title="Items">
+          <div class="till__items">
+            <app-pos-product-search />
+            <app-pos-bill-lines (approvalRequested)="openApproval($event)" />
+          </div>
+        </app-card>
+      </div>
+      <div class="till__side">
+        <app-card title="Totals">
+          <app-pos-totals (approvalRequested)="openApproval($event)" />
+        </app-card>
+        <app-card title="Payment">
+          <app-pos-payment />
+        </app-card>
+        <app-pos-actions
+          (saveAndPrintRequested)="save(true)"
+          (saveRequested)="save(false)"
+          (holdRequested)="hold()"
+          (newBillRequested)="requestNewBill()"
+          (heldBillsRequested)="heldOpen.set(true)"
+        />
+      </div>
+    </div>
+  } @else {
+    <p class="sd-muted" role="status">Opening the till.</p>
+  }
+
+  <app-discount-approval-dialog
+    [open]="pendingApproval() !== null"
+    [request]="pendingApproval()?.request ?? null"
+    (finished)="onApprovalFinished($event)"
+  />
+  <app-held-bills-dialog
+    [open]="heldOpen()"
+    [heldBills]="posService.heldBills()"
+    [busy]="posService.working()"
+    [canChange]="posService.canSell()"
+    (resumed)="resume($event)"
+    (discarded)="discard($event)"
+    (closed)="closeHeld()"
+  />
+  <app-confirm-dialog
+    [title]="confirmCopy().title"
+    [confirmLabel]="confirmCopy().confirmLabel"
+    [cancelLabel]="confirmCopy().cancelLabel"
+    [danger]="true"
+    buttonSize="xl"
+    [open]="confirmKind() !== null"
+    (confirmed)="confirmed()"
+    (cancelled)="cancelled()"
+  >
+    <p>{{ confirmCopy().message }}</p>
+  </app-confirm-dialog>
+  <app-pos-receipt [sale]="receiptSale()" (closed)="closeReceipt()" />
+</div>

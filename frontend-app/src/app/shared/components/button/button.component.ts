@@ -3,7 +3,7 @@ import { IconName } from '../../../core/models/shared/icon-name.model';
 import { IconComponent } from '../icon/icon.component';
 
 export type ButtonVariant = 'default' | 'primary' | 'soft' | 'danger' | 'ghost';
-export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 @Component({
   selector: 'app-button',

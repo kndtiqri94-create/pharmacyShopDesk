@@ -5,7 +5,7 @@ import { clearBrowserStorage, TEST_PROVIDERS } from '../../../../testing/auth-te
 import { UserRole } from '../../models/enums/user-role.enum';
 import { UserStatus } from '../../models/enums/user-status.enum';
 import { UserDataService } from '../data/user-data.service';
-import { MOCK_AUTH_ENABLED } from './auth.tokens';
+import { MOCK_AUTH_ENABLED, SIGN_IN_THROTTLE_MS } from './auth.tokens';
 import { AuthService } from './auth.service';
 import { MOCK_CREDENTIALS } from './mock-credentials';
 import { SessionCredentialStore } from './session-credential-store.service';
@@ -240,5 +240,116 @@ describe('AuthService with users created in this session', () => {
     await service.restoreSession();
     expect(service.isSignedIn()).toBeFalse();
     expect(sessionStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
+  });
+});
+
+describe('AuthService verifyCredentials', () => {
+  const ownerCredential = MOCK_CREDENTIALS[0];
+  const managerCredential = MOCK_CREDENTIALS[1];
+
+  beforeEach(() => {
+    clearBrowserStorage();
+    TestBed.configureTestingModule({ providers: TEST_PROVIDERS });
+  });
+
+  afterEach(clearBrowserStorage);
+
+  const service = () => TestBed.inject(AuthService);
+
+  it('returns the matched user id for a valid pair', async () => {
+    expect(await service().verifyCredentials('nimal', ownerCredential.password)).toBe('usr-001');
+    expect(await service().verifyCredentials(' KAMAL ', managerCredential.password)).toBe(
+      'usr-002'
+    );
+  });
+
+  it('returns null for a wrong password, an unknown user and a mixed pair', async () => {
+    expect(await service().verifyCredentials('nimal', 'wrong')).toBeNull();
+    expect(await service().verifyCredentials('ghost', 'wrong')).toBeNull();
+    expect(await service().verifyCredentials('nimal', managerCredential.password)).toBeNull();
+  });
+
+  it('returns null for empty fields and over-long input', async () => {
+    expect(await service().verifyCredentials('', 'x')).toBeNull();
+    expect(await service().verifyCredentials('nimal', '')).toBeNull();
+    expect(
+      await service().verifyCredentials('nimal', `${ownerCredential.password}${'x'.repeat(200)}`)
+    ).toBeNull();
+    expect(await service().verifyCredentials('n'.repeat(500), 'x')).toBeNull();
+  });
+
+  it('does not sign anyone in or write to storage', async () => {
+    await service().verifyCredentials('nimal', ownerCredential.password);
+    expect(service().isSignedIn()).toBeFalse();
+    expect(service().currentUser()).toBeNull();
+    expect(sessionStorage.length).toBe(0);
+    expect(localStorage.length).toBe(0);
+  });
+
+  it('leaves the signed-in user unchanged when another pair is verified', async () => {
+    await service().signIn('ruwani', MOCK_CREDENTIALS[3].password, false);
+    await service().verifyCredentials('nimal', ownerCredential.password);
+    expect(service().currentUser()?.id).toBe('usr-004');
+  });
+
+  it('still accepts a valid Admin pair after many failures', async () => {
+    for (let attempt = 0; attempt < 6; attempt += 1) {
+      await service().verifyCredentials('nimal', 'wrong');
+    }
+    expect(await service().verifyCredentials('nimal', ownerCredential.password)).toBe('usr-001');
+  });
+
+  describe('failure counter', () => {
+    const throttleMs = 7;
+
+    function throttleWaits(spy: jasmine.Spy): number {
+      return spy.calls.allArgs().filter(args => args[1] === throttleMs).length;
+    }
+
+    beforeEach(() => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [...TEST_PROVIDERS, { provide: SIGN_IN_THROTTLE_MS, useValue: throttleMs }],
+      });
+    });
+
+    it('is not reset by a valid non-Admin pair', async () => {
+      const timer = spyOn(window, 'setTimeout').and.callThrough();
+      for (let attempt = 0; attempt < 4; attempt += 1) {
+        await service().verifyCredentials('nimal', 'wrong');
+      }
+      expect(await service().verifyCredentials('kamal', managerCredential.password)).toBe(
+        'usr-002'
+      );
+      await service().verifyCredentials('nimal', 'wrong');
+      expect(throttleWaits(timer)).toBe(1);
+    });
+
+    it('is reset by a valid active Admin pair', async () => {
+      const timer = spyOn(window, 'setTimeout').and.callThrough();
+      for (let attempt = 0; attempt < 4; attempt += 1) {
+        await service().verifyCredentials('nimal', 'wrong');
+      }
+      await service().verifyCredentials('nimal', ownerCredential.password);
+      await service().verifyCredentials('nimal', 'wrong');
+      expect(throttleWaits(timer)).toBe(0);
+    });
+
+    it('does not share the count with sign-in failures', async () => {
+      const timer = spyOn(window, 'setTimeout').and.callThrough();
+      for (let attempt = 0; attempt < 4; attempt += 1) {
+        await service().signIn('nimal', 'wrong', false);
+      }
+      await service().verifyCredentials('nimal', 'wrong');
+      expect(throttleWaits(timer)).toBe(0);
+    });
+  });
+
+  it('is refused when sign-in is not configured', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [...TEST_PROVIDERS, { provide: MOCK_AUTH_ENABLED, useValue: false }],
+    });
+    expect(await service().verifyCredentials('nimal', ownerCredential.password)).toBeNull();
   });
 });

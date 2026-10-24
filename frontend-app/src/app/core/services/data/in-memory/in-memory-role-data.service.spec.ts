@@ -22,6 +22,7 @@ describe('InMemoryRoleDataService', () => {
       employees: 'VIEW',
       payroll: 'VIEW',
       'reload-utility': 'FULL',
+      pos: 'FULL',
       users: 'NONE',
       settings: 'NONE',
     });
@@ -34,6 +35,7 @@ describe('InMemoryRoleDataService', () => {
       employees: 'NONE',
       payroll: 'NONE',
       'reload-utility': 'VIEW',
+      pos: 'FULL',
       users: 'NONE',
       settings: 'NONE',
     });
@@ -46,6 +48,7 @@ describe('InMemoryRoleDataService', () => {
       employees: 'NONE',
       payroll: 'NONE',
       'reload-utility': 'FULL',
+      pos: 'FULL',
       users: 'NONE',
       settings: 'NONE',
     });

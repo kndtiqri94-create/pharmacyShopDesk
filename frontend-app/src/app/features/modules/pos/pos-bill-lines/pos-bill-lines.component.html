@@ -1,0 +1,49 @@
+<app-data-table
+  ariaLabel="Bill items"
+  itemLabel="items"
+  emptyTitle="No items yet"
+  emptyMessage="Search for a product or scan a barcode to add it to the bill."
+  [columns]="columns"
+  [rows]="rows()"
+  [rowKey]="rowKey"
+  [paginate]="false"
+>
+  <ng-template appDataTableCell="discount" let-row>
+    <input
+      class="line-input line-input--discount sd-num"
+      type="text"
+      inputmode="decimal"
+      autocomplete="off"
+      [attr.maxlength]="discountMaxLength"
+      [attr.aria-label]="'Discount percent for ' + row.line.name"
+      [value]="row.line.discountPercent"
+      [disabled]="!discountEditable()"
+      (change)="onDiscountChange(row, $event)"
+    />
+  </ng-template>
+  <ng-template appDataTableCell="quantity" let-row>
+    <input
+      class="line-input line-input--quantity sd-num"
+      type="text"
+      inputmode="numeric"
+      autocomplete="off"
+      [attr.maxlength]="quantityMaxLength"
+      [attr.aria-label]="'Quantity of ' + row.line.name"
+      [value]="row.line.quantity"
+      [disabled]="!posService.canSell()"
+      (change)="onQuantityChange(row, $event)"
+    />
+  </ng-template>
+  <ng-template appDataTableCell="action" let-row>
+    <app-button
+      variant="danger"
+      size="xl"
+      icon="trash"
+      [ariaLabel]="'Remove ' + row.line.name"
+      [disabled]="!posService.canSell()"
+      (click)="remove(row)"
+    >
+      Remove
+    </app-button>
+  </ng-template>
+</app-data-table>

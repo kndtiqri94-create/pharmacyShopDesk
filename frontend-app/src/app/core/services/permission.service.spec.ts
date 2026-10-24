@@ -90,6 +90,52 @@ describe('PermissionService', () => {
     expect(service().canView(ModuleKey.PAYROLL)).toBeFalse();
   });
 
+  it('gives every role Full POS access and keeps it out of the sidebar list', async () => {
+    for (const role of [UserRole.ADMIN, UserRole.MANAGER, UserRole.PHARMACIST, UserRole.CASHIER]) {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({ providers: TEST_PROVIDERS });
+      await signInAs(role);
+      expect(service().canView(ModuleKey.POS)).withContext(role).toBeTrue();
+      expect(service().canWrite(ModuleKey.POS)).withContext(role).toBeTrue();
+      expect(
+        service()
+          .allowedModules()
+          .map(definition => definition.key)
+      ).not.toContain(ModuleKey.POS);
+    }
+  });
+
+  it('removes the POS button and till access when the matrix takes POS away in the session', async () => {
+    await signInAs(UserRole.CASHIER);
+    expect(service().canView(ModuleKey.POS)).toBeTrue();
+    const roleDataService = TestBed.inject(RoleDataService);
+    const matrix = await firstValueFrom(roleDataService.getMatrix());
+    await firstValueFrom(
+      roleDataService.saveMatrix({
+        ...matrix,
+        CASHIER: { ...matrix.CASHIER, [ModuleKey.POS]: PermissionLevel.NONE },
+      })
+    );
+    expect(service().canView(ModuleKey.POS)).toBeFalse();
+    expect(service().canWrite(ModuleKey.POS)).toBeFalse();
+    expect(service().levelFor(ModuleKey.DASHBOARD)).toBe(PermissionLevel.NONE);
+    expect(service().levelFor(ModuleKey.RELOAD_UTILITY)).toBe(PermissionLevel.FULL);
+  });
+
+  it('lets a view-only role see the till but not sell', async () => {
+    await signInAs(UserRole.PHARMACIST);
+    const roleDataService = TestBed.inject(RoleDataService);
+    const matrix = await firstValueFrom(roleDataService.getMatrix());
+    await firstValueFrom(
+      roleDataService.saveMatrix({
+        ...matrix,
+        PHARMACIST: { ...matrix.PHARMACIST, [ModuleKey.POS]: PermissionLevel.VIEW },
+      })
+    );
+    expect(service().canView(ModuleKey.POS)).toBeTrue();
+    expect(service().canWrite(ModuleKey.POS)).toBeFalse();
+  });
+
   it('keeps payroll out of the sidebar list and the landing path', async () => {
     await signInAs(UserRole.ADMIN);
     expect(

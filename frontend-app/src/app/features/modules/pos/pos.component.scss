@@ -1,0 +1,36 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.till {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+}
+
+.till__grid {
+  display: grid;
+  gap: var(--sd-space-4);
+  grid-template-columns: minmax(0, 1fr) 420px;
+  align-items: start;
+
+  @include bp.below-laptop {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.till__main,
+.till__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+  min-width: 0;
+}
+
+.till__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+}

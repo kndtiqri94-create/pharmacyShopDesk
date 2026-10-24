@@ -362,6 +362,7 @@ describe('UsersComponent', () => {
         'Employees',
         'Payroll',
         'Reload & Utility',
+        'POS',
         'Users',
         'Settings',
       ]);
@@ -369,7 +370,8 @@ describe('UsersComponent', () => {
       expect(rows[4]).toEqual(['Suppliers', 'Full', 'Full', 'View', 'No access']);
       expect(rows[5]).toEqual(['Employees', 'Full', 'View', 'No access', 'No access']);
       expect(rows[6]).toEqual(['Payroll', 'Full', 'View', 'No access', 'No access']);
-      expect(rows[8]).toEqual(['Users', 'Full', 'No access', 'No access', 'No access']);
+      expect(rows[8]).toEqual(['POS', 'Full', 'Full', 'Full', 'Full']);
+      expect(rows[9]).toEqual(['Users', 'Full', 'No access', 'No access', 'No access']);
     });
 
     it('opens Edit roles with the Admin column fixed at Full and Discard returns to the saved matrix', async () => {
@@ -378,8 +380,8 @@ describe('UsersComponent', () => {
       fixture.detectChanges();
       const dialog = dialogOf(element, 'app-edit-roles-panel');
       expect(dialog.open).toBeTrue();
-      expect(dialog.querySelectorAll('[data-testid="admin-fixed"]')).toHaveSize(10);
-      expect(dialog.querySelectorAll('select')).toHaveSize(30);
+      expect(dialog.querySelectorAll('[data-testid="admin-fixed"]')).toHaveSize(11);
+      expect(dialog.querySelectorAll('select')).toHaveSize(33);
       const select = dialog.querySelector(
         'select[aria-label="Cashier access to Settings"]'
       ) as HTMLSelectElement;
@@ -387,7 +389,7 @@ describe('UsersComponent', () => {
       buttonByText(dialog, 'Discard')?.click();
       fixture.detectChanges();
       expect(dialogOf(element, 'app-edit-roles-panel').open).toBeFalse();
-      expect(matrixRows(element)[9]).toEqual([
+      expect(matrixRows(element)[10]).toEqual([
         'Settings',
         'Full',
         'No access',

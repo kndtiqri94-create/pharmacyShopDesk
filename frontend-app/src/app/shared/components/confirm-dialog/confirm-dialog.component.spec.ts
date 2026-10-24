@@ -86,4 +86,24 @@ describe('ConfirmDialogComponent', () => {
     expect(button(element, 'Disable user').disabled).toBeTrue();
     expect(button(element, 'Cancel').disabled).toBeTrue();
   });
+
+  it('uses medium buttons unless asked for the extra large touch size', () => {
+    const medium = TestBed.createComponent(ConfirmDialogComponent);
+    medium.componentRef.setInput('title', 'Leave the till');
+    medium.componentRef.setInput('confirmLabel', 'Leave');
+    medium.detectChanges();
+    const mediumButtons = Array.from(
+      medium.nativeElement.querySelectorAll('button')
+    ) as HTMLElement[];
+    expect(mediumButtons.map(item => item.getAttribute('data-size'))).toEqual(['md', 'md']);
+    const large = TestBed.createComponent(ConfirmDialogComponent);
+    large.componentRef.setInput('title', 'Leave the till');
+    large.componentRef.setInput('confirmLabel', 'Leave');
+    large.componentRef.setInput('buttonSize', 'xl');
+    large.detectChanges();
+    const largeButtons = Array.from(
+      large.nativeElement.querySelectorAll('button')
+    ) as HTMLElement[];
+    expect(largeButtons.map(item => item.getAttribute('data-size'))).toEqual(['xl', 'xl']);
+  });
 });

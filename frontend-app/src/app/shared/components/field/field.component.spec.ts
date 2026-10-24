@@ -14,6 +14,7 @@ import { FIELD_IMPORTS } from './field.imports';
       [prefix]="prefix"
       [suffix]="suffix"
       [span]="span"
+      [size]="size"
     >
       <input appFieldControl type="text" />
     </app-field>
@@ -26,6 +27,7 @@ class HostComponent {
   prefix: string | null = null;
   suffix: string | null = null;
   span = 12;
+  size: 'md' | 'lg' | 'xl' = 'md';
 }
 
 describe('FieldComponent', () => {
@@ -36,6 +38,13 @@ describe('FieldComponent', () => {
     const element = fixture.nativeElement as HTMLElement;
     return { fixture, element, input: element.querySelector('input')! };
   }
+
+  it('makes the extra large field at least 52px tall for touch screens', () => {
+    const { element } = render(host => (host.size = 'xl'));
+    const box = element.querySelector('.sd-field-box') as HTMLElement;
+    expect(box.classList).toContain('sd-field-box--xl');
+    expect(parseFloat(getComputedStyle(box).minHeight)).toBeGreaterThanOrEqual(52);
+  });
 
   it('links the label to the control', () => {
     const { element, input } = render();

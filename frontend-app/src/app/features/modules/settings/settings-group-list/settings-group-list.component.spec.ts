@@ -14,15 +14,16 @@ describe('SettingsGroupListComponent', () => {
     return { fixture, element, buttons, chosen };
   }
 
-  it('lists the four groups in a list of real buttons', () => {
+  it('lists the five groups in a list of real buttons', () => {
     const { element, buttons } = render();
     expect(buttons().map(button => button.textContent?.trim())).toEqual([
       'Shop profile',
       'Currency & region',
       'Inventory alerts',
+      'Point of sale',
       'Backup & sync',
     ]);
-    expect(element.querySelectorAll('ul > li')).toHaveSize(4);
+    expect(element.querySelectorAll('ul > li')).toHaveSize(5);
     expect(element.querySelector('nav')?.getAttribute('aria-label')).toBe('Setting groups');
     expect(buttons().every(button => button.type === 'button')).toBeTrue();
   });
@@ -34,19 +35,20 @@ describe('SettingsGroupListComponent', () => {
       null,
       'true',
       null,
+      null,
     ]);
     expect(element.querySelectorAll('.group--active')).toHaveSize(1);
     fixture.componentRef.setInput('active', 'backup-sync');
     fixture.detectChanges();
-    expect(buttons()[3].getAttribute('aria-current')).toBe('true');
+    expect(buttons()[4].getAttribute('aria-current')).toBe('true');
     expect(buttons()[2].getAttribute('aria-current')).toBeNull();
   });
 
   it('tells the page which group was chosen by pointer or keyboard', () => {
     const { buttons, chosen } = render();
     buttons()[1].click();
-    buttons()[3].focus();
-    buttons()[3].click();
+    buttons()[4].focus();
+    buttons()[4].click();
     expect(chosen).toEqual(['currency-region', 'backup-sync']);
   });
 });

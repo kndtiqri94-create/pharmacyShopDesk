@@ -207,4 +207,44 @@ describe('application routes', () => {
     );
     expect((await open('/products')).router.url).toBe('/access-denied');
   });
+
+  for (const role of [UserRole.ADMIN, UserRole.MANAGER, UserRole.PHARMACIST, UserRole.CASHIER]) {
+    it(`opens the till at /pos for the ${role} role by default`, async () => {
+      await signInAs(role);
+      const { router } = await open('/pos');
+      expect(router.url).toBe('/pos');
+    });
+  }
+
+  it('sends a signed-out visitor who types the till address to sign in', async () => {
+    const { router } = await open('/pos');
+    expect(router.url).toBe('/sign-in?returnUrl=%2Fpos');
+  });
+
+  it('stops a role whose POS access was removed from opening the till by typing the address', async () => {
+    await signInAs(UserRole.CASHIER);
+    expect((await open('/pos')).router.url).toBe('/pos');
+    const roleDataService = TestBed.inject(RoleDataService);
+    const saved = await firstValueFrom(roleDataService.getMatrix());
+    await firstValueFrom(
+      roleDataService.saveMatrix(setMatrixCell(saved, UserRole.CASHIER, ModuleKey.POS, 'NONE'))
+    );
+    const { harness, router } = await open('/pos');
+    expect(router.url).toBe('/access-denied');
+    expect((harness.routeNativeElement as HTMLElement).textContent).toContain(
+      'You do not have access to POS'
+    );
+  });
+
+  it('keeps every other module as it was when POS is switched off for a role', async () => {
+    await signInAs(UserRole.CASHIER);
+    const roleDataService = TestBed.inject(RoleDataService);
+    const saved = await firstValueFrom(roleDataService.getMatrix());
+    await firstValueFrom(
+      roleDataService.saveMatrix(setMatrixCell(saved, UserRole.CASHIER, ModuleKey.POS, 'NONE'))
+    );
+    expect((await open('/products')).router.url).toBe('/products');
+    expect((await open('/reload-utility')).router.url).toBe('/reload-utility');
+    expect((await open('/settings')).router.url).toBe('/access-denied');
+  });
 });

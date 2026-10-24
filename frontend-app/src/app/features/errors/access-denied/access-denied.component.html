@@ -1,6 +1,15 @@
-<app-fallback-page
-  heading="Access denied"
-  subtitle="Your role does not include this area."
-  emptyTitle="You can't open this area"
-  message="You don't have access to this area. Ask the owner if you need it, or go to a page you can use."
-/>
+@if (isPosDenied()) {
+  <app-fallback-page
+    heading="Access denied"
+    subtitle="Your role does not include POS."
+    emptyTitle="You can't open the POS till"
+    message="You do not have access to POS. Ask the owner if you need it, or go to a page you can use."
+  />
+} @else {
+  <app-fallback-page
+    heading="Access denied"
+    subtitle="Your role does not include this area."
+    emptyTitle="You can't open this area"
+    message="You don't have access to this area. Ask the owner if you need it, or go to a page you can use."
+  />
+}

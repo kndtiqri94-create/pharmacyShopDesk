@@ -21,6 +21,10 @@
   min-height: var(--sd-control-lg);
 }
 
+.sd-field-box--xl {
+  min-height: var(--sd-control-touch);
+}
+
 .sd-field-control {
   flex: 1 1 auto;
   min-width: 0;

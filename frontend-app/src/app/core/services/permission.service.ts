@@ -17,8 +17,10 @@ export class PermissionService {
   private readonly authService = inject(AuthService);
   private readonly roleDataService = inject(RoleDataService);
   private readonly matrixSignal = signal<RolePermissionMatrix | null>(null);
+  private readonly deniedModuleSignal = signal<ModuleKey | null>(null);
 
   readonly matrix = this.matrixSignal.asReadonly();
+  readonly deniedModule = this.deniedModuleSignal.asReadonly();
   readonly allowedModules = computed(() =>
     MODULE_DEFINITIONS.filter(
       definition =>
@@ -34,6 +36,10 @@ export class PermissionService {
 
   async load(): Promise<void> {
     this.matrixSignal.set(await firstValueFrom(this.roleDataService.getMatrix()));
+  }
+
+  noteDenied(module: ModuleKey | null): void {
+    this.deniedModuleSignal.set(module);
   }
 
   levelFor(module: ModuleKey): PermissionLevel {

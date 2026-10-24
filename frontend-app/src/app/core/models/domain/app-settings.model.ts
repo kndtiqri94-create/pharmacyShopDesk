@@ -11,4 +11,9 @@ export interface AppSettings {
   showLowStockCountInSidebar: boolean;
   sellEarliestExpiringFirst: boolean;
   blockExpiredSales: boolean;
+  posLineDiscountEnabled: boolean;
+  posBillDiscountEnabled: boolean;
+  posDefaultDiscountPercent: number;
+  posMaxDiscountPercent: number;
+  posHideSidebar: boolean;
 }

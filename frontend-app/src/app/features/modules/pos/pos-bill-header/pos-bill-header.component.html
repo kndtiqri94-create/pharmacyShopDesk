@@ -1,0 +1,80 @@
+<div class="bill-header">
+  <div class="bill-header__actions">
+    <app-button
+      size="xl"
+      icon="plus"
+      [disabled]="posService.working()"
+      (click)="newBillRequested.emit()"
+    >
+      Create new bill
+    </app-button>
+    <app-button
+      size="xl"
+      icon="pause"
+      [disabled]="!posService.canSell() || posService.working()"
+      (click)="holdRequested.emit()"
+    >
+      Hold bill
+    </app-button>
+  </div>
+  <div class="sd-form-grid">
+    <app-field label="Bill date" fieldId="pos-bill-date" size="xl" [span]="3">
+      <input
+        appFieldControl
+        type="date"
+        [max]="today"
+        [value]="posService.bill().date"
+        [disabled]="!posService.canSell()"
+        (change)="onDateChange($event)"
+      />
+    </app-field>
+    <app-field label="Bill type" fieldId="pos-bill-type" size="xl" [span]="3">
+      <select appFieldControl [disabled]="!posService.canSell()">
+        <option value="INVOICE" selected>Invoice</option>
+      </select>
+    </app-field>
+    <app-field label="Invoice no" fieldId="pos-invoice-no" size="xl" [span]="3">
+      <input
+        appFieldControl
+        class="sd-code"
+        type="text"
+        readonly
+        [value]="posService.bill().invoiceNo"
+      />
+    </app-field>
+    <app-field label="Customer" fieldId="pos-customer" size="xl" [span]="6">
+      <input
+        appFieldControl
+        type="text"
+        list="pos-customer-options"
+        autocomplete="off"
+        maxlength="60"
+        [value]="customerName()"
+        [disabled]="!posService.canSell()"
+        (change)="onCustomerChange($event)"
+      />
+      <datalist id="pos-customer-options">
+        @for (customer of posService.customers(); track customer.id) {
+          <option [value]="customer.name"></option>
+        }
+      </datalist>
+    </app-field>
+    <app-field label="Sales rep" fieldId="pos-rep" size="xl" hint="Optional." [span]="6">
+      <input
+        appFieldControl
+        type="text"
+        list="pos-rep-options"
+        autocomplete="off"
+        maxlength="60"
+        [value]="repName()"
+        [disabled]="!posService.canSell()"
+        (change)="onRepChange($event)"
+      />
+      <datalist id="pos-rep-options">
+        @for (rep of posService.reps(); track rep.id) {
+          <option [value]="rep.name"></option>
+        }
+      </datalist>
+    </app-field>
+  </div>
+</div>
