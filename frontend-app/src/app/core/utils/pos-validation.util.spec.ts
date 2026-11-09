@@ -31,6 +31,8 @@ function readiness(
     totals: computeBillTotals(lines, ZERO_DISCOUNT, amounts),
     amounts,
     isWalkIn,
+    cardLast4: '',
+    onlineAccountChosen: true,
   });
 }
 
@@ -73,8 +75,9 @@ describe('pos validation', () => {
         cash: '10',
         card: 'x',
         online: '1.234',
-        cardReference: '',
-        onlineReference: '',
+        cardLast4: '',
+        onlineNote: '',
+        onlineAccountId: null,
         creditSelected: false,
       });
       expect(result.amounts).toBeNull();
@@ -86,8 +89,9 @@ describe('pos validation', () => {
         cash: '60',
         card: '40.00',
         online: '',
-        cardReference: 'ref',
-        onlineReference: '',
+        cardLast4: '1234',
+        onlineNote: '',
+        onlineAccountId: null,
         creditSelected: true,
       });
       expect(result.amounts).toEqual({

@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: var(--sd-space-2);
+}

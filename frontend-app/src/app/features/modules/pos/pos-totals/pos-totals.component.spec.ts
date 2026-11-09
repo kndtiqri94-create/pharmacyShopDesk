@@ -51,56 +51,40 @@ describe('PosTotalsComponent', () => {
     return { fixture, element, read, amountInput, percentInput, change, approvals, pos, message };
   }
 
-  it('shows No. of items, Sub total, Total, Paid and Balance for the bill', async () => {
-    const { read } = await render();
-    expect(read('item-count')).toBe('1');
+  it('shows No. of Items as count / quantity, then Sub Total and Total for the bill', async () => {
+    const { read, element } = await render();
+    expect(read('item-count')).toBe('1 / 4');
     expect(read('sub-total')).toBe('Rs. 10.00');
     expect(read('total')).toBe('Rs. 10.00');
-    expect(read('paid')).toBe('Rs. 0.00');
-    expect(read('balance-label')).toBe('Amount due');
-    expect(read('balance')).toBe('Rs. 10.00');
+    expect(element.querySelector('[data-testid="summary-box"] hr')).not.toBeNull();
+    expect(element.querySelector('[data-testid="summary-box"]')?.textContent).toContain(
+      'Discount (Rs.)'
+    );
+    expect(element.querySelector('[data-testid="summary-box"]')?.textContent).toContain(
+      'Discount (%)'
+    );
+  });
+
+  it('makes the Total the largest figure with the label on the left', async () => {
+    const { element } = await render();
+    const total = element.querySelector('[data-testid="total"]') as HTMLElement;
+    const subTotal = element.querySelector('[data-testid="sub-total"]') as HTMLElement;
+    expect(parseFloat(getComputedStyle(total).fontSize)).toBeGreaterThan(
+      parseFloat(getComputedStyle(subTotal).fontSize)
+    );
+    expect(getComputedStyle(total).fontWeight).toBe('700');
+    expect(total.previousElementSibling?.textContent?.trim()).toBe('Total');
   });
 
   it('updates as soon as the lines change', async () => {
     const { fixture, read, pos } = await render();
     pos.addProduct('prod-007');
     fixture.detectChanges();
-    expect(read('item-count')).toBe('2');
+    expect(read('item-count')).toBe('2 / 5');
     expect(read('sub-total')).toBe('Rs. 460.00');
     pos.removeLine('prod-007');
     fixture.detectChanges();
     expect(read('sub-total')).toBe('Rs. 10.00');
-  });
-
-  describe('balance', () => {
-    it('is labelled Change, in words, when cash is more than the amount due', async () => {
-      const { fixture, read, pos } = await render();
-      pos.setPaymentText('cash', '12');
-      fixture.detectChanges();
-      expect(read('balance-label')).toBe('Change');
-      expect(read('balance')).toBe('Rs. 2.00');
-      expect(read('paid')).toBe('Rs. 12.00');
-    });
-
-    it('is labelled Credit due, in words, when Credit covers the rest for a named customer', async () => {
-      const { fixture, read, pos } = await render();
-      pos.setCustomer('cus-002');
-      pos.setPaymentText('cash', '3');
-      pos.setCredit(true);
-      fixture.detectChanges();
-      expect(read('balance-label')).toBe('Credit due');
-      expect(read('balance')).toBe('Rs. 7.00');
-      expect(read('paid')).toBe('Rs. 3.00');
-    });
-
-    it('is zero when paid in full across methods', async () => {
-      const { fixture, read, pos } = await render();
-      pos.setPaymentText('cash', '6');
-      pos.setPaymentText('card', '4');
-      fixture.detectChanges();
-      expect(read('paid')).toBe('Rs. 10.00');
-      expect(read('balance')).toBe('Rs. 0.00');
-    });
   });
 
   describe('bill discount', () => {

@@ -1,0 +1,93 @@
+<app-pos-dialog heading="Create Account" [open]="open()" (closed)="closed.emit()">
+  <div class="sd-form-grid">
+    <app-field
+      label="Bank"
+      fieldId="create-account-bank"
+      size="xl"
+      [required]="true"
+      [error]="errors().bank ?? null"
+    >
+      <select appFieldControl [value]="bank()" (change)="onBank($event)">
+        <option value="" [selected]="bank() === ''">Choose a bank</option>
+        @for (name of banks; track name) {
+          <option [value]="name" [selected]="bank() === name">{{ name }}</option>
+        }
+      </select>
+    </app-field>
+    <app-field
+      label="Branch"
+      fieldId="create-account-branch"
+      size="xl"
+      [required]="true"
+      [error]="errors().branch ?? null"
+    >
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        [attr.maxlength]="textMaxLength"
+        [value]="branch()"
+        (input)="onBranch($event)"
+      />
+    </app-field>
+    <app-field
+      label="Holder Name"
+      fieldId="create-account-holder"
+      size="xl"
+      [required]="true"
+      [error]="errors().holderName ?? null"
+    >
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        [attr.maxlength]="textMaxLength"
+        [value]="holderName()"
+        (input)="onHolderName($event)"
+      />
+    </app-field>
+    <app-field
+      label="Account No"
+      fieldId="create-account-number"
+      size="xl"
+      [required]="true"
+      [error]="errors().accountNo ?? null"
+    >
+      <input
+        appFieldControl
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        [attr.maxlength]="accountNoMaxLength"
+        [value]="accountNo()"
+        (input)="onAccountNo($event)"
+      />
+    </app-field>
+    <app-field
+      label="Opening Balance"
+      fieldId="create-account-balance"
+      prefix="Rs."
+      size="xl"
+      [required]="true"
+      [error]="errors().openingBalance ?? null"
+    >
+      <input
+        appFieldControl
+        class="account__balance"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [attr.maxlength]="balanceMaxLength"
+        [value]="openingBalance()"
+        (input)="onOpeningBalance($event)"
+        (keydown.enter)="save()"
+      />
+    </app-field>
+  </div>
+  <div dialogActions>
+    <app-button size="xl" tone="slate" (click)="closed.emit()">Cancel</app-button>
+    <app-button size="xl" icon="check" tone="green" [disabled]="busy()" (click)="save()">
+      Save
+    </app-button>
+  </div>
+</app-pos-dialog>

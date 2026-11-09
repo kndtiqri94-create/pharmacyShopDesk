@@ -1,0 +1,14 @@
+@if (visible()) {
+  <nav class="bar" aria-label="More till actions">
+    @for (item of items; track item.action) {
+      <app-button
+        size="xl"
+        tone="blue"
+        [icon]="item.icon"
+        (click)="actionRequested.emit(item.action)"
+      >
+        {{ item.label }}
+      </app-button>
+    }
+  </nav>
+}

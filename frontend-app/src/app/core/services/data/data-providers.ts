@@ -1,8 +1,10 @@
 import { Provider } from '@angular/core';
 import { AttendanceDataService } from './attendance-data.service';
+import { BankAccountDataService } from './bank-account-data.service';
 import { EmployeeDataService } from './employee-data.service';
 import { GrnDataService } from './grn-data.service';
 import { InMemoryAttendanceDataService } from './in-memory/in-memory-attendance-data.service';
+import { InMemoryBankAccountDataService } from './in-memory/in-memory-bank-account-data.service';
 import { InMemoryEmployeeDataService } from './in-memory/in-memory-employee-data.service';
 import { InMemoryGrnDataService } from './in-memory/in-memory-grn-data.service';
 import { InMemoryLeaveDataService } from './in-memory/in-memory-leave-data.service';
@@ -48,6 +50,7 @@ const IN_MEMORY_BINDINGS: readonly [DataToken, new () => object][] = [
   [AttendanceDataService, InMemoryAttendanceDataService],
   [LeaveDataService, InMemoryLeaveDataService],
   [PayrollDataService, InMemoryPayrollDataService],
+  [BankAccountDataService, InMemoryBankAccountDataService],
 ];
 
 function notConfigured(): never {

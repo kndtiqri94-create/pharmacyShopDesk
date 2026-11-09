@@ -2,6 +2,8 @@
 
 :host {
   display: block;
+  min-height: 100%;
+  background: var(--sd-pos-bg);
 }
 
 .till {
@@ -30,6 +32,15 @@
 }
 
 .till__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+  padding: var(--sd-space-3);
+  border-radius: var(--sd-radius-md);
+  background: var(--sd-pos-panel);
+}
+
+.till__return {
   display: flex;
   flex-direction: column;
   gap: var(--sd-space-4);

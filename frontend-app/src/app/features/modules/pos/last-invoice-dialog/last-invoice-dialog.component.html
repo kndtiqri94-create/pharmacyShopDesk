@@ -1,0 +1,83 @@
+<app-pos-dialog heading="Last invoice" [open]="open()" (closed)="closed.emit()">
+  @if (sale(); as invoice) {
+    <div class="pp-stack" data-testid="last-invoice">
+      <dl class="pp-summary">
+        <div>
+          <dt>Invoice</dt>
+          <dd class="sd-code">{{ invoice.invoiceNo }}</dd>
+        </div>
+        <div>
+          <dt>Date</dt>
+          <dd>{{ dateOf(invoice.date) }} {{ timeOf(invoice.createdAt) }}</dd>
+        </div>
+        <div>
+          <dt>Customer</dt>
+          <dd>{{ invoice.customerName }}</dd>
+        </div>
+        <div>
+          <dt>Served by</dt>
+          <dd>{{ invoice.cashierName }}</dd>
+        </div>
+      </dl>
+      <table class="pp-table" aria-label="Items sold">
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col" class="is-right">Qty</th>
+            <th scope="col" class="is-right">Price</th>
+            <th scope="col" class="is-right">Disc %</th>
+            <th scope="col" class="is-right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of invoice.lines; track line.productId) {
+            <tr>
+              <td>{{ line.name }}</td>
+              <td class="is-right sd-num">{{ line.quantity }}</td>
+              <td class="is-right sd-num">{{ cell(line.unitPriceCents) }}</td>
+              <td class="is-right sd-num">{{ line.discountPercent }}</td>
+              <td class="is-right sd-num">{{ cell(line.totalCents) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <dl class="pp-summary">
+        <div>
+          <dt>Discount</dt>
+          <dd class="sd-num">{{ money(invoice.discountCents) }}</dd>
+        </div>
+        <div class="pp-summary__strong">
+          <dt>Total</dt>
+          <dd class="sd-num">{{ money(invoice.totalCents) }}</dd>
+        </div>
+        @for (payment of invoice.payments; track payment.method) {
+          <div>
+            <dt>{{ methodLabel(payment.method) }}</dt>
+            <dd class="sd-num">{{ money(payment.amountCents) }}</dd>
+          </div>
+        }
+      </dl>
+      @if (returns().length > 0) {
+        <app-alert tone="info" title="Returns made against this invoice">
+          @for (item of returns(); track item.id) {
+            <span class="sd-code">{{ item.returnNo }}</span>
+            ({{ money(item.totalCents) }})&nbsp;
+          }
+        </app-alert>
+      }
+    </div>
+  } @else if (loaded()) {
+    <app-empty-state
+      title="No sales yet"
+      message="Save a sale on the till and it will show here for viewing and printing."
+    />
+  }
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close</app-button>
+    @if (sale()) {
+      <app-button variant="primary" size="xl" icon="printer" (click)="print()">
+        Print receipt
+      </app-button>
+    }
+  </div>
+</app-pos-dialog>

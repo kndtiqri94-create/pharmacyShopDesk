@@ -19,10 +19,11 @@ describe('pos shortcuts', () => {
     expect(press('F7')).toBe(PosShortcutAction.PAY_ONLINE);
     expect(press('F10')).toBe(PosShortcutAction.HOLD);
     expect(press('F12')).toBe(PosShortcutAction.NEW_BILL);
+    expect(press('F11')).toBe(PosShortcutAction.SAVE_QUOTATION);
   });
 
   it('leaves every other key to the browser', () => {
-    for (const key of ['F5', 'F6', 'F8', 'F9', 'F11', 'a', 'Enter', 'Escape', '1', '']) {
+    for (const key of ['F5', 'F6', 'F8', 'F9', 'a', 'Enter', 'Escape', '1', '']) {
       expect(press(key)).withContext(key).toBeNull();
     }
   });

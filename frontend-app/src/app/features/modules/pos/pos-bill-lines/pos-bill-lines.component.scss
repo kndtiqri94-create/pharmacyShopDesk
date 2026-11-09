@@ -1,10 +1,18 @@
 :host {
   display: block;
+  --sd-table-row-height: var(--sd-control-lg);
+  --sd-table-cell-padding-y: 0;
+}
+
+.line-actions {
+  display: flex;
+  gap: var(--sd-space-2);
 }
 
 .line-input {
-  min-height: var(--sd-control-touch);
+  min-height: var(--sd-control-lg);
   padding: 0 var(--sd-space-3);
+  font-size: 16px;
   border: 1px solid var(--sd-border-strong);
   border-radius: var(--sd-radius-md);
   background: var(--sd-surface);
@@ -23,9 +31,15 @@
 }
 
 .line-input--discount {
-  width: 88px;
+  width: 104px;
 }
 
 .line-input--quantity {
-  width: 96px;
+  width: 112px;
+}
+
+@media (pointer: coarse) {
+  .line-input {
+    min-height: var(--sd-control-touch);
+  }
 }

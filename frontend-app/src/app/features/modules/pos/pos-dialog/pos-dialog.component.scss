@@ -1,0 +1,54 @@
+:host {
+  display: contents;
+}
+
+.pos-dialog {
+  width: min(560px, calc(100vw - var(--sd-space-6)));
+  max-height: calc(100vh - var(--sd-space-6));
+  padding: 0;
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  background: var(--sd-surface);
+  color: var(--sd-ink);
+  box-shadow: var(--sd-shadow-pop);
+
+  &[data-size='lg'] {
+    width: min(920px, calc(100vw - var(--sd-space-6)));
+  }
+
+  &[data-size='xl'] {
+    width: min(1280px, calc(100vw - var(--sd-space-6)));
+  }
+
+  &::backdrop {
+    background: var(--sd-scrim);
+  }
+}
+
+.pos-dialog__surface {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+  padding: var(--sd-space-5);
+}
+
+.pos-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sd-space-3);
+}
+
+.pos-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+  min-width: 0;
+}
+
+.pos-dialog__footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--sd-space-2);
+}

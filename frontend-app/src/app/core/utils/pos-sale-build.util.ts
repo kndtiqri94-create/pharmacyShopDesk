@@ -1,3 +1,4 @@
+import { BankAccount, BankAccountSnapshot } from '../models/domain/bank-account.model';
 import { Bill } from '../models/domain/bill.model';
 import { BillLine } from '../models/domain/bill-line.model';
 import { DiscountApproval } from '../models/domain/discount-approval.model';
@@ -12,6 +13,7 @@ import { SalePaymentMethod } from '../models/enums/sale-payment-method.enum';
 import { cloneValue } from './clone.util';
 import { isIsoDate } from './date.util';
 import { isInvoiceNumber, nextInvoiceNumber } from './invoice-number.util';
+import { ONLINE_NOTE_MAX_LENGTH } from './bank-account-validation.util';
 import { nextRecordId } from './document-number.util';
 import {
   defaultBillDiscount,
@@ -28,7 +30,6 @@ import {
 } from './pos-totals.util';
 import {
   MAX_BILL_LINES,
-  REFERENCE_MAX_LENGTH,
   invalidQuantityMessage,
   parseLineQuantity,
   parsePaymentEntries,
@@ -46,6 +47,7 @@ export interface SaleBuildContext {
   today: string;
   now: string;
   existingSales: readonly Sale[];
+  accounts: readonly BankAccount[];
   cashier: { id: string; name: string };
 }
 
@@ -143,22 +145,35 @@ function buildSaleLines(
   return { saleLines, products: Array.from(changed.values()) };
 }
 
-function buildPayments(bill: Bill, totals: BillTotals, cash: number, card: number, online: number) {
+function toSnapshot(account: BankAccount): BankAccountSnapshot {
+  return { bank: account.bank, accountNo: account.accountNo, holderName: account.holderName };
+}
+
+function buildPayments(
+  bill: Bill,
+  totals: BillTotals,
+  amounts: { cash: number; card: number; online: number },
+  account: BankAccount | null
+) {
+  const { cash, card, online } = amounts;
   const payments: SalePayment[] = [];
-  const reference = (text: string) => text.trim().slice(0, REFERENCE_MAX_LENGTH);
+  const cardLast4 = bill.payments.cardLast4;
   if (cash > 0) payments.push({ method: SalePaymentMethod.CASH, amountCents: cash, reference: '' });
   if (card > 0) {
     payments.push({
       method: SalePaymentMethod.CARD,
       amountCents: card,
-      reference: reference(bill.payments.cardReference),
+      reference: cardLast4,
+      cardLast4: cardLast4.length === 0 ? null : cardLast4,
     });
   }
   if (online > 0) {
     payments.push({
       method: SalePaymentMethod.ONLINE,
       amountCents: online,
-      reference: reference(bill.payments.onlineReference),
+      reference: '',
+      account: account === null ? null : toSnapshot(account),
+      note: bill.payments.onlineNote.trim().slice(0, ONLINE_NOTE_MAX_LENGTH),
     });
   }
   if (totals.creditCents > 0) {
@@ -219,6 +234,8 @@ export function buildSale(context: SaleBuildContext): SaleBuildResult {
   const priced = pricing.lines;
   const totals = computeBillTotals(priced, bill.billDiscount, parsed.amounts);
   const customer = context.customers.find(candidate => candidate.id === bill.customerId)!;
+  const account =
+    context.accounts.find(candidate => candidate.id === bill.payments.onlineAccountId) ?? null;
   const problem = findDiscountProblem(
     priced,
     bill.billDiscount,
@@ -232,6 +249,8 @@ export function buildSale(context: SaleBuildContext): SaleBuildResult {
     totals,
     amounts: parsed.amounts,
     isWalkIn: customer.isWalkIn,
+    cardLast4: bill.payments.cardLast4,
+    onlineAccountChosen: account !== null,
   });
   if (readiness !== null) return invalid(readiness.message);
   const built = buildSaleLines(priced, context.products, context);
@@ -255,9 +274,12 @@ export function buildSale(context: SaleBuildContext): SaleBuildResult {
     payments: buildPayments(
       bill,
       totals,
-      parsed.amounts.cashCents,
-      parsed.amounts.cardCents,
-      parsed.amounts.onlineCents
+      {
+        cash: parsed.amounts.cashCents,
+        card: parsed.amounts.cardCents,
+        online: parsed.amounts.onlineCents,
+      },
+      account
     ),
     subTotalCents: totals.subTotalCents,
     discountCents: totals.discountCents,

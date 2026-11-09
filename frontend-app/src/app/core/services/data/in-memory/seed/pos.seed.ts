@@ -19,3 +19,13 @@ export const SALES_REP_SEED: readonly SalesRep[] = [
   { id: 'rep-004', name: 'Suresh Kumar' },
   { id: 'rep-005', name: 'Tharindu Silva' },
 ];
+
+export interface OpeningDue {
+  customerId: string;
+  owedCents: number;
+}
+
+export const OPENING_DUE_SEED: readonly OpeningDue[] = [
+  { customerId: 'cus-002', owedCents: 450_000 },
+  { customerId: 'cus-004', owedCents: 1_275_000 },
+];

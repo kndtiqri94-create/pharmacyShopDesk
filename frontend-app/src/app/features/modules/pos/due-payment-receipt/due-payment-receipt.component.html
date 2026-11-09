@@ -1,0 +1,49 @@
+<app-pos-print-sheet
+  [open]="payment() !== null"
+  heading="Payment receipt"
+  printLabel="Print payment receipt"
+  (closed)="closed.emit()"
+>
+  @if (payment(); as receipt) {
+    <header class="rc-header">
+      <p class="sd-body-strong">{{ settings()?.shopName ?? 'Payment receipt' }}</p>
+      @if (settings()?.address) {
+        <p class="sd-caption">{{ settings()?.address }}</p>
+      }
+    </header>
+    <dl class="rc-meta">
+      <div>
+        <dt>Receipt</dt>
+        <dd class="sd-code" data-testid="due-receipt-no">{{ receipt.receiptNo }}</dd>
+      </div>
+      <div>
+        <dt>Date</dt>
+        <dd>{{ dateOf(receipt.createdAt) }} {{ timeOf(receipt.createdAt) }}</dd>
+      </div>
+      <div>
+        <dt>Customer</dt>
+        <dd>{{ receipt.customerName }}</dd>
+      </div>
+      <div>
+        <dt>Taken by</dt>
+        <dd>{{ receipt.takenBy }}</dd>
+      </div>
+      <div>
+        <dt>Method</dt>
+        <dd>
+          {{ methodLabel(receipt.method) }}
+          @if (receipt.reference) {
+            <span class="sd-caption">({{ receipt.reference }})</span>
+          }
+        </dd>
+      </div>
+    </dl>
+    <dl class="rc-totals">
+      <div class="rc-grand">
+        <dt>Amount paid</dt>
+        <dd class="sd-num">{{ money(receipt.amountCents) }}</dd>
+      </div>
+    </dl>
+    <p class="rc-thanks sd-caption">Thank you.</p>
+  }
+</app-pos-print-sheet>

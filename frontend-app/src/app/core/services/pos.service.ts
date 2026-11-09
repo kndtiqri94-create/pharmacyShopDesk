@@ -11,7 +11,16 @@ import { PosSettings } from '../models/domain/pos-settings.model';
 import { Product } from '../models/domain/product.model';
 import { SalesRep } from '../models/domain/sales-rep.model';
 import { DiscountScope } from '../models/enums/discount-scope.enum';
+import { ALL_BILL_TYPES, BillType } from '../models/enums/bill-type.enum';
 import { ModuleKey } from '../models/enums/module-key.enum';
+import { QuotationStatus } from '../models/enums/quotation-status.enum';
+import {
+  CARD_LAST4_LENGTH,
+  CARD_LAST4_MESSAGE,
+  ONLINE_NOTE_MAX_LENGTH,
+  isValidCardLast4,
+  onlyDigits,
+} from '../utils/bank-account-validation.util';
 import { isIsoDate } from '../utils/date.util';
 import {
   decideBillDiscount,
@@ -21,15 +30,18 @@ import {
   findDiscountProblem,
   parseDiscountPercent,
 } from '../utils/pos-discount.util';
-import { applyKeypadKey } from '../utils/pos-keypad.util';
+import { emptyPaymentEntries } from '../utils/pos-payment-entries.util';
 import { POS_SETTINGS_DEFAULTS, toPosSettings } from '../utils/pos-settings.util';
+import { recheckBillLines } from '../utils/pos-product-update.util';
+import { prepareQuotationForInvoice } from '../utils/pos-quotation.util';
 import { SellableStock, getSellableStock } from '../utils/pos-stock-allocation.util';
 import { PaymentAmounts, billDiscountPercent, computeBillTotals } from '../utils/pos-totals.util';
 import {
   AMOUNT_TEXT_MAX_LENGTH,
   CREDIT_WALK_IN_MESSAGE,
+  ONLINE_ACCOUNT_MESSAGE,
   PaymentFieldKey,
-  REFERENCE_MAX_LENGTH,
+  PaymentMethodKey,
   checkProductAddable,
   checkQuantityAgainstStock,
   invalidQuantityMessage,
@@ -38,19 +50,30 @@ import {
   parsePaymentEntries,
 } from '../utils/pos-validation.util';
 import { AuthService } from './auth/auth.service';
+import { BankAccountService } from './bank-account.service';
 import { ClockService } from './clock.service';
 import { ProductDataService } from './data/product-data.service';
 import { SalesDataService } from './data/sales-data.service';
 import { SettingsDataService } from './data/settings-data.service';
 import { PermissionService } from './permission.service';
+import { PosCashService } from './pos-cash.service';
 import { DiscountChangeRequest, PosDiscountApprovalService } from './pos-discount-approval.service';
+import { PosQuotationService, SaveQuotationResult } from './pos-quotation.service';
+import { PosReturnService } from './pos-return.service';
 import {
   DiscardResult,
   HoldResult,
+  PosFailureResult,
   PosSaleService,
+  QuotationLink,
   ResumeResult,
   SaveSaleResult,
 } from './pos-sale.service';
+
+export interface PaymentProblems {
+  cardLast4: string | null;
+  onlineAccount: string | null;
+}
 
 export type PosActionResult = { ok: true } | { ok: false; message: string };
 
@@ -58,6 +81,9 @@ export type DiscountEvaluation =
   | { kind: 'APPLIED' }
   | { kind: 'NEEDS_APPROVAL'; request: DiscountChangeRequest; billInput: BillDiscountInput | null }
   | { kind: 'REFUSED'; message: string };
+
+export type ConvertQuotationResult =
+  { ok: true; notes: string[]; autoHeld: HeldBill | null } | PosFailureResult;
 
 const NOT_ALLOWED = 'You can look at the till, but you cannot change a bill.';
 const NEEDS_APPROVAL = "That discount needs an Admin's approval.";
@@ -76,15 +102,11 @@ function fail(message: string): PosActionResult {
   return { ok: false, message };
 }
 
-function emptyPayments(): PaymentEntries {
-  return {
-    cash: '',
-    card: '',
-    online: '',
-    cardReference: '',
-    onlineReference: '',
-    creditSelected: false,
-  };
+function failureResult(
+  message: string,
+  reason: PosFailureResult['reason'] = 'invalid'
+): PosFailureResult {
+  return { ok: false, reason, message };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -97,6 +119,10 @@ export class PosService {
   private readonly settingsDataService = inject(SettingsDataService);
   private readonly saleService = inject(PosSaleService);
   private readonly approvalService = inject(PosDiscountApprovalService);
+  private readonly returnService = inject(PosReturnService);
+  private readonly quotationService = inject(PosQuotationService);
+  private readonly cashService = inject(PosCashService);
+  private readonly bankAccountService = inject(BankAccountService);
 
   private readonly settingsSignal = signal<PosSettings>(POS_SETTINGS_DEFAULTS);
   private readonly productsSignal = signal<readonly Product[]>([]);
@@ -104,9 +130,12 @@ export class PosService {
   private readonly billSignal = signal<Bill>(this.blankBill(''));
   private readonly repsSignal = signal<readonly SalesRep[]>([]);
   private readonly heldBillsSignal = signal<readonly HeldBill[]>([]);
-  private readonly activeFieldSignal = signal<PaymentFieldKey>('cash');
+  private readonly activeMethodSignal = signal<PaymentMethodKey>('cash');
+  private readonly showProblemsSignal = signal(false);
   private readonly workingSignal = signal(false);
   private readonly readySignal = signal(false);
+  private readonly billTypeSignal = signal<BillType>(BillType.INVOICE);
+  private readonly conversionSignal = signal<QuotationLink | null>(null);
   private blockExpired = true;
   private started = false;
 
@@ -116,9 +145,12 @@ export class PosService {
   readonly customers = this.customersSignal.asReadonly();
   readonly reps = this.repsSignal.asReadonly();
   readonly heldBills = this.heldBillsSignal.asReadonly();
-  readonly activePaymentField = this.activeFieldSignal.asReadonly();
+  readonly activePaymentMethod = this.activeMethodSignal.asReadonly();
+  readonly showPaymentProblems = this.showProblemsSignal.asReadonly();
   readonly working = this.workingSignal.asReadonly();
   readonly ready = this.readySignal.asReadonly();
+  readonly billType = this.billTypeSignal.asReadonly();
+  readonly converting = this.conversionSignal.asReadonly();
 
   readonly canSell = computed(
     () => this.authService.currentUser() !== null && this.permissionService.canWrite(ModuleKey.POS)
@@ -136,7 +168,21 @@ export class PosService {
     const customerId = this.billSignal().customerId;
     return this.customersSignal().find(customer => customer.id === customerId)?.isWalkIn ?? true;
   });
-  readonly hasUnsavedContent = computed(() => this.billSignal().lines.length > 0);
+  readonly paymentProblems = computed<PaymentProblems>(() => {
+    const payments = this.billSignal().payments;
+    const onlineCents = this.parsedPayments().amounts?.onlineCents ?? 0;
+    return {
+      cardLast4: isValidCardLast4(payments.cardLast4) ? null : CARD_LAST4_MESSAGE,
+      onlineAccount:
+        onlineCents > 0 && this.bankAccountService.findById(payments.onlineAccountId) === null
+          ? ONLINE_ACCOUNT_MESSAGE
+          : null,
+    };
+  });
+  readonly hasBillLines = computed(() => this.billSignal().lines.length > 0);
+  readonly hasUnsavedContent = computed(
+    () => this.hasBillLines() || this.returnService.inProgress()
+  );
   readonly discountProblem = computed(() => {
     const bill = this.billSignal();
     return findDiscountProblem(
@@ -165,7 +211,18 @@ export class PosService {
     this.started = false;
     this.readySignal.set(false);
     this.billSignal.set(this.blankBill(''));
-    this.activeFieldSignal.set('cash');
+    this.activeMethodSignal.set('cash');
+    this.billTypeSignal.set(BillType.INVOICE);
+    this.conversionSignal.set(null);
+    this.returnService.reset();
+  }
+
+  setBillType(type: BillType): PosActionResult {
+    if (!this.canSell()) return fail(NOT_ALLOWED);
+    if (!ALL_BILL_TYPES.includes(type)) return fail('Choose Invoice or Return.');
+    if (type === BillType.INVOICE) this.returnService.reset();
+    this.billTypeSignal.set(type);
+    return ok();
   }
 
   async newBill(): Promise<void> {
@@ -328,6 +385,7 @@ export class PosService {
       return fail('Choose a customer from the list.');
     }
     this.billSignal.update(bill => ({ ...bill, customerId }));
+    if (this.activeMethodSignal() === 'credit') this.syncCreditMode();
     return ok();
   }
 
@@ -349,46 +407,53 @@ export class PosService {
     return ok();
   }
 
-  selectPaymentField(field: PaymentFieldKey): void {
-    this.activeFieldSignal.set(field);
+  selectPaymentMethod(method: PaymentMethodKey): void {
+    this.activeMethodSignal.set(method);
+    this.syncCreditMode();
   }
 
   setPaymentText(field: PaymentFieldKey, text: string): void {
     if (!this.canSell()) return;
     const value = text.slice(0, AMOUNT_TEXT_MAX_LENGTH);
-    this.billSignal.update(bill => ({ ...bill, payments: { ...bill.payments, [field]: value } }));
+    this.updatePayments({ [field]: value });
   }
 
-  setReference(field: 'card' | 'online', text: string): void {
+  clearPaymentText(field: PaymentFieldKey): void {
     if (!this.canSell()) return;
-    const key = field === 'card' ? 'cardReference' : 'onlineReference';
-    const value = text.slice(0, REFERENCE_MAX_LENGTH);
-    this.billSignal.update(bill => ({ ...bill, payments: { ...bill.payments, [key]: value } }));
+    this.updatePayments({ [field]: '' });
   }
 
-  pressKey(key: string): void {
+  setCardLast4(text: string): void {
     if (!this.canSell()) return;
-    const field = this.activeFieldSignal();
-    const next = applyKeypadKey(this.billSignal().payments[field], key);
-    this.setPaymentText(field, next);
+    this.updatePayments({ cardLast4: onlyDigits(text, CARD_LAST4_LENGTH) });
+  }
+
+  setOnlineNote(text: string): void {
+    if (!this.canSell()) return;
+    this.updatePayments({ onlineNote: text.slice(0, ONLINE_NOTE_MAX_LENGTH) });
+  }
+
+  setOnlineAccount(accountId: string | null): void {
+    if (!this.canSell()) return;
+    const known = accountId !== null && this.bankAccountService.findById(accountId) !== null;
+    this.updatePayments({ onlineAccountId: known ? accountId : null });
   }
 
   setCredit(selected: boolean): PosActionResult {
     if (!this.canSell()) return fail(NOT_ALLOWED);
     if (selected && this.isWalkIn()) return fail(CREDIT_WALK_IN_MESSAGE);
-    this.billSignal.update(bill => ({
-      ...bill,
-      payments: { ...bill.payments, creditSelected: selected },
-    }));
+    this.updatePayments({ creditSelected: selected });
     return ok();
   }
 
   async saveBill(): Promise<SaveSaleResult> {
     return this.work(async () => {
-      const result = await this.saleService.save(this.billSignal());
+      const result = await this.saleService.save(this.billSignal(), this.conversionSignal());
       if (result.ok) {
         await this.reloadProducts();
         await this.startNewBill();
+      } else {
+        this.showProblemsSignal.set(true);
       }
       return result;
     });
@@ -407,11 +472,11 @@ export class PosService {
 
   async resumeHeldBill(heldId: string): Promise<ResumeResult> {
     return this.work(async () => {
-      const current = this.hasUnsavedContent() ? this.billSignal() : null;
+      const current = this.hasBillLines() ? this.billSignal() : null;
       const result = await this.saleService.resume(heldId, current);
       if (result.ok) {
         this.billSignal.set(result.bill);
-        this.activeFieldSignal.set('cash');
+        this.activeMethodSignal.set('cash');
         await this.reloadHeld();
         await this.reloadProducts();
       }
@@ -425,6 +490,106 @@ export class PosService {
       await this.reloadHeld();
       return result;
     });
+  }
+
+  async saveQuotation(): Promise<SaveQuotationResult> {
+    if (this.billTypeSignal() === BillType.RETURN) {
+      return failureResult('Quotations are for invoices. Switch the bill type to Invoice first.');
+    }
+    return this.work(async () => {
+      const bill = this.billSignal();
+      const result = await this.quotationService.save(bill);
+      if (result.ok) {
+        await firstValueFrom(this.salesDataService.releaseInvoiceNumber(bill.invoiceNo));
+        await this.startNewBill();
+      }
+      return result;
+    });
+  }
+
+  async convertQuotation(quotationId: string): Promise<ConvertQuotationResult> {
+    if (!this.canSell()) return failureResult(NOT_ALLOWED);
+    return this.work(async () => {
+      const quotation = await this.quotationService.find(quotationId);
+      if (quotation === null) {
+        return failureResult('That quotation is no longer there.', 'not-found');
+      }
+      if (quotation.status !== QuotationStatus.OPEN) {
+        return failureResult('That quotation was already converted to an invoice.');
+      }
+      let autoHeld: HeldBill | null = null;
+      if (this.hasBillLines()) {
+        const held = await this.saleService.hold(this.billSignal());
+        if (!held.ok) return held;
+        autoHeld = held.held;
+      }
+      const reusable =
+        autoHeld === null && !this.hasBillLines() && this.billSignal().invoiceNo !== '';
+      const invoiceNo = reusable
+        ? this.billSignal().invoiceNo
+        : await firstValueFrom(this.salesDataService.nextInvoiceNumber());
+      await this.loadData();
+      const prepared = prepareQuotationForInvoice(quotation.bill, {
+        products: this.productsSignal(),
+        customers: this.customersSignal(),
+        reps: this.repsSignal(),
+        settings: this.settingsSignal(),
+        today: this.clockService.today(),
+        blockExpired: this.blockExpired,
+        invoiceNo,
+      });
+      this.returnService.reset();
+      this.billTypeSignal.set(BillType.INVOICE);
+      this.billSignal.set(prepared.bill);
+      this.activeMethodSignal.set('cash');
+      this.conversionSignal.set({ id: quotation.id, quotationNo: quotation.quotationNo });
+      return { ok: true as const, notes: prepared.notes, autoHeld };
+    });
+  }
+
+  refreshProducts(): Promise<void> {
+    return this.reloadProducts();
+  }
+
+  async recheckBillAfterProductChange(): Promise<string[]> {
+    await this.reloadProducts();
+    const bill = this.billSignal();
+    if (bill.lines.length === 0) return [];
+    const result = recheckBillLines(
+      bill.lines,
+      this.productsSignal(),
+      this.clockService.today(),
+      this.blockExpired
+    );
+    this.billSignal.set({ ...bill, lines: result.lines });
+    return result.notes;
+  }
+
+  async saveWarnings(): Promise<string[]> {
+    const status = await this.cashService.status(this.clockService.today());
+    const messages: string[] = [];
+    if (status.counterClosed) {
+      messages.push(
+        "Today's counter is already closed. This sale will not be part of the locked counter report."
+      );
+    }
+    const cashCents = this.parsedPayments().amounts?.cashCents ?? 0;
+    if (status.drawerEnded && cashCents > 0) {
+      messages.push(
+        "The drawer has been ended for today. This cash sale will be added to the day's entries."
+      );
+    }
+    return messages;
+  }
+
+  private updatePayments(change: Partial<PaymentEntries>): void {
+    this.billSignal.update(bill => ({ ...bill, payments: { ...bill.payments, ...change } }));
+  }
+
+  private syncCreditMode(): void {
+    if (!this.canSell()) return;
+    const wanted = this.activeMethodSignal() === 'credit' && !this.isWalkIn();
+    if (this.billSignal().payments.creditSelected !== wanted) this.setCredit(wanted);
   }
 
   private async work<T>(run: () => Promise<T>): Promise<T> {
@@ -474,7 +639,7 @@ export class PosService {
       lines: [],
       billDiscount: defaultBillDiscount(this.settingsSignal()),
       billDiscountApproval: null,
-      payments: emptyPayments(),
+      payments: emptyPaymentEntries(),
     };
   }
 
@@ -492,7 +657,10 @@ export class PosService {
   private async startNewBill(): Promise<void> {
     const invoiceNo = await firstValueFrom(this.salesDataService.nextInvoiceNumber());
     this.billSignal.set(this.blankBill(invoiceNo));
-    this.activeFieldSignal.set('cash');
+    this.showProblemsSignal.set(false);
+    this.activeMethodSignal.set('cash');
+    this.conversionSignal.set(null);
+    this.returnService.reset();
     this.started = true;
   }
 
@@ -506,7 +674,7 @@ export class PosService {
     this.blockExpired = appSettings.blockExpiredSales;
     this.customersSignal.set(customers);
     this.repsSignal.set(reps);
-    await Promise.all([this.reloadProducts(), this.reloadHeld()]);
+    await Promise.all([this.reloadProducts(), this.reloadHeld(), this.bankAccountService.load()]);
   }
 
   private async reloadProducts(): Promise<void> {

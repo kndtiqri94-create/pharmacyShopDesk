@@ -9,7 +9,10 @@ function highestSuffix(values: readonly string[], prefix: string): number {
     .reduce((highest, value) => Math.max(highest, value), 0);
 }
 
-export function nextDocumentNumber(prefix: 'GRN' | 'PO', existing: readonly string[]): string {
+export function nextDocumentNumber(
+  prefix: 'GRN' | 'PO' | 'RET' | 'QUO' | 'RCP',
+  existing: readonly string[]
+): string {
   const next = highestSuffix(existing, `${prefix}-`) + 1;
   return `${prefix}-${String(next).padStart(NUMBER_DIGITS, '0')}`;
 }

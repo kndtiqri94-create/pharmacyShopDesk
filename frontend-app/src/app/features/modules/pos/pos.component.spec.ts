@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { clearBrowserStorage, signInAs, TEST_PROVIDERS } from '../../../../testing/auth-test.util';
+import { counterCloseInput } from '../../../../testing/pos-test.util';
 import { UserRole } from '../../../core/models/enums/user-role.enum';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { RoleDataService } from '../../../core/services/data/role-data.service';
@@ -10,6 +11,8 @@ import { SalesDataService } from '../../../core/services/data/sales-data.service
 import { SettingsDataService } from '../../../core/services/data/settings-data.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PermissionService } from '../../../core/services/permission.service';
+import { PosCashService } from '../../../core/services/pos-cash.service';
+import { PosCounterService } from '../../../core/services/pos-counter.service';
 import { PosFullscreenService } from '../../../core/services/pos-fullscreen.service';
 import { PosService } from '../../../core/services/pos.service';
 import { ShellStateService } from '../../../core/services/shell-state.service';
@@ -98,6 +101,63 @@ describe('PosComponent', () => {
     return { fixture, element, pos, press, fillBill, message, button, confirmDialog, fullscreen };
   }
 
+  describe('the item details dialog', () => {
+    async function openDetails(role: UserRole) {
+      const context = await render({ role });
+      context.pos.addProduct('prod-001');
+      context.fixture.detectChanges();
+      const trigger = context.element.querySelector<HTMLButtonElement>(
+        'button[aria-label^="Details of"]'
+      )!;
+      trigger.focus();
+      trigger.click();
+      await settle(context.fixture);
+      const dialog = context.element.querySelector<HTMLDialogElement>(
+        'app-pos-item-details-dialog dialog'
+      )!;
+      return { ...context, trigger, dialog };
+    }
+
+    it('opens for a selected line, shows the cost price to an Admin and a Manager', async () => {
+      for (const role of [UserRole.ADMIN, UserRole.MANAGER]) {
+        const { dialog, element } = await openDetails(role);
+        expect(dialog.open).toBeTrue();
+        expect(element.querySelector('[data-testid="item-cost"]')).not.toBeNull();
+        TestBed.resetTestingModule();
+      }
+    });
+
+    it('never shows the cost price to a cashier or a pharmacist', async () => {
+      for (const role of [UserRole.CASHIER, UserRole.PHARMACIST]) {
+        const { dialog, element } = await openDetails(role);
+        expect(dialog.open).toBeTrue();
+        expect(element.querySelector('[data-testid="item-cost"]')).toBeNull();
+        expect(dialog.textContent).not.toContain('Cost price');
+        TestBed.resetTestingModule();
+      }
+    });
+
+    it('returns focus to the details button and leaves the bill untouched when closed', async () => {
+      const { dialog, trigger, pos, fixture } = await openDetails(UserRole.ADMIN);
+      const before = JSON.stringify(pos.bill());
+      dialog.dispatchEvent(new Event('cancel', { cancelable: true }));
+      await settle(fixture);
+      expect(dialog.open).toBeFalse();
+      expect(document.activeElement).toBe(trigger);
+      expect(JSON.stringify(pos.bill())).toBe(before);
+    });
+  });
+
+  describe('the restyled secondary buttons', () => {
+    it('colour-codes the action buttons and leaves no indigo primary in the actions area', async () => {
+      const { element } = await render();
+      const actions = element.querySelector('app-pos-actions')!;
+      expect(actions.querySelectorAll('button[data-variant="primary"]')).toHaveSize(0);
+      expect(actions.querySelectorAll('button[data-tone]')).toHaveSize(6);
+      expect(element.querySelectorAll('app-pos-bottom-bar button[data-tone="blue"]')).toHaveSize(9);
+    });
+  });
+
   describe('the till screen', () => {
     it('shows the header, bill header, items, totals, payment and actions', async () => {
       const { element } = await render();
@@ -120,12 +180,26 @@ describe('PosComponent', () => {
       expect(button('Enter full screen')).toBeDefined();
     });
 
-    it('has no Phase B bottom bar buttons, not even disabled ones', async () => {
+    it('shows the nine Phase B buttons and no Transfer or Normal button', async () => {
       const { element } = await render();
+      const bar = element.querySelector('app-pos-bottom-bar') as HTMLElement;
+      const labels = Array.from(bar.querySelectorAll('button')).map(candidate =>
+        candidate.textContent?.trim()
+      );
+      expect(labels).toEqual([
+        'Last Invoice',
+        'Quotations',
+        'Cash Book',
+        'Update Products',
+        'Add OB',
+        'Counter Close',
+        'Bill & Reload',
+        'Drawer (End)',
+        'Due Amount',
+      ]);
       const text = element.textContent ?? '';
-      for (const phaseB of ['Last Invoice', 'Quotation', 'Cash Book', 'Counter Close', 'Drawer']) {
-        expect(text).withContext(phaseB).not.toContain(phaseB);
-      }
+      expect(text).not.toContain('Transfer');
+      expect(text).not.toContain('Normal');
     });
 
     it('makes every button at least 52px, dialogs included', async () => {
@@ -143,7 +217,7 @@ describe('PosComponent', () => {
       const { element, pos, button } = await render({ viewOnly: true });
       expect(element.textContent).toContain('View only');
       expect(pos.canSell()).toBeFalse();
-      expect(button('Save & print').disabled).toBeTrue();
+      expect(button('Save & Print').disabled).toBeTrue();
       expect(button('Hold bill').disabled).toBeTrue();
     });
 
@@ -176,11 +250,11 @@ describe('PosComponent', () => {
       const { press, pos, fixture } = await render();
       expect(press('F4').defaultPrevented).toBeTrue();
       fixture.detectChanges();
-      expect(pos.activePaymentField()).toBe('card');
+      expect(pos.activePaymentMethod()).toBe('card');
       expect(press('F7').defaultPrevented).toBeTrue();
-      expect(pos.activePaymentField()).toBe('online');
+      expect(pos.activePaymentMethod()).toBe('online');
       expect(press('F3').defaultPrevented).toBeTrue();
-      expect(pos.activePaymentField()).toBe('cash');
+      expect(pos.activePaymentMethod()).toBe('cash');
     });
 
     it('F2 saves the sale and opens a new empty bill', async () => {
@@ -238,7 +312,7 @@ describe('PosComponent', () => {
 
     it('leaves every other key to the browser', async () => {
       const { press } = await render();
-      for (const key of ['F5', 'F6', 'F11', 'Enter', 'a']) {
+      for (const key of ['F5', 'F6', 'Enter', 'a']) {
         expect(press(key).defaultPrevented).withContext(key).toBeFalse();
       }
     });
@@ -369,13 +443,17 @@ describe('PosComponent', () => {
     });
 
     it('warns the browser before the tab is closed or reloaded with unsaved items only', async () => {
-      const { fillBill } = await render();
+      const { fixture, fillBill } = await render();
+      const handler = (event: Event) =>
+        (
+          fixture.componentInstance as unknown as { onBeforeUnload(event: Event): void }
+        ).onBeforeUnload(event);
       const clean = new Event('beforeunload', { cancelable: true });
-      window.dispatchEvent(clean);
+      handler(clean);
       expect(clean.defaultPrevented).toBeFalse();
       fillBill();
       const unsaved = new Event('beforeunload', { cancelable: true });
-      window.dispatchEvent(unsaved);
+      handler(unsaved);
       expect(unsaved.defaultPrevented).toBeTrue();
     });
   });
@@ -495,6 +573,215 @@ describe('PosComponent', () => {
       ) as HTMLDialogElement;
       expect(dialog.open).toBeTrue();
       expect(element.textContent).toContain('bill discount of 5%');
+    });
+  });
+
+  describe('Phase B on the till', () => {
+    const selectBillType = (
+      element: HTMLElement,
+      fixture: { detectChanges(): void },
+      value: string
+    ) => {
+      const select = element.querySelector('#pos-bill-type') as HTMLSelectElement;
+      select.value = value;
+      select.dispatchEvent(new Event('change'));
+      fixture.detectChanges();
+    };
+    const tillDialog = (element: HTMLElement, tag: string) =>
+      element.querySelector(`${tag} dialog`) as HTMLDialogElement;
+
+    it('offers Invoice and Return in the bill type, and no Transfer', async () => {
+      const { element } = await render();
+      const options = Array.from(element.querySelectorAll('#pos-bill-type option'));
+      expect(options.map(option => option.textContent?.trim())).toEqual(['Invoice', 'Return']);
+    });
+
+    it('shows the return lookups when Return is chosen, and keeps the invoice bill safe', async () => {
+      const { fixture, element, fillBill, pos } = await render();
+      fillBill();
+      selectBillType(element, fixture, 'RETURN');
+      expect(element.querySelector('app-pos-return-panel')).not.toBeNull();
+      expect(element.querySelector('#return-invoice-lookup')).not.toBeNull();
+      expect(element.querySelector('#return-bill-lookup')).not.toBeNull();
+      expect(element.querySelector('app-pos-bill-lines')).toBeNull();
+      selectBillType(element, fixture, 'INVOICE');
+      expect(element.querySelector('app-pos-bill-lines')).not.toBeNull();
+      expect(pos.bill().lines).toHaveSize(1);
+    });
+
+    it('asks before leaving a return in progress and keeps it if you stay', async () => {
+      const { fixture, element, fillBill, pos, button, confirmDialog } = await render();
+      fillBill();
+      await pos.saveBill();
+      selectBillType(element, fixture, 'RETURN');
+      const lookup = element.querySelector('#return-invoice-lookup') as HTMLInputElement;
+      lookup.value = 'INV-0001';
+      lookup.dispatchEvent(new Event('input'));
+      button('Find sale').click();
+      await settle(fixture);
+      const quantity = element.querySelector(
+        'input[aria-label="Quantity of Paracetamol 500mg to return"]'
+      ) as HTMLInputElement;
+      quantity.value = '1';
+      quantity.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      selectBillType(element, fixture, 'INVOICE');
+      expect(confirmDialog().open).toBeTrue();
+      expect(element.textContent).toContain('Leave the return?');
+      button('Stay on the return').click();
+      fixture.detectChanges();
+      expect(pos.billType()).toBe('RETURN');
+      expect(element.querySelector('app-pos-return-panel')).not.toBeNull();
+    });
+
+    it('saves a quotation on F11, stops the browser using the key and clears the bill', async () => {
+      const { fixture, press, fillBill, pos, message } = await render();
+      fillBill();
+      const event = press('F11');
+      expect(event.defaultPrevented).toBeTrue();
+      await settle(fixture);
+      expect(message()).toBe('Quotation QUO-0001 saved.');
+      expect(pos.bill().lines).toEqual([]);
+      const sales = await firstValueFrom(TestBed.inject(SalesDataService).getSales());
+      expect(sales).toHaveSize(0);
+    });
+
+    it('refuses F11 on an empty bill and says why', async () => {
+      const { fixture, press, message } = await render();
+      press('F11');
+      await settle(fixture);
+      expect(message()).toContain('no items');
+    });
+
+    it('shows the F11 key on the Save quotation button', async () => {
+      const { button } = await render();
+      expect(button('Save Quotation').textContent).toContain('F11');
+    });
+
+    it('does nothing on F11 once the till is not the page on screen', async () => {
+      const { fixture, press, fillBill } = await render();
+      fillBill();
+      fixture.destroy();
+      const event = press('F11');
+      expect(event.defaultPrevented).toBeFalse();
+    });
+
+    it('opens each bottom bar dialog without losing the unsaved bill', async () => {
+      const { fixture, element, fillBill, pos, button } = await render();
+      fillBill();
+      const cases: [string, string][] = [
+        ['Cash Book', 'app-cash-book-dialog'],
+        ['Add OB', 'app-add-ob-dialog'],
+        ['Drawer (End)', 'app-drawer-end-dialog'],
+        ['Last Invoice', 'app-last-invoice-dialog'],
+        ['Quotations', 'app-quotations-dialog'],
+        ['Update Products', 'app-update-products-dialog'],
+        ['Due Amount', 'app-due-amount-dialog'],
+        ['Counter Close', 'app-counter-close-dialog'],
+      ];
+      for (const [label, tag] of cases) {
+        button(label).click();
+        await settle(fixture, 10);
+        expect(tillDialog(element, tag).open).withContext(label).toBeTrue();
+        expect(pos.bill().lines).withContext(label).toHaveSize(1);
+        tillDialog(element, tag).dispatchEvent(new Event('cancel', { cancelable: true }));
+        await settle(fixture, 10);
+        expect(tillDialog(element, tag).open).withContext(label).toBeFalse();
+      }
+    });
+
+    it('puts a quotation back on the till as an invoice from the Quotations dialog', async () => {
+      const { fixture, element, fillBill, press, button, pos, message } = await render();
+      fillBill();
+      press('F11');
+      await settle(fixture);
+      button('Quotations').click();
+      fixture.detectChanges();
+      await settle(fixture);
+      (
+        element.querySelector(
+          'button[aria-label="Convert QUO-0001 to invoice"]'
+        ) as HTMLButtonElement
+      ).click();
+      await settle(fixture);
+      expect(pos.bill().lines).toHaveSize(1);
+      expect(pos.converting()?.quotationNo).toBe('QUO-0001');
+      expect(message()).toContain('Quotation loaded as an invoice.');
+      expect(tillDialog(element, 'app-quotations-dialog').open).toBeFalse();
+    });
+
+    it('asks before saving a sale on a day whose counter is closed, and saves if you go on', async () => {
+      const { fixture, press, fillBill, button, confirmDialog, pos, message } = await render();
+      await TestBed.inject(PosCounterService).close(counterCloseInput('0'));
+      fillBill();
+      press('F2');
+      await settle(fixture);
+      expect(confirmDialog().open).toBeTrue();
+      expect(confirmDialog().textContent).toContain('not be part of the locked counter report');
+      expect(pos.bill().lines).toHaveSize(1);
+      button('Save the sale').click();
+      await settle(fixture);
+      expect(message()).toBe('Sale INV-0001 saved.');
+    });
+
+    it('asks before saving a cash sale after the drawer has ended', async () => {
+      const { fixture, press, fillBill, button, confirmDialog, message } = await render();
+      await TestBed.inject(PosCashService).endDrawer();
+      fillBill();
+      press('F2');
+      await settle(fixture);
+      expect(confirmDialog().open).toBeTrue();
+      expect(confirmDialog().textContent).toContain('drawer has been ended');
+      button('Go back').click();
+      fixture.detectChanges();
+      expect(message()).toBeUndefined();
+    });
+
+    it('takes you to Reload & Utility from Bill & Reload when you have access', async () => {
+      const { element, fixture, button } = await render();
+      const navigate = spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
+      button('Bill & Reload').click();
+      fixture.detectChanges();
+      expect(navigate).toHaveBeenCalledWith('/reload-utility');
+      expect(element).toBeTruthy();
+    });
+
+    it('shows a no access message from Bill & Reload when Reload & Utility is off limits', async () => {
+      const { fixture, button, message } = await render();
+      const roleData = TestBed.inject(RoleDataService);
+      await TestBed.inject(PermissionService).load();
+      const matrix = await firstValueFrom(roleData.getMatrix());
+      await firstValueFrom(
+        roleData.saveMatrix({
+          ...matrix,
+          CASHIER: { ...matrix.CASHIER, 'reload-utility': 'NONE' },
+        })
+      );
+      const navigate = spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
+      button('Bill & Reload').click();
+      fixture.detectChanges();
+      expect(navigate).not.toHaveBeenCalled();
+      expect(message()).toContain('do not have access to Reload & Utility');
+    });
+
+    it('keeps the leave prompt for an unsaved bill when going to Reload & Utility', async () => {
+      const { fixture, fillBill, confirmDialog } = await render();
+      fillBill();
+      const decision = fixture.componentInstance.confirmLeave() as Promise<boolean>;
+      fixture.detectChanges();
+      expect(confirmDialog().open).toBeTrue();
+      expect(decision).toBeInstanceOf(Promise);
+    });
+
+    it('lets a view only user look at the bottom bar and read, but not change', async () => {
+      const { fixture, element, button } = await render({ viewOnly: true });
+      expect(element.querySelector('app-pos-bottom-bar')).not.toBeNull();
+      button('Add OB').click();
+      await settle(fixture, 10);
+      const save = Array.from(
+        tillDialog(element, 'app-add-ob-dialog').querySelectorAll('button')
+      ).find(candidate => candidate.textContent?.trim() === 'Save balance')!;
+      expect(save.disabled).toBeTrue();
     });
   });
 });

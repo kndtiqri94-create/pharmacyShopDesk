@@ -1,4 +1,4 @@
-import { Component, computed, inject, output } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
 import { BillLine } from '../../../../core/models/domain/bill-line.model';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { PosService } from '../../../../core/services/pos.service';
@@ -18,6 +18,7 @@ interface BillRow {
 }
 
 const QUANTITY_TEXT_MAX_LENGTH = 5;
+const COARSE_POINTER_QUERY = '(pointer: coarse)';
 
 @Component({
   selector: 'app-pos-bill-lines',
@@ -27,12 +28,14 @@ const QUANTITY_TEXT_MAX_LENGTH = 5;
 })
 export class PosBillLinesComponent {
   readonly approvalRequested = output<PendingApproval>();
+  readonly detailsRequested = output<string>();
 
   private readonly notificationService = inject(NotificationService);
 
   protected readonly posService = inject(PosService);
   protected readonly discountMaxLength = DISCOUNT_TEXT_MAX_LENGTH;
   protected readonly quantityMaxLength = QUANTITY_TEXT_MAX_LENGTH;
+  protected readonly buttonSize = signal<'lg' | 'xl'>('lg');
   protected readonly columns: readonly DataTableColumn<BillRow>[] = [
     { key: 'serial', label: 'S/N', kind: 'number' },
     { key: 'sku', label: 'SKU', kind: 'code', value: row => row.line.sku },
@@ -58,7 +61,18 @@ export class PosBillLinesComponent {
     () => this.posService.settings().lineDiscountEnabled && this.posService.canSell()
   );
 
+  constructor() {
+    if (typeof matchMedia !== 'function') return;
+    const query = matchMedia(COARSE_POINTER_QUERY);
+    this.buttonSize.set(query.matches ? 'xl' : 'lg');
+    query.addEventListener('change', event => this.buttonSize.set(event.matches ? 'xl' : 'lg'));
+  }
+
   protected rowKey = (row: BillRow): string => row.line.productId;
+
+  protected showDetails(row: BillRow): void {
+    this.detailsRequested.emit(row.line.productId);
+  }
 
   protected onQuantityChange(row: BillRow, event: Event): void {
     const input = event.target as HTMLInputElement;

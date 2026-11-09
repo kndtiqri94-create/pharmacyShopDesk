@@ -35,15 +35,25 @@
     />
   </ng-template>
   <ng-template appDataTableCell="action" let-row>
-    <app-button
-      variant="danger"
-      size="xl"
-      icon="trash"
-      [ariaLabel]="'Remove ' + row.line.name"
-      [disabled]="!posService.canSell()"
-      (click)="remove(row)"
-    >
-      Remove
-    </app-button>
+    <div class="line-actions">
+      <app-button
+        [size]="buttonSize()"
+        icon="info"
+        [ariaLabel]="'Details of ' + row.line.name"
+        (click)="showDetails(row)"
+      >
+        Details
+      </app-button>
+      <app-button
+        variant="danger"
+        [size]="buttonSize()"
+        icon="trash"
+        [ariaLabel]="'Remove ' + row.line.name"
+        [disabled]="!posService.canSell()"
+        (click)="remove(row)"
+      >
+        Remove
+      </app-button>
+    </div>
   </ng-template>
 </app-data-table>

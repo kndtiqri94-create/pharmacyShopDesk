@@ -1,0 +1,9 @@
+@use '../pos-parts';
+
+:host {
+  display: contents;
+}
+
+.due__input {
+  text-align: right;
+}

@@ -42,6 +42,12 @@
           <dt>Served by</dt>
           <dd>{{ receipt.cashierName }}</dd>
         </div>
+        @if (returnNos().length > 0) {
+          <div>
+            <dt>Returns</dt>
+            <dd class="sd-code">{{ returnNos().join(', ') }}</dd>
+          </div>
+        }
         @if (receipt.repName) {
           <div>
             <dt>Rep</dt>

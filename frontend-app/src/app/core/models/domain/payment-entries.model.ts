@@ -2,7 +2,8 @@ export interface PaymentEntries {
   cash: string;
   card: string;
   online: string;
-  cardReference: string;
-  onlineReference: string;
+  cardLast4: string;
+  onlineNote: string;
+  onlineAccountId: string | null;
   creditSelected: boolean;
 }

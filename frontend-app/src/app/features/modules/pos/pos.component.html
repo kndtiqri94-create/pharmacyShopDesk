@@ -9,34 +9,61 @@
   }
 
   @if (posService.ready()) {
-    <div class="till__grid">
-      <div class="till__main">
+    @if (posService.billType() === billTypes.RETURN) {
+      <div class="till__return">
         <app-card>
-          <app-pos-bill-header (newBillRequested)="requestNewBill()" (holdRequested)="hold()" />
+          <app-pos-bill-header
+            (newBillRequested)="requestNewBill()"
+            (holdRequested)="hold()"
+            (billTypeRequested)="requestBillType($event)"
+          />
         </app-card>
-        <app-card title="Items">
-          <div class="till__items">
-            <app-pos-product-search />
-            <app-pos-bill-lines (approvalRequested)="openApproval($event)" />
-          </div>
+        <app-card title="Return from an earlier sale">
+          <app-pos-return-panel
+            (returnCompleted)="onReturnCompleted($event)"
+            (printRequested)="onReturnCompleted($event)"
+          />
         </app-card>
       </div>
-      <div class="till__side">
-        <app-card title="Totals">
-          <app-pos-totals (approvalRequested)="openApproval($event)" />
-        </app-card>
-        <app-card title="Payment">
-          <app-pos-payment />
-        </app-card>
-        <app-pos-actions
-          (saveAndPrintRequested)="save(true)"
-          (saveRequested)="save(false)"
-          (holdRequested)="hold()"
-          (newBillRequested)="requestNewBill()"
-          (heldBillsRequested)="heldOpen.set(true)"
-        />
+    } @else {
+      <div class="till__grid">
+        <div class="till__main">
+          <app-card>
+            <app-pos-bill-header
+              (newBillRequested)="requestNewBill()"
+              (holdRequested)="hold()"
+              (billTypeRequested)="requestBillType($event)"
+            />
+          </app-card>
+          <app-card title="Items">
+            <div class="till__items">
+              <app-pos-product-search />
+              <app-pos-bill-lines
+                (approvalRequested)="openApproval($event)"
+                (detailsRequested)="openDetails($event)"
+              />
+            </div>
+          </app-card>
+        </div>
+        <div class="till__side">
+          <app-card title="Totals">
+            <app-pos-totals (approvalRequested)="openApproval($event)" />
+          </app-card>
+          <app-card title="Payment">
+            <app-pos-payment />
+          </app-card>
+          <app-pos-actions
+            (saveAndPrintRequested)="save(true)"
+            (saveRequested)="save(false)"
+            (holdRequested)="hold()"
+            (newBillRequested)="requestNewBill()"
+            (heldBillsRequested)="heldOpen.set(true)"
+            (saveQuotationRequested)="saveQuotation()"
+          />
+        </div>
       </div>
-    </div>
+    }
+    <app-pos-bottom-bar (actionRequested)="onBottomBar($event)" />
   } @else {
     <p class="sd-muted" role="status">Opening the till.</p>
   }
@@ -45,6 +72,12 @@
     [open]="pendingApproval() !== null"
     [request]="pendingApproval()?.request ?? null"
     (finished)="onApprovalFinished($event)"
+  />
+  <app-pos-item-details-dialog
+    [open]="detailsProduct() !== null"
+    [product]="detailsProduct()"
+    [canSeeCost]="canSeeCost()"
+    (closed)="closeDetails()"
   />
   <app-held-bills-dialog
     [open]="heldOpen()"
@@ -55,11 +88,52 @@
     (discarded)="discard($event)"
     (closed)="closeHeld()"
   />
+  <app-quotations-dialog
+    [open]="tillDialog() === 'QUOTATIONS'"
+    [canChange]="posService.canSell()"
+    (convertRequested)="convertQuotation($event)"
+    (closed)="closeTillDialog()"
+  />
+  <app-last-invoice-dialog
+    [open]="tillDialog() === 'LAST_INVOICE'"
+    (printRequested)="onLastInvoicePrint($event)"
+    (closed)="closeTillDialog()"
+  />
+  <app-cash-book-dialog [open]="tillDialog() === 'CASH_BOOK'" (closed)="closeTillDialog()" />
+  <app-add-ob-dialog
+    [open]="tillDialog() === 'ADD_OB'"
+    [canChange]="posService.canSell()"
+    (closed)="closeTillDialog()"
+  />
+  <app-drawer-end-dialog
+    [open]="tillDialog() === 'DRAWER'"
+    [canChange]="posService.canSell()"
+    (closed)="closeTillDialog()"
+  />
+  <app-counter-close-dialog
+    [open]="tillDialog() === 'COUNTER_CLOSE'"
+    [canChange]="posService.canSell()"
+    [hasUnsavedBill]="posService.hasBillLines()"
+    (printRequested)="onCounterPrint($event)"
+    (closed)="closeTillDialog()"
+  />
+  <app-due-amount-dialog
+    [open]="tillDialog() === 'DUE_AMOUNT'"
+    [canChange]="posService.canSell()"
+    (printRequested)="onDuePrint($event)"
+    (closed)="closeTillDialog()"
+  />
+  <app-update-products-dialog
+    [open]="tillDialog() === 'UPDATE_PRODUCTS'"
+    [canChange]="posService.canSell()"
+    (productUpdated)="onProductUpdated()"
+    (closed)="closeTillDialog()"
+  />
   <app-confirm-dialog
     [title]="confirmCopy().title"
     [confirmLabel]="confirmCopy().confirmLabel"
     [cancelLabel]="confirmCopy().cancelLabel"
-    [danger]="true"
+    [danger]="confirmCopy().danger"
     buttonSize="xl"
     [open]="confirmKind() !== null"
     (confirmed)="confirmed()"
@@ -67,5 +141,12 @@
   >
     <p>{{ confirmCopy().message }}</p>
   </app-confirm-dialog>
-  <app-pos-receipt [sale]="receiptSale()" (closed)="closeReceipt()" />
+  <app-pos-receipt
+    [sale]="receiptSale()"
+    [returnNos]="receiptReturnNos()"
+    (closed)="closeReceipt()"
+  />
+  <app-pos-return-receipt [saleReturn]="returnReceipt()" (closed)="closeReturnReceipt()" />
+  <app-due-payment-receipt [payment]="dueReceipt()" (closed)="closeDueReceipt()" />
+  <app-counter-report-receipt [report]="counterSheet()" (closed)="closeCounterSheet()" />
 </div>

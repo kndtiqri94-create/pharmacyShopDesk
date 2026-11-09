@@ -1,0 +1,64 @@
+<app-pos-dialog heading="Cash book" size="lg" [open]="open()" (closed)="closed.emit()">
+  <div class="sd-form-grid">
+    <app-field label="Day" fieldId="cash-book-date" size="xl" [span]="4">
+      <input
+        appFieldControl
+        type="date"
+        [max]="today"
+        [value]="date()"
+        (change)="onDateChange($event)"
+      />
+    </app-field>
+  </div>
+
+  @if (view(); as current) {
+    @if (current.readOnly) {
+      <app-alert tone="info">
+        @if (current.status.counterClosed) {
+          This day's counter is closed, so the cash book is locked and for viewing only.
+        } @else {
+          This is an earlier day, shown for viewing only.
+        }
+      </app-alert>
+    }
+    <dl class="pp-summary">
+      <div>
+        <dt>Opening balance for {{ dateOf(current.status.date) }}</dt>
+        <dd class="sd-num" data-testid="cash-opening">{{ money(current.book.openingCents) }}</dd>
+      </div>
+    </dl>
+
+    @if (current.book.rows.length === 0) {
+      <app-alert tone="info" title="No cash movements">
+        Nothing has come in or gone out in cash on this day yet.
+      </app-alert>
+    } @else {
+      <app-data-table
+        ariaLabel="Cash movements"
+        itemLabel="movements"
+        [columns]="columns"
+        [rows]="current.book.rows"
+        [rowKey]="rowKey"
+        [paginate]="false"
+      />
+    }
+
+    <dl class="pp-summary">
+      <div>
+        <dt>Cash in</dt>
+        <dd class="sd-num">{{ money(current.book.cashInCents) }}</dd>
+      </div>
+      <div>
+        <dt>Cash out</dt>
+        <dd class="sd-num">{{ money(current.book.cashOutCents) }}</dd>
+      </div>
+      <div class="pp-summary__strong">
+        <dt>Closing balance</dt>
+        <dd class="sd-num" data-testid="cash-closing">{{ money(current.book.expectedCents) }}</dd>
+      </div>
+    </dl>
+  }
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close</app-button>
+  </div>
+</app-pos-dialog>

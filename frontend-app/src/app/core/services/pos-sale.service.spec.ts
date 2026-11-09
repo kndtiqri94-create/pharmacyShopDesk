@@ -47,8 +47,9 @@ function bill(overrides: Partial<Bill> = {}): Bill {
       cash: '10',
       card: '',
       online: '',
-      cardReference: '',
-      onlineReference: '',
+      cardLast4: '',
+      onlineNote: '',
+      onlineAccountId: null,
       creditSelected: false,
     },
     ...overrides,
@@ -361,7 +362,7 @@ describe('PosSaleService', () => {
       const stored = bill({
         customerId: NAMED_CUSTOMER,
         repId: 'rep-002',
-        payments: { ...bill().payments, cash: '4', card: '3', cardReference: 'ref-1' },
+        payments: { ...bill().payments, cash: '4', card: '3', cardLast4: '1234' },
       });
       const parked = await service().hold(stored);
       const result = await service().resume(parked.ok ? parked.held.id : '', null);

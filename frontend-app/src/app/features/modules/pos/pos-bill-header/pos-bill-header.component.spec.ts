@@ -64,7 +64,7 @@ describe('PosBillHeaderComponent', () => {
     expect(input('pos-customer').value).toBe('Walk-in Customer');
     expect(input('pos-rep').value).toBe('');
     const options = Array.from(element.querySelectorAll('#pos-bill-type option'));
-    expect(options.map(option => option.textContent?.trim())).toEqual(['Invoice']);
+    expect(options.map(option => option.textContent?.trim())).toEqual(['Invoice', 'Return']);
   });
 
   it('offers sample customers to pick from and no way to add one', async () => {

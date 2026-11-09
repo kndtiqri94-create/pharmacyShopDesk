@@ -23,4 +23,5 @@ export interface Sale {
   changeCents: number;
   profitCents: number;
   discountApprovals: DiscountApproval[];
+  convertedFromQuotationNo?: string;
 }

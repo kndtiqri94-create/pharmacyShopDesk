@@ -15,6 +15,7 @@ export class PosActionsComponent {
   readonly holdRequested = output<void>();
   readonly newBillRequested = output<void>();
   readonly heldBillsRequested = output<void>();
+  readonly saveQuotationRequested = output<void>();
 
   protected readonly posService = inject(PosService);
   protected readonly keys = POS_SHORTCUT_KEYS;

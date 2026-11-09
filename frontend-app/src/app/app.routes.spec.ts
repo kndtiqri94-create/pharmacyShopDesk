@@ -229,6 +229,7 @@ describe('application routes', () => {
     await firstValueFrom(
       roleDataService.saveMatrix(setMatrixCell(saved, UserRole.CASHIER, ModuleKey.POS, 'NONE'))
     );
+    await open('/products');
     const { harness, router } = await open('/pos');
     expect(router.url).toBe('/access-denied');
     expect((harness.routeNativeElement as HTMLElement).textContent).toContain(

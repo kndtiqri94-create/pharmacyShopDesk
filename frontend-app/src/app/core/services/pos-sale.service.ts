@@ -5,6 +5,7 @@ import { HeldBill } from '../models/domain/held-bill.model';
 import { Sale } from '../models/domain/sale.model';
 import { AppUser } from '../models/domain/app-user.model';
 import { ModuleKey } from '../models/enums/module-key.enum';
+import { QuotationStatus } from '../models/enums/quotation-status.enum';
 import { cloneValue } from '../utils/clone.util';
 import { nextRecordId } from '../utils/document-number.util';
 import { nextHoldNumber } from '../utils/invoice-number.util';
@@ -15,6 +16,7 @@ import { computeBillTotals } from '../utils/pos-totals.util';
 import { MAX_BILL_LINES, validateHold } from '../utils/pos-validation.util';
 import { AuthService } from './auth/auth.service';
 import { ClockService } from './clock.service';
+import { BankAccountDataService } from './data/bank-account-data.service';
 import { ProductDataService } from './data/product-data.service';
 import { SalesDataService } from './data/sales-data.service';
 import { SettingsDataService } from './data/settings-data.service';
@@ -34,12 +36,18 @@ export type DiscardResult = { ok: true } | PosFailureResult;
 export type ResumeResult =
   { ok: true; bill: Bill; notes: string[]; autoHeld: HeldBill | null } | PosFailureResult;
 
+export interface QuotationLink {
+  id: string;
+  quotationNo: string;
+}
+
 export const MAX_HELD_BILLS = 50;
 
 const DENIED_MESSAGE = 'You do not have access to sell at the till.';
 const BUSY_MESSAGE = 'The last action is still finishing. Try again in a moment.';
 const TOO_MANY_HELD = 'Too many bills are on hold. Resume or discard one first.';
 const HELD_NOT_FOUND = 'That held bill is no longer there.';
+const QUOTATION_UNAVAILABLE = 'That quotation was already converted or deleted.';
 
 function failure(reason: PosFailure, message: string): PosFailureResult {
   return { ok: false, reason, message };
@@ -53,10 +61,14 @@ export class PosSaleService {
   private readonly productDataService = inject(ProductDataService);
   private readonly salesDataService = inject(SalesDataService);
   private readonly settingsDataService = inject(SettingsDataService);
+  private readonly bankAccountDataService = inject(BankAccountDataService);
   private busy = false;
 
-  save(bill: Bill): Promise<SaveSaleResult> {
+  save(bill: Bill, quotation: QuotationLink | null = null): Promise<SaveSaleResult> {
     return this.guarded(async user => {
+      if (quotation !== null && !(await this.quotationIsOpen(quotation.id))) {
+        return failure('invalid', QUOTATION_UNAVAILABLE);
+      }
       const [appSettings, customers, reps] = await Promise.all([
         firstValueFrom(this.settingsDataService.get()),
         firstValueFrom(this.salesDataService.getCustomers()),
@@ -65,8 +77,12 @@ export class PosSaleService {
       const blockExpired = appSettings.blockExpiredSales;
       const settings = toPosSettings(appSettings);
       return firstValueFrom(
-        forkJoin([this.productDataService.getAll(), this.salesDataService.getSales()]).pipe(
-          switchMap(([products, sales]): Observable<SaveSaleResult> => {
+        forkJoin([
+          this.productDataService.getAll(),
+          this.salesDataService.getSales(),
+          this.bankAccountDataService.getAll(),
+        ]).pipe(
+          switchMap(([products, sales, accounts]): Observable<SaveSaleResult> => {
             const built = buildSale({
               bill,
               products,
@@ -77,12 +93,18 @@ export class PosSaleService {
               today: this.clockService.today(),
               now: this.clockService.now(),
               existingSales: sales,
+              accounts,
               cashier: { id: user.id, name: user.displayName },
             });
             if (!built.ok) return of(failure(built.reason, built.message));
+            const sale =
+              quotation === null
+                ? built.sale
+                : { ...built.sale, convertedFromQuotationNo: quotation.quotationNo };
             return this.productDataService.saveAll(built.products).pipe(
-              switchMap(() => this.salesDataService.saveSale(built.sale)),
-              map((sale): SaveSaleResult => ({ ok: true, sale }))
+              switchMap(() => this.salesDataService.saveSale(sale)),
+              switchMap(saved => this.convertQuotation(quotation, saved)),
+              map((saved): SaveSaleResult => ({ ok: true, sale: saved }))
             );
           })
         )
@@ -175,6 +197,20 @@ export class PosSaleService {
         bill: copy,
       },
     };
+  }
+
+  private async quotationIsOpen(id: string): Promise<boolean> {
+    const quotations = await firstValueFrom(this.salesDataService.getQuotations());
+    return quotations.some(
+      candidate => candidate.id === id && candidate.status === QuotationStatus.OPEN
+    );
+  }
+
+  private convertQuotation(quotation: QuotationLink | null, sale: Sale): Observable<Sale> {
+    if (quotation === null) return of(sale);
+    return this.salesDataService
+      .markQuotationConverted(quotation.id, sale.invoiceNo)
+      .pipe(map(() => sale));
   }
 
   private async persistHeld(held: HeldBill): Promise<HoldResult> {

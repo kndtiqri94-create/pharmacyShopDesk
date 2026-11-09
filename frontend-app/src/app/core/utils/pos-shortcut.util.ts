@@ -6,6 +6,7 @@ export const PosShortcutAction = {
   PAY_ONLINE: 'PAY_ONLINE',
   HOLD: 'HOLD',
   NEW_BILL: 'NEW_BILL',
+  SAVE_QUOTATION: 'SAVE_QUOTATION',
 } as const;
 
 export type PosShortcutAction = (typeof PosShortcutAction)[keyof typeof PosShortcutAction];
@@ -18,6 +19,7 @@ export const POS_SHORTCUT_KEYS: Record<PosShortcutAction, string> = {
   PAY_ONLINE: 'F7',
   HOLD: 'F10',
   NEW_BILL: 'F12',
+  SAVE_QUOTATION: 'F11',
 };
 
 export interface ShortcutKeyEvent {

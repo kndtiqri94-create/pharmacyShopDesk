@@ -20,6 +20,7 @@ const PRINTING_CLASS = 'sd-printing-receipt';
 })
 export class PosReceiptComponent {
   readonly sale = input<Sale | null>(null);
+  readonly returnNos = input<readonly string[]>([]);
   readonly closed = output<void>();
 
   private readonly document = inject(DOCUMENT);

@@ -141,4 +141,14 @@ export const ICON_PATHS: Record<IconName, readonly string[]> = {
     'M5.5 22v-3.8h3.8',
   ],
   pause: ['M8 5v14', 'M16 5v14'],
+  calculator: [
+    'M6 2h12a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z',
+    'M8 6h8v3H8z',
+    'M8 13h.01',
+    'M12 13h.01',
+    'M16 13h.01',
+    'M8 17h.01',
+    'M12 17h.01',
+    'M16 17h.01',
+  ],
 };

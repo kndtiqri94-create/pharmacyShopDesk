@@ -120,8 +120,9 @@ describe('DashboardComponent', () => {
         cash: '10',
         card: '',
         online: '',
-        cardReference: '',
-        onlineReference: '',
+        cardLast4: '',
+        onlineNote: '',
+        onlineAccountId: null,
         creditSelected: false,
       },
     });

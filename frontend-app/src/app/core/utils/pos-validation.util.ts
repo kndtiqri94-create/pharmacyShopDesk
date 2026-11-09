@@ -1,6 +1,7 @@
 import { PaymentEntries } from '../models/domain/payment-entries.model';
 import { Product } from '../models/domain/product.model';
 import { formatCount, rupeesToCents } from './money.util';
+import { CARD_LAST4_MESSAGE, isValidCardLast4 } from './bank-account-validation.util';
 import { BillTotals, PaymentAmounts } from './pos-totals.util';
 import { SellableStock } from './pos-stock-allocation.util';
 import { MAX_PRICE_RUPEES, parseNonNegativeNumber } from './product-validation.util';
@@ -16,7 +17,12 @@ export type AddRefusal = 'INACTIVE' | 'OUT_OF_STOCK' | 'EXPIRED' | 'LINE_LIMIT' 
 export type AddCheck = { ok: true } | { ok: false; reason: AddRefusal; message: string };
 
 export type SaleErrorCode =
-  'EMPTY_BILL' | 'PAYMENT_INCOMPLETE' | 'OVERPAID_NOT_CASH' | 'CREDIT_WALK_IN';
+  | 'EMPTY_BILL'
+  | 'PAYMENT_INCOMPLETE'
+  | 'OVERPAID_NOT_CASH'
+  | 'CREDIT_WALK_IN'
+  | 'CARD_LAST4'
+  | 'ONLINE_ACCOUNT_REQUIRED';
 
 export interface SaleError {
   code: SaleErrorCode;
@@ -24,6 +30,8 @@ export interface SaleError {
 }
 
 export type PaymentFieldKey = 'cash' | 'card' | 'online';
+
+export type PaymentMethodKey = PaymentFieldKey | 'credit';
 
 export type PaymentFieldErrors = Partial<Record<PaymentFieldKey, string>>;
 
@@ -35,6 +43,7 @@ export interface ParsedPayments {
 export const EMPTY_BILL_MESSAGE = 'The bill has no items. Add a product first.';
 export const CREDIT_WALK_IN_MESSAGE =
   'Credit needs a named customer. Choose a customer, or take payment another way.';
+export const ONLINE_ACCOUNT_MESSAGE = 'Choose an Account for the Online payment.';
 const AMOUNT_ERROR = 'Enter an amount like 100 or 100.50.';
 
 export function parseLineQuantity(text: string): number | null {
@@ -53,6 +62,10 @@ export function parseAmountCents(text: string): number | null {
   const cleaned = trimmed.endsWith('.') ? trimmed.slice(0, -1) : trimmed;
   const rupees = parseNonNegativeNumber(cleaned, AMOUNT_DECIMALS);
   return rupees === null || rupees > MAX_PRICE_RUPEES ? null : rupeesToCents(rupees);
+}
+
+export function parseRequiredAmountCents(text: string): number | null {
+  return text.trim().length === 0 ? null : parseAmountCents(text);
 }
 
 export function parsePaymentEntries(entries: PaymentEntries): ParsedPayments {
@@ -125,6 +138,8 @@ export interface SaleReadinessInput {
   totals: BillTotals;
   amounts: PaymentAmounts;
   isWalkIn: boolean;
+  cardLast4: string;
+  onlineAccountChosen: boolean;
 }
 
 export function validateHold(lineCount: number): SaleError | null {
@@ -135,6 +150,12 @@ export function validateSaleReadiness(input: SaleReadinessInput): SaleError | nu
   const { totals, amounts } = input;
   const empty = validateHold(input.lineCount);
   if (empty !== null) return empty;
+  if (!isValidCardLast4(input.cardLast4)) {
+    return { code: 'CARD_LAST4', message: CARD_LAST4_MESSAGE };
+  }
+  if (amounts.onlineCents > 0 && !input.onlineAccountChosen) {
+    return { code: 'ONLINE_ACCOUNT_REQUIRED', message: ONLINE_ACCOUNT_MESSAGE };
+  }
   if (totals.creditCents > 0 && input.isWalkIn) {
     return { code: 'CREDIT_WALK_IN', message: CREDIT_WALK_IN_MESSAGE };
   }

@@ -1,0 +1,26 @@
+@use '../pos-parts';
+
+:host {
+  display: contents;
+}
+
+.dd-table {
+  font-size: var(--sd-fs-body);
+
+  tfoot th,
+  tfoot td {
+    border-bottom: 0;
+    font-weight: 700;
+  }
+}
+
+.dd-count {
+  width: 112px;
+}
+
+.dd-error {
+  margin: var(--sd-space-1) 0 0;
+  color: var(--sd-danger);
+  font-size: var(--sd-fs-caption);
+  line-height: var(--sd-lh-caption);
+}

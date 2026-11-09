@@ -1,0 +1,15 @@
+@use '../pos-parts';
+
+:host {
+  display: contents;
+}
+
+.quote__detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+}
+
+.quote__invoice {
+  margin-left: var(--sd-space-1);
+}

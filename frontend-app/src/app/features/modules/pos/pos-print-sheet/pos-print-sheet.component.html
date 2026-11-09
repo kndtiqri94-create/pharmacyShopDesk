@@ -1,0 +1,22 @@
+@if (open()) {
+  <div
+    class="sd-receipt-overlay print-overlay"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="titleId"
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
+    (keydown.escape)="closed.emit()"
+  >
+    <div class="print-toolbar">
+      <app-button variant="primary" size="xl" icon="printer" (click)="print()">{{
+        printLabel()
+      }}</app-button>
+      <app-button size="xl" (click)="closed.emit()">Close</app-button>
+    </div>
+    <article class="sd-receipt-sheet print-sheet">
+      <h2 class="sd-section-title print-sheet__title" [id]="titleId">{{ heading() }}</h2>
+      <ng-content />
+    </article>
+  </div>
+}

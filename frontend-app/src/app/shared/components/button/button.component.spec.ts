@@ -81,3 +81,30 @@ describe('ButtonComponent', () => {
     expect(fixture.componentInstance.clicks).toBe(1);
   });
 });
+
+@Component({
+  imports: [ButtonComponent],
+  template: `<app-button [tone]="tone">Hold</app-button>`,
+})
+class ToneHostComponent {
+  tone: 'amber' | 'green' | 'blue' | null = null;
+}
+
+describe('ButtonComponent tone', () => {
+  function renderTone(tone: 'amber' | 'green' | 'blue' | null) {
+    const fixture = TestBed.createComponent(ToneHostComponent);
+    fixture.componentInstance.tone = tone;
+    fixture.detectChanges();
+    return fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+  }
+
+  it('adds no tone attribute by default so other screens render unchanged', () => {
+    expect(renderTone(null).hasAttribute('data-tone')).toBeFalse();
+  });
+
+  it('marks the button with its tone and keeps its label', () => {
+    const button = renderTone('amber');
+    expect(button.getAttribute('data-tone')).toBe('amber');
+    expect(button.textContent?.trim()).toBe('Hold');
+  });
+});

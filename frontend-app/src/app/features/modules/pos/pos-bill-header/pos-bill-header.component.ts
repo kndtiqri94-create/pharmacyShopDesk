@@ -1,4 +1,9 @@
 import { Component, computed, inject, output } from '@angular/core';
+import {
+  ALL_BILL_TYPES,
+  BILL_TYPE_LABELS,
+  BillType,
+} from '../../../../core/models/enums/bill-type.enum';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { PosActionResult, PosService } from '../../../../core/services/pos.service';
 import { ClockService } from '../../../../core/services/clock.service';
@@ -14,12 +19,18 @@ import { FIELD_IMPORTS } from '../../../../shared/components/field/field.imports
 export class PosBillHeaderComponent {
   readonly newBillRequested = output<void>();
   readonly holdRequested = output<void>();
+  readonly billTypeRequested = output<BillType>();
 
   private readonly notificationService = inject(NotificationService);
   private readonly clockService = inject(ClockService);
 
   protected readonly posService = inject(PosService);
   protected readonly today = this.clockService.today();
+  protected readonly billTypes = ALL_BILL_TYPES.map(value => ({
+    value,
+    label: BILL_TYPE_LABELS[value],
+  }));
+  protected readonly isReturn = computed(() => this.posService.billType() === BillType.RETURN);
   protected readonly customerName = computed(() => {
     const customerId = this.posService.bill().customerId;
     return this.posService.customers().find(customer => customer.id === customerId)?.name ?? '';
@@ -28,6 +39,15 @@ export class PosBillHeaderComponent {
     const repId = this.posService.bill().repId;
     return this.posService.reps().find(rep => rep.id === repId)?.name ?? '';
   });
+
+  protected onBillTypeChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const chosen = ALL_BILL_TYPES.find(type => type === select.value);
+    select.value = this.posService.billType();
+    if (chosen !== undefined && chosen !== this.posService.billType()) {
+      this.billTypeRequested.emit(chosen);
+    }
+  }
 
   protected onDateChange(event: Event): void {
     const input = event.target as HTMLInputElement;

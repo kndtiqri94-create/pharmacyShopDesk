@@ -480,11 +480,66 @@ describe('PosService', () => {
       expect(pos().totals().changeCents).toBe(200);
     });
 
-    it('keeps references for card and online, capped in length', () => {
-      pos().setReference('card', 'c'.repeat(100));
-      pos().setReference('online', 'ONL-1');
-      expect(pos().bill().payments.cardReference).toHaveSize(40);
-      expect(pos().bill().payments.onlineReference).toBe('ONL-1');
+    it('keeps only digits for the card last 4, capped at 4, and caps the online note at 200', () => {
+      pos().setCardLast4('12a34567');
+      expect(pos().bill().payments.cardLast4).toBe('1234');
+      pos().setOnlineNote('n'.repeat(300));
+      expect(pos().bill().payments.onlineNote).toHaveSize(200);
+    });
+
+    it('only accepts a bank account that exists', () => {
+      pos().setOnlineAccount('bank-001');
+      expect(pos().bill().payments.onlineAccountId).toBe('bank-001');
+      pos().setOnlineAccount('bank-999');
+      expect(pos().bill().payments.onlineAccountId).toBeNull();
+    });
+
+    it('clears one payment field without touching the others', () => {
+      pos().setPaymentText('cash', '3');
+      pos().setPaymentText('card', '2');
+      pos().setCardLast4('1234');
+      pos().clearPaymentText('cash');
+      expect(pos().bill().payments.cash).toBe('');
+      expect(pos().bill().payments.card).toBe('2');
+      expect(pos().bill().payments.cardLast4).toBe('1234');
+      expect(pos().totals().paidCents).toBe(200);
+    });
+
+    it('keeps amounts entered on other methods when the method is switched', () => {
+      pos().setPaymentText('cash', '3');
+      pos().selectPaymentMethod('card');
+      pos().setPaymentText('card', '2');
+      pos().selectPaymentMethod('online');
+      pos().selectPaymentMethod('cash');
+      expect(pos().totals().paidCents).toBe(500);
+    });
+
+    it('turns Credit on only while the Credit method is shown and the customer is named', () => {
+      pos().selectPaymentMethod('credit');
+      expect(pos().bill().payments.creditSelected).toBeFalse();
+      pos().setCustomer(NAMED_CUSTOMER);
+      expect(pos().bill().payments.creditSelected).toBeTrue();
+      pos().selectPaymentMethod('cash');
+      expect(pos().bill().payments.creditSelected).toBeFalse();
+    });
+
+    it('blocks saving a partial card last 4 and an online payment with no account', async () => {
+      pos().setPaymentText('card', '10');
+      pos().setCardLast4('12');
+      const partial = await pos().saveBill();
+      expect(!partial.ok && partial.message).toContain('4 digits');
+      expect(pos().showPaymentProblems()).toBeTrue();
+      expect(pos().paymentProblems().cardLast4).not.toBeNull();
+      pos().setCardLast4('');
+      pos().clearPaymentText('card');
+      pos().setPaymentText('online', '10');
+      const noAccount = await pos().saveBill();
+      expect(!noAccount.ok && noAccount.message).toContain('Account');
+      expect(pos().paymentProblems().onlineAccount).not.toBeNull();
+      pos().setOnlineAccount('bank-001');
+      expect(pos().paymentProblems().onlineAccount).toBeNull();
+      const saved = await pos().saveBill();
+      expect(saved.ok && saved.sale.payments[0].account?.bank).toBe('Bank of Ceylon');
     });
 
     it('blocks Credit for the walk-in customer with a message', () => {
@@ -511,15 +566,6 @@ describe('PosService', () => {
       const result = await pos().saveBill();
       expect(!result.ok && result.message).toContain('named customer');
       expect(pos().bill().lines).toHaveSize(1);
-    });
-
-    it('types on the keypad into the field in use, ignoring a second point and a third decimal', () => {
-      for (const key of ['1', '2', '.', '5', '.', '7', '9']) pos().pressKey(key);
-      expect(pos().bill().payments.cash).toBe('12.57');
-      pos().selectPaymentField('card');
-      for (const key of ['5', '0', 'BACKSPACE']) pos().pressKey(key);
-      expect(pos().bill().payments.card).toBe('5');
-      expect(pos().bill().payments.cash).toBe('12.57');
     });
 
     it('does not break on text that is not an amount', () => {

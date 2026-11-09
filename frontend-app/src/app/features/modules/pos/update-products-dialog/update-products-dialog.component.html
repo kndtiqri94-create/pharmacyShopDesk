@@ -1,0 +1,151 @@
+<app-pos-dialog heading="Update products" size="lg" [open]="open()" (closed)="closed.emit()">
+  @if (selected(); as product) {
+    <div class="pp-stack" data-testid="product-editor">
+      <dl class="pp-summary">
+        <div>
+          <dt>Product</dt>
+          <dd>{{ product.name }}</dd>
+        </div>
+        <div>
+          <dt>SKU</dt>
+          <dd class="sd-code">{{ product.sku }}</dd>
+        </div>
+      </dl>
+      <div class="sd-form-grid">
+        <app-field
+          label="Selling price"
+          fieldId="update-price"
+          prefix="Rs."
+          size="xl"
+          [error]="priceError()"
+          [span]="6"
+        >
+          <input
+            appFieldControl
+            class="update__input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            maxlength="14"
+            [value]="priceText()"
+            [disabled]="!canChange()"
+            (input)="onPriceInput($event)"
+          />
+        </app-field>
+        <app-field
+          label="Stock"
+          fieldId="update-stock"
+          size="xl"
+          [error]="stockError()"
+          hint="A whole number. Cost, batch and expiry are changed in Products and Stock in."
+          [span]="6"
+        >
+          <input
+            appFieldControl
+            class="update__input"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            maxlength="14"
+            [value]="stockText()"
+            [disabled]="!canChange()"
+            (input)="onStockInput($event)"
+          />
+        </app-field>
+      </div>
+
+      @if (diff(); as change) {
+        <div class="pp-confirm" role="alert" data-testid="update-confirm">
+          <p class="sd-body-strong">Save this change?</p>
+          <dl class="pp-summary">
+            @if (change.priceChanged) {
+              <div>
+                <dt>Selling price</dt>
+                <dd class="sd-num">
+                  {{ money(change.oldPriceCents) }} to {{ money(change.newPriceCents) }}
+                </dd>
+              </div>
+            }
+            @if (change.stockChanged) {
+              <div>
+                <dt>Stock</dt>
+                <dd class="sd-num">{{ change.oldStock }} to {{ change.newStock }}</dd>
+              </div>
+            }
+          </dl>
+          @if (change.stockChanged) {
+            <p class="sd-caption">
+              A stock change here is recorded with your name. Normally only a goods received note
+              changes stock.
+            </p>
+          }
+          <div class="pp-row-actions">
+            <app-button size="xl" (click)="cancelReview()">Go back</app-button>
+            <app-button variant="primary" size="xl" [disabled]="busy()" (click)="confirmSave()">
+              Save change
+            </app-button>
+          </div>
+        </div>
+      }
+
+      <div class="pp-row-actions">
+        <app-button size="xl" (click)="backToSearch()">Back to search</app-button>
+        <app-button
+          variant="primary"
+          size="xl"
+          [disabled]="!canChange() || busy() || diff() !== null"
+          (click)="review()"
+        >
+          Review change
+        </app-button>
+      </div>
+    </div>
+  } @else {
+    <div class="sd-form-grid">
+      <app-field
+        label="Search products"
+        fieldId="update-search"
+        size="xl"
+        hint="Type a name, SKU or barcode."
+        [span]="8"
+      >
+        <input
+          appFieldControl
+          type="search"
+          autocomplete="off"
+          [attr.maxlength]="searchMaxLength"
+          [value]="search()"
+          (input)="onSearchInput($event)"
+        />
+      </app-field>
+    </div>
+    @if (search().trim().length > 0) {
+      <app-data-table
+        ariaLabel="Matching products"
+        itemLabel="products"
+        emptyTitle="No product found"
+        emptyMessage="Try the name, the SKU or the barcode."
+        [columns]="columns"
+        [rows]="results()"
+        [rowKey]="rowKey"
+        [paginate]="false"
+      >
+        <ng-template appDataTableCell="action" let-row>
+          <div class="pp-row-actions">
+            <app-button
+              size="xl"
+              [ariaLabel]="'Edit ' + row.name"
+              [disabled]="!canChange()"
+              (click)="choose(row)"
+            >
+              Edit
+            </app-button>
+          </div>
+        </ng-template>
+      </app-data-table>
+    }
+  }
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close</app-button>
+  </div>
+</app-pos-dialog>

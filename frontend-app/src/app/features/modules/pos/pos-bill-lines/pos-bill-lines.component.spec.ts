@@ -148,10 +148,11 @@ describe('PosBillLinesComponent', () => {
       expect(pos.totals().totalCents).toBe(45_000);
     });
 
-    it('uses an extra large button with a visible word', async () => {
+    it('uses a large button (extra large on touch) with a visible word', async () => {
       const { element } = await render();
       const remove = element.querySelector('button[aria-label^="Remove"]') as HTMLButtonElement;
-      expect(remove.getAttribute('data-size')).toBe('xl');
+      const touch = matchMedia('(pointer: coarse)').matches;
+      expect(remove.getAttribute('data-size')).toBe(touch ? 'xl' : 'lg');
       expect(remove.textContent).toContain('Remove');
     });
   });
@@ -201,5 +202,61 @@ describe('PosBillLinesComponent', () => {
       const { input } = await render();
       expect(input(0, 'Discount percent').getAttribute('maxlength')).toBe('6');
     });
+  });
+});
+
+describe('PosBillLinesComponent details', () => {
+  beforeEach(() => clearBrowserStorage());
+
+  afterEach(() => clearBrowserStorage());
+
+  async function renderLines() {
+    TestBed.configureTestingModule({ providers: TEST_PROVIDERS });
+    await signInAs(UserRole.CASHIER);
+    const pos = TestBed.inject(PosService);
+    await pos.open();
+    pos.addProduct('prod-001');
+    const fixture = TestBed.createComponent(PosBillLinesComponent);
+    const requested: string[] = [];
+    fixture.componentInstance.detailsRequested.subscribe(id => requested.push(id));
+    fixture.detectChanges();
+    return { fixture, element: fixture.nativeElement as HTMLElement, requested, pos };
+  }
+
+  it('asks for the item details of a line without changing the bill', async () => {
+    const { element, requested, pos } = await renderLines();
+    const before = JSON.stringify(pos.bill());
+    const details = element.querySelector<HTMLButtonElement>('button[aria-label^="Details of"]')!;
+    details.click();
+    expect(requested).toEqual(['prod-001']);
+    expect(JSON.stringify(pos.bill())).toBe(before);
+  });
+
+  it('has a keyboard-operable details button with a name that holds no cost price', async () => {
+    const { element, pos } = await renderLines();
+    const details = element.querySelector<HTMLButtonElement>('button[aria-label^="Details of"]')!;
+    expect(details.tagName).toBe('BUTTON');
+    expect(details.tabIndex).toBe(0);
+    const product = pos.products().find(item => item.id === 'prod-001')!;
+    expect(details.getAttribute('aria-label')).not.toContain(String(product.costCents));
+    expect(details.textContent?.trim()).toBe('Details');
+  });
+
+  it('sizes the line inputs to the large control height and rows to 46px', async () => {
+    const { element } = await renderLines();
+    const input = element.querySelector<HTMLInputElement>('.line-input')!;
+    const cell = element.querySelector<HTMLElement>('tbody td')!;
+    expect(parseFloat(getComputedStyle(input).minHeight)).toBeGreaterThanOrEqual(46);
+    expect(getComputedStyle(cell).height).not.toBe('auto');
+    const row = cell.closest('tr')!;
+    const finePointer = !window.matchMedia('(pointer: coarse)').matches;
+    const rowHeight = row.getBoundingClientRect().height;
+    if (finePointer) {
+      expect(rowHeight).toBeGreaterThanOrEqual(46);
+      expect(rowHeight).toBeLessThanOrEqual(47.5);
+    } else {
+      expect(rowHeight).toBeGreaterThanOrEqual(52);
+      expect(rowHeight).toBeLessThanOrEqual(53.5);
+    }
   });
 });

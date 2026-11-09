@@ -1,0 +1,138 @@
+<app-pos-dialog heading="Quotations" size="lg" [open]="open()" (closed)="closed.emit()">
+  @if (viewing(); as quotation) {
+    <div class="quote__detail" data-testid="quotation-detail">
+      <dl class="pp-summary">
+        <div>
+          <dt>Quotation</dt>
+          <dd class="sd-code">{{ quotation.quotationNo }}</dd>
+        </div>
+        <div>
+          <dt>Customer</dt>
+          <dd>{{ quotation.customerName }}</dd>
+        </div>
+        <div>
+          <dt>Status</dt>
+          <dd>
+            {{ statusLabels[quotation.status] }}
+            @if (quotation.convertedInvoiceNo) {
+              <span class="sd-code">({{ quotation.convertedInvoiceNo }})</span>
+            }
+          </dd>
+        </div>
+      </dl>
+      <table class="pp-table" aria-label="Quotation items">
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col" class="is-right">Qty</th>
+            <th scope="col" class="is-right">Price</th>
+            <th scope="col" class="is-right">Disc %</th>
+            <th scope="col" class="is-right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of quotation.bill.lines; track line.productId) {
+            <tr>
+              <td>{{ line.name }}</td>
+              <td class="is-right sd-num">{{ line.quantity }}</td>
+              <td class="is-right sd-num">{{ cell(line.unitPriceCents) }}</td>
+              <td class="is-right sd-num">{{ line.discountPercent }}</td>
+              <td class="is-right sd-num">{{ cell(lineTotal(line)) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <dl class="pp-summary">
+        <div>
+          <dt>Bill discount</dt>
+          <dd class="sd-num">
+            @if (quotation.bill.billDiscount.mode === 'PERCENT') {
+              {{ quotation.bill.billDiscount.percent }}%
+            } @else {
+              {{ money(quotation.bill.billDiscount.cents) }}
+            }
+          </dd>
+        </div>
+        <div class="pp-summary__strong">
+          <dt>Total</dt>
+          <dd class="sd-num">{{ money(quotation.totalCents) }}</dd>
+        </div>
+      </dl>
+      <div class="pp-row-actions">
+        <app-button size="xl" (click)="back()">Back to list</app-button>
+        <app-button
+          variant="primary"
+          size="xl"
+          [disabled]="!canChange() || quotation.status !== openStatus"
+          (click)="convertRequested.emit(quotation.id)"
+        >
+          Convert to invoice
+        </app-button>
+      </div>
+    </div>
+  } @else {
+    <app-data-table
+      ariaLabel="Quotations"
+      itemLabel="quotations"
+      emptyTitle="No quotations yet"
+      emptyMessage="Press Save quotation on the till to keep a bill as a quotation."
+      [columns]="columns"
+      [rows]="quotations()"
+      [rowKey]="rowKey"
+      [paginate]="false"
+    >
+      <ng-template appDataTableCell="status" let-row>
+        <app-badge
+          [label]="statusLabel(row.status)"
+          [tone]="row.status === openStatus ? 'info' : 'success'"
+        />
+        @if (row.convertedInvoiceNo) {
+          <span class="sd-code quote__invoice">{{ row.convertedInvoiceNo }}</span>
+        }
+      </ng-template>
+      <ng-template appDataTableCell="action" let-row>
+        @if (deletingId() === row.id) {
+          <div class="pp-row-actions">
+            <span class="sd-body-strong">Delete {{ row.quotationNo }}?</span>
+            <app-button size="xl" (click)="keep()">Keep it</app-button>
+            <app-button
+              variant="danger"
+              size="xl"
+              [disabled]="busy()"
+              (click)="confirmDelete(row.id)"
+            >
+              Delete
+            </app-button>
+          </div>
+        } @else {
+          <div class="pp-row-actions">
+            <app-button size="xl" [ariaLabel]="'Open ' + row.quotationNo" (click)="view(row.id)">
+              Open
+            </app-button>
+            <app-button
+              variant="primary"
+              size="xl"
+              [ariaLabel]="'Convert ' + row.quotationNo + ' to invoice'"
+              [disabled]="!canChange() || row.status !== openStatus"
+              (click)="convertRequested.emit(row.id)"
+            >
+              Convert
+            </app-button>
+            <app-button
+              variant="danger"
+              size="xl"
+              [ariaLabel]="'Delete ' + row.quotationNo"
+              [disabled]="!canChange() || row.status !== openStatus || busy()"
+              (click)="askDelete(row.id)"
+            >
+              Delete
+            </app-button>
+          </div>
+        }
+      </ng-template>
+    </app-data-table>
+  }
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close</app-button>
+  </div>
+</app-pos-dialog>

@@ -5,6 +5,7 @@ import { PosSettings } from '../models/domain/pos-settings.model';
 import { Product } from '../models/domain/product.model';
 import { Sale } from '../models/domain/sale.model';
 import { POS_CUSTOMER_SEED, SALES_REP_SEED } from '../services/data/in-memory/seed/pos.seed';
+import { BANK_ACCOUNT_SEED } from '../services/data/in-memory/seed/bank-account.seed';
 import { PRODUCT_SEED } from '../services/data/in-memory/seed/product.seed';
 import { SaleBuildContext, buildSale } from './pos-sale-build.util';
 
@@ -57,12 +58,28 @@ function bill(overrides: Partial<Bill> = {}): Bill {
       cash: '10',
       card: '',
       online: '',
-      cardReference: '',
-      onlineReference: '',
+      cardLast4: '',
+      onlineNote: '',
+      onlineAccountId: null,
       creditSelected: false,
     },
     ...overrides,
   };
+}
+
+function onlineBill(payments: Partial<Bill['payments']>): Bill {
+  return bill({
+    payments: {
+      cash: '',
+      card: '',
+      online: '10',
+      cardLast4: '',
+      onlineNote: '',
+      onlineAccountId: 'bank-001',
+      creditSelected: false,
+      ...payments,
+    },
+  });
 }
 
 function context(overrides: Partial<SaleBuildContext> = {}): SaleBuildContext {
@@ -76,6 +93,7 @@ function context(overrides: Partial<SaleBuildContext> = {}): SaleBuildContext {
     today: '2026-09-21',
     now: '2026-09-21T10:30:00',
     existingSales: [],
+    accounts: BANK_ACCOUNT_SEED,
     cashier: { id: 'usr-004', name: 'Ruwani Jayawardena' },
     ...overrides,
   };
@@ -138,22 +156,62 @@ describe('buildSale', () => {
       expect(sale.paidCents).toBe(2000);
     });
 
-    it('records card and online references and trims them', () => {
+    it('records the card last 4 digits and keeps the online note trimmed', () => {
       const { sale } = built({
         bill: bill({
           payments: {
             cash: '',
             card: '6',
             online: '4',
-            cardReference: `  ${'c'.repeat(80)}  `,
-            onlineReference: '',
+            cardLast4: '1234',
+            onlineNote: `  ${'n'.repeat(300)}  `,
+            onlineAccountId: 'bank-001',
             creditSelected: false,
           },
         }),
       });
       expect(sale.payments.map(payment => payment.method)).toEqual(['CARD', 'ONLINE']);
-      expect(sale.payments[0].reference).toHaveSize(40);
-      expect(sale.payments[1].reference).toBe('');
+      expect(sale.payments[0].cardLast4).toBe('1234');
+      expect(sale.payments[1].note).toHaveSize(200);
+    });
+
+    it('stores a snapshot of the chosen account and nothing else about it', () => {
+      const { sale } = built({
+        bill: onlineBill({ onlineAccountId: 'bank-002', onlineNote: 'ref 9' }),
+      });
+      expect(sale.payments[0].account).toEqual({
+        bank: 'Commercial Bank of Ceylon',
+        accountNo: '8001234567',
+        holderName: 'ShopDesk Pharmacy',
+      });
+      expect(sale.payments[0].note).toBe('ref 9');
+    });
+
+    it('blocks an online payment with no account, but not a zero online amount', () => {
+      const blocked = buildSale(context({ bill: onlineBill({ onlineAccountId: null }) }));
+      expect(blocked.ok).toBeFalse();
+      expect(!blocked.ok && blocked.message).toContain('Account');
+      const zero = buildSale(
+        context({ bill: onlineBill({ online: '0', cash: '10', onlineAccountId: null }) })
+      );
+      expect(zero.ok).toBeTrue();
+    });
+
+    it('blocks an online payment whose account is not known', () => {
+      expect(
+        buildSale(context({ bill: onlineBill({ onlineAccountId: 'bank-999' }) })).ok
+      ).toBeFalse();
+    });
+
+    it('blocks a card payment with a partial last 4', () => {
+      const partial = buildSale(
+        context({ bill: onlineBill({ cardLast4: '12', online: '', cash: '5', card: '5' }) })
+      );
+      expect(partial.ok).toBeFalse();
+      const empty = buildSale(
+        context({ bill: onlineBill({ cardLast4: '', online: '', cash: '5', card: '5' }) })
+      );
+      expect(empty.ok).toBeTrue();
     });
 
     it('records the unpaid part as credit for a named customer', () => {
