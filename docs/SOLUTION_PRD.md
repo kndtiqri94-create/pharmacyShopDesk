@@ -1,7 +1,7 @@
 # Product Requirements Document — ShopDesk
 
 > **Status:** Draft
-> **Version:** v0.10
+> **Version:** v0.11
 > **Last updated:** 2026-10-24
 > **Owner:** Product Owner (agent: product-owner)
 
@@ -184,7 +184,7 @@ This phase delivers the **frontend only**: a working, responsive back-office web
 **Bottom bar (Phase B, hidden in Phase A, confirmed v0.7, OQ27 closed)**
 - **FR-POS-13** [B] Bottom bar buttons (the reference "Normal" view-mode button is dropped: dropped, not needed in a single-pharmacy till): Last Invoice (re-open/reprint the last sale), Quotations (list), Cash Book, Update Products (quick stock/price edit), Add OB (opening balance), Counter Close, Bill & Reload (jump to Reload & Utility), Drawer (End), Due Amount (customer dues).
 - **FR-POS-14** [B] Returns: look up a past invoice and return lines; return restocks FEFO to the original batch where possible and records a refund or customer credit. There is no Transfer bill type (dropped v0.5, OQ28 closed). Quotations: Save Quotation (F11) stores a quote that can be converted to an invoice; no stock effect until converted.
-- **FR-POS-15** [B] Cash handling: Cash Book (daily cash in/out from POS sales, Reload & Utility sales are handled separately and are NOT included in the POS cash book or counter close (OQ29 closed v0.6), Counter Close (count expected vs counted cash, shows difference, locks the day's counter report; screen layout redesigned in v0.9, see FR-POS-20), Drawer End, and Due Amount (customers with unpaid balances, take a payment).
+- **FR-POS-15** [B] Cash handling: Cash Book (daily cash in/out from POS sales, Reload & Utility sales are handled separately and are NOT included in the POS cash book or counter close (OQ29 closed v0.6), Counter Close (count expected vs counted cash, shows difference, locks the day's counter report; screen layout redesigned in v0.9, see FR-POS-20; Cash Book screen extended in v0.11, see FR-POS-24), Drawer End, and Due Amount (customers with unpaid balances, take a payment).
 
 ### 5.9.1 Assumptions for POS (v0.4), for the user to confirm
 - A10 (REVISED v0.6) POS is reached only via the top-bar POS button. Its header has one fullscreen toggle button whose icon switches between maximise and minimise with the real browser fullscreen state (FR-POS-2). Based on the user's reference header screenshot; closes OQ31.
@@ -248,6 +248,19 @@ This phase delivers the **frontend only**: a working, responsive back-office web
 - A32 (assumed, OQ37-2) Account is mandatory for any Online payment above 0; Last 4 No. is optional but, when entered, exactly 4 digits and capped at 4 characters (the earlier "optional reference only" wording becomes this); Note optional.
 - A33 (assumed, OQ37-3) The chosen account IS stored on the payment record (as a snapshot of bank, account no and holder, so later account edits cannot change old sales); Opening Balance is stored but accounts keep no running balance, no statement and no edit or delete in Phase A (create and select only).
 - A34 (v0.10) The on-screen keypad is removed (FR-POS-9 withdrawn). Any existing keypad component, its tests and its use in POS are removed by the delivery team; no replacement.
+
+### 5.9.7 Cash Book modal extension (FR-POS-24) — added v0.11
+> Extends the Cash Book of FR-POS-15 (S-2.10.4, done). Layout taken from a user-supplied reference screenshot that is NOT stored in the repo; this section is the specification. Web only, mock data, English labels only, single pharmacy, styling per `docs/design/ShopDesk-design-system.md` (light and dark). Delivery order: first a design spec (markdown under `docs/design/`), then the Angular build.
+- **FR-POS-24** [B] Cash Book modal, titled "Cash Book":
+  - **Header controls**: "Created at" date filter (default Today) with Filter and Reset buttons; Export CSV and Export PDF (in-browser mock, same approach as payroll); action buttons Add Actual Balance, Adjustment and Add OB (opening balance).
+  - **Ledger table** with columns Description, Credit, Debit, Balance, and rows in this order: Opening Balance, Total Expenses, Advance Salary, Employee Loan Settlement, Incomes, Invoices, Previous Invoices, Invoice Returns, GRNs, GRN Returns, Cash back, Adjustments, Cashbook Bank Deposit; followed by summary rows Balance, Actual Balance and Difference. ALL rows are always shown and are backed by mock data, even where the app has no real module yet (e.g. Advance Salary, Employee Loan Settlement, Cash back, Cashbook Bank Deposit).
+  - **Other Payment Invoices** section lists only Card and Online (Cash is already in the ledger; Credit is shown as credit sales). Methods follow OQ25 (Cash, Card, Online, Credit); no Cheque, Bank Transfer, Voucher, Exchange, Saving, Set-off, Loyalty Points, Customer Recharge, Pick Me, Uber, Koko Pay, Mint Pay, Ali Pay or V-Pay.
+  - **Daily Sales Summary**: Sale Invoices, Invoice Returns, Discount, Tax, Unpaid Invoices.
+  - **Reload & Utility is dropped entirely**: no Reload Commission row, no Provider TopUp row, no Add Reload Commission button. OQ29 and A19 are unchanged.
+  - **Permissions**: only the Admin role may use Add Actual Balance, Adjustment and Add OB; all other roles with POS access see them view-only (buttons hidden or disabled with an explanation) and may still Filter, Reset and export.
+  - Edge states: empty date range shows zeros, an invalid or reversed date is blocked with a message, keyboard operable accessible dialog (Esc closes, focus trapped).
+- A35 (user decision, v0.11) Rows with no real backing module are shown with mock data (not hidden). The Exports are in-browser mocks. English labels only. Single pharmacy.
+- A36 (assumed, OQ38-1) Add Actual Balance records the counted cash for the selected day and drives the Actual Balance and Difference (Actual minus Balance) rows; Adjustment adds a signed, noted entry to the Adjustments row; Add OB sets the Opening Balance row (same data as the existing Add OB, S-2.10.4). All three are saved in the mock store and need a numeric amount (two decimals) and, for Adjustment, a note.
 
 ## 6. Non-Functional Requirements
 | Category | Requirement |
@@ -332,9 +345,12 @@ This phase delivers the **frontend only**: a working, responsive back-office web
 
 - OQ37 — OPEN (v0.10), payment panel redesign, built to the assumptions shown unless the user says otherwise (owner: user): (1) Credit is the fourth method tile after Online, no F-key, read-only panel (A28)? (2) Online Account mandatory when amount above 0; Card Last 4 optional but exactly 4 digits if entered (A32)? (3) Store the chosen account (snapshot) on the payment record, with no running account balance (A33)? (4) Create Account field limits (A31)? (5) Bank list as in A30, and the three seed accounts in A29? Decided by the user and no longer open: More ignored (A27), in-memory accounts with sample data, created accounts saved and selectable, fixed bank list, keypad removed (A34).
 
+- OQ38 — OPEN (v0.11), Cash Book extension, built to the assumption shown unless the user says otherwise (owner: user): (1) Meaning of Add Actual Balance, Adjustment and the Difference row (A36)? (2) Which mock figures should the non-existent modules (Advance Salary, Employee Loan Settlement, Cash back, Bank Deposit) show, and is Cashbook Bank Deposit meant to link to the bank accounts of FR-POS-22 later?
+
 ## 10. Change Log
 | Version | Date | Author | Change |
 |---|---|---|---|
+| v0.11 | 2026-11-13 | Shiham (PO) | Cash Book modal extension from a user-supplied reference layout (screenshot not stored): new section 5.9.7 with FR-POS-24 (date filter, exports, Add Actual Balance/Adjustment/Add OB, full ledger with mock data, Other Payment Invoices Card and Online only, Daily Sales Summary, Admin-only edit), A35, A36, OQ38. Reload & Utility dropped (OQ29/A19 unchanged); OQ25 payment methods kept. FR-POS-15 pointer. |
 | v0.10 | 2026-11-09 | Shiham (PO) | POS right-hand payment panel redesign from 4 reference screenshots: new sections 5.9.5/5.9.6 with FR-POS-21 (panel layout: grey summary box, large Total, method tiles, per-method fields with X clear buttons, grey Paid/Balance box, action grid), FR-POS-22 (in-memory bank accounts and Create Account modal), FR-POS-23 (Online account and Card last-4 rules, stored on payment); FR-POS-9 keypad withdrawn; FR-POS-8 and A16 revised; OQ25 reopened and re-closed ("More" ignored); A27 to A34; OQ37 opened. |
 | v0.9 | 2026-10-24 | Shiham (PO) | Counter Close screen redesign from a reference screenshot: new section 5.9.3 with FR-POS-20 (three-column dialog, Shift Summary, POS-only Sales Breakdown, Cash Count with calculator, Handover and BF, Cash Reconciliation panel, disabled Complete button with hint, bilingual labels), FR-POS-15 pointer; assumptions A22 to A26 in 5.9.4; OQ36 opened. OQ29 kept intact: Reload & Utility and the Reload Commission line stay out. |
 | v0.8 | 2026-10-24 | Shiham (PO) | POS billing screen visual restyle: new section 5.9.2 with FR-POS-17 (grey surfaces and soft colour-coded secondary buttons, light and dark, contrast kept), FR-POS-18 (line-item details popup), FR-POS-19 (taller line-item rows); A21 narrow exception to the "status colour is not decoration" design rule; OQ34, OQ35 opened. |

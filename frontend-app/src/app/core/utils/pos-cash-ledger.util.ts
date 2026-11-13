@@ -180,3 +180,22 @@ export function firstActivityTimestamp(
   stamps.sort((first, second) => first.localeCompare(second));
   return stamps[0];
 }
+
+export function sumCashEntries(entries: readonly CashEntry[], kind: CashEntryKind): number {
+  return entries
+    .filter(item => item.kind === kind)
+    .reduce((total, item) => total + item.amountCents, 0);
+}
+
+export function hasDayActivity(
+  sources: CashLedgerSources,
+  date: string,
+  hasOpening: boolean
+): boolean {
+  return (
+    hasOpening ||
+    sources.sales.some(sale => dateOfTimestamp(sale.createdAt) === date) ||
+    sources.returns.some(item => dateOfTimestamp(item.createdAt) === date) ||
+    sources.duePayments.some(payment => dateOfTimestamp(payment.createdAt) === date)
+  );
+}

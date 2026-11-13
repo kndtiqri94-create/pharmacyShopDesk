@@ -111,6 +111,27 @@ describe('PosCashService and PosCounterService', () => {
       expect(view.book.expectedCents).toBe(100_000 + 11_000 - 500);
     });
 
+    it('gives the same cash figures over a range as the single day view', async () => {
+      await signInAs(UserRole.CASHIER);
+      await cash().saveOpening('1000', false);
+      await sell({ payments: { ...testBill().payments, cash: '20' } });
+      await sell({
+        invoiceNo: 'INV-0002',
+        payments: { ...testBill().payments, cash: '', card: '10' },
+      });
+      await TestBed.inject(PosDueService).takePayment('cus-002', '100', 'CASH', '');
+      const range = await cash().cashRange('2026-09-19', TEST_TODAY);
+      expect(range.openingCents).toBe(0);
+      expect(range.cashInvoicesCents).toBe(1000);
+      expect(range.cashDuesCents).toBe(10_000);
+      expect(range.cashRefundsCents).toBe(0);
+      expect(range.activeDates).toEqual([TEST_TODAY]);
+      expect(range.sales).toHaveSize(2);
+      const single = await cash().cashRange(TEST_TODAY, TEST_TODAY);
+      expect(single.openingCents).toBe(100_000);
+      expect(single.toDayLocked).toBeFalse();
+    });
+
     it('shows an earlier date for viewing only', async () => {
       await signInAs(UserRole.CASHIER);
       const view = await cash().view('2026-09-20');

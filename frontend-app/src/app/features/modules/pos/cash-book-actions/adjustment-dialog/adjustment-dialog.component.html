@@ -1,0 +1,50 @@
+<app-pos-dialog heading="Add adjustment" [open]="open()" (closed)="closed.emit()">
+  <p class="sd-caption">Recorded against {{ dateOf(date()) }} with your name and the time.</p>
+  @if (formError(); as message) {
+    <app-alert tone="warning">{{ message }}</app-alert>
+  }
+  <div class="sd-form-grid">
+    <app-field
+      label="Amount"
+      fieldId="adjustment-amount"
+      prefix="Rs."
+      size="xl"
+      [error]="amountError()"
+      hint="Use a minus sign for money taken out, like -250.50."
+      [span]="12"
+    >
+      <input
+        appFieldControl
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        maxlength="13"
+        [value]="amountText()"
+        (input)="onAmountInput($event)"
+      />
+    </app-field>
+    <app-field
+      label="Note"
+      fieldId="adjustment-note"
+      size="xl"
+      [required]="true"
+      [error]="noteError()"
+      hint="Say why you are adjusting."
+      [span]="12"
+    >
+      <textarea
+        appFieldControl
+        rows="3"
+        [attr.maxlength]="noteMaxLength"
+        [value]="noteText()"
+        (input)="onNoteInput($event)"
+      ></textarea>
+    </app-field>
+  </div>
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close</app-button>
+    <app-button variant="primary" size="xl" [disabled]="busy()" (click)="save()">
+      Save adjustment
+    </app-button>
+  </div>
+</app-pos-dialog>

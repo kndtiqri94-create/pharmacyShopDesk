@@ -1,16 +1,23 @@
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { CounterReport } from '../models/domain/counter-report.model';
+import { SaleReturn } from '../models/domain/sale-return.model';
+import { Sale } from '../models/domain/sale.model';
+import { CashEntryKind } from '../models/enums/cash-entry-kind.enum';
 import { DayOpening } from '../models/domain/day-opening.model';
 import { DrawerSession } from '../models/domain/drawer-session.model';
 import { ModuleKey } from '../models/enums/module-key.enum';
+import { datesInRange } from '../utils/cash-book-validation.util';
 import { addDays } from '../utils/date.util';
 import { openingChanged, parseOpeningBalance } from '../utils/opening-balance.util';
 import {
   CashBook,
   buildCashEntries,
   computeCashBook,
+  dateOfTimestamp,
   firstActivityTimestamp,
+  hasDayActivity,
+  sumCashEntries,
 } from '../utils/pos-cash-ledger.util';
 import { ClockService } from './clock.service';
 import { DayLockedError } from './data/day-locked.error';
@@ -33,6 +40,17 @@ export interface CashBookView {
   status: DayStatus;
   book: CashBook;
   readOnly: boolean;
+}
+
+export interface CashRangeFigures {
+  openingCents: number;
+  cashInvoicesCents: number;
+  cashDuesCents: number;
+  cashRefundsCents: number;
+  activeDates: string[];
+  sales: Sale[];
+  returns: SaleReturn[];
+  toDayLocked: boolean;
 }
 
 export interface BroughtForward {
@@ -78,6 +96,32 @@ export class PosCashService {
       status,
       book: computeCashBook(openingCents, entries),
       readOnly: date !== this.clockService.today() || status.counterClosed,
+    };
+  }
+
+  async cashRange(from: string, to: string): Promise<CashRangeFigures> {
+    const dates = datesInRange(from, to);
+    const records = await this.recordsService.load();
+    const statuses = await Promise.all(dates.map(date => this.status(date)));
+    const entries = statuses.flatMap(status =>
+      buildCashEntries(records, status.date, status.report?.closedAt ?? null)
+    );
+    const first = statuses[0];
+    const inRange = (timestamp: string): boolean => {
+      const day = dateOfTimestamp(timestamp);
+      return day >= from && day <= to;
+    };
+    return {
+      openingCents: first?.report?.openingCents ?? first?.opening?.amountCents ?? 0,
+      cashInvoicesCents: sumCashEntries(entries, CashEntryKind.SALE_CASH),
+      cashDuesCents: sumCashEntries(entries, CashEntryKind.DUE_PAYMENT),
+      cashRefundsCents: sumCashEntries(entries, CashEntryKind.RETURN_REFUND),
+      activeDates: statuses
+        .filter(status => hasDayActivity(records, status.date, status.opening !== null))
+        .map(status => status.date),
+      sales: records.sales.filter(sale => inRange(sale.createdAt)),
+      returns: records.returns.filter(item => inRange(item.createdAt)),
+      toDayLocked: statuses.at(-1)?.counterClosed ?? false,
     };
   }
 

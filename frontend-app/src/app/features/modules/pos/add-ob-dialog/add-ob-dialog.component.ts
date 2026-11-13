@@ -5,6 +5,7 @@ import {
   DayStatus,
   PosCashService,
 } from '../../../../core/services/pos-cash.service';
+import { PosCashBookService } from '../../../../core/services/pos-cash-book.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { formatDate, formatTime } from '../../../../core/utils/date.util';
 import { formatRupeesExact, formatRupeesInput } from '../../../../core/utils/money.util';
@@ -23,9 +24,11 @@ import { PosDialogComponent } from '../pos-dialog/pos-dialog.component';
 export class AddObDialogComponent {
   readonly open = input(false);
   readonly canChange = input(true);
+  readonly adminOnly = input(false);
   readonly closed = output<void>();
 
   private readonly cashService = inject(PosCashService);
+  private readonly cashBookService = inject(PosCashBookService);
   private readonly clockService = inject(ClockService);
   private readonly notificationService = inject(NotificationService);
 
@@ -80,7 +83,9 @@ export class AddObDialogComponent {
   private async submit(confirmChange: boolean): Promise<void> {
     this.busy.set(true);
     try {
-      const result = await this.cashService.saveOpening(this.amountText(), confirmChange);
+      const result = this.adminOnly()
+        ? await this.cashBookService.saveOpeningBalance(this.amountText(), confirmChange)
+        : await this.cashService.saveOpening(this.amountText(), confirmChange);
       this.confirming.set(false);
       if (!result.ok) {
         this.error.set(result.message);

@@ -106,6 +106,39 @@ describe('AddObDialogComponent', () => {
     expect((element.querySelector('#add-ob-amount') as HTMLInputElement).disabled).toBeTrue();
   });
 
+  describe('when opened from the Cash Book (admin only)', () => {
+    async function renderAdminOnly(role: UserRole) {
+      await signInAs(role);
+      const fixture = TestBed.createComponent(AddObDialogComponent);
+      fixture.componentRef.setInput('adminOnly', true);
+      fixture.componentRef.setInput('open', true);
+      await settle(fixture);
+      const element = fixture.nativeElement as HTMLElement;
+      const input = element.querySelector('#add-ob-amount') as HTMLInputElement;
+      input.value = '3000';
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      const save = Array.from(element.querySelectorAll('button')).find(
+        candidate => candidate.textContent?.trim() === 'Save balance'
+      )!;
+      save.click();
+      await settle(fixture);
+      return element;
+    }
+
+    it('lets an Admin save the opening balance', async () => {
+      await renderAdminOnly(UserRole.ADMIN);
+      const status = await TestBed.inject(PosCashService).status(TEST_TODAY);
+      expect(status.opening?.amountCents).toBe(300_000);
+    });
+
+    it('refuses a Cashier even though the till button would allow it', async () => {
+      const element = await renderAdminOnly(UserRole.CASHIER);
+      expect(element.querySelector('.field__error')?.textContent).toContain('Only an Admin');
+      expect((await TestBed.inject(PosCashService).status(TEST_TODAY)).opening).toBeNull();
+    });
+  });
+
   describe('brought forward from the last closed day', () => {
     const closePreviousDay = (broughtForwardCents: number) =>
       firstValueFrom(
