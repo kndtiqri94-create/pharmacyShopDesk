@@ -56,6 +56,13 @@ describe('PosProductSearchComponent', () => {
     expect(text).toContain('18 in stock');
   });
 
+  it('shows suggestions as an overlay so the bill lines below do not move', async () => {
+    const { type, element } = await render();
+    type('salbu');
+    const list = element.querySelector('.results') as HTMLElement;
+    expect(getComputedStyle(list).position).toBe('absolute');
+  });
+
   it('finds products by generic name, SKU and barcode', async () => {
     const { type, results } = await render();
     type('amoxicillin');

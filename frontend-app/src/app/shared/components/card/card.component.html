@@ -1,4 +1,8 @@
-<section class="card" [attr.aria-labelledby]="title() ? titleId : null">
+<section
+  class="card"
+  [class.card--overflow]="allowOverflow()"
+  [attr.aria-labelledby]="title() ? titleId : null"
+>
   @if (title()) {
     <header class="card__header">
       <div>

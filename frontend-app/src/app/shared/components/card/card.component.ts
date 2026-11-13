@@ -10,6 +10,7 @@ export class CardComponent {
   readonly title = input<string | null>(null);
   readonly subtitle = input<string | null>(null);
   readonly flush = input(false);
+  readonly allowOverflow = input(false);
 
   protected readonly titleId = createUniqueId('card-title');
 }

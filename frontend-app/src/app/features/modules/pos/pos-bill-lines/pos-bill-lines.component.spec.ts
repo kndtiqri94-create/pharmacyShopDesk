@@ -49,16 +49,14 @@ describe('PosBillLinesComponent', () => {
     return { fixture, element, rows, input, change, approvals, pos, message };
   }
 
-  it('shows exactly the columns S/N, SKU, Rep, Barcode, Sale Price, Discount %, QTY, Action and Total', async () => {
+  it('shows exactly the columns S/N, Description, Sale Price, Discount %, QTY, Action and Total', async () => {
     const { element } = await render();
     const headers = Array.from(element.querySelectorAll('thead th')).map(cell =>
       cell.textContent?.replace(/\s+/g, ' ').trim()
     );
     expect(headers).toEqual([
       'S/N',
-      'SKU',
-      'Rep',
-      'Barcode',
+      'Description',
       'Sale Price (Rs.)',
       'Discount %',
       'QTY',
@@ -67,26 +65,17 @@ describe('PosBillLinesComponent', () => {
     ]);
   });
 
-  it('shows each line with its serial number, codes, price and total to two decimals, right-aligned', async () => {
-    const { rows } = await render();
+  it('shows each line with its serial number, description, price and total to two decimals, right-aligned', async () => {
+    const { rows, pos } = await render();
     const first = Array.from(rows()[0].querySelectorAll('td'));
     expect(first[0].textContent?.trim()).toBe('1');
-    expect(first[1].textContent?.trim()).toBe('PAR-500');
-    expect(first[2].textContent?.trim()).toBe('–');
-    expect(first[3].textContent?.trim()).toBe('4791000000011');
-    expect(first[4].textContent?.trim()).toBe('2.50');
-    expect(first[4].classList).toContain('is-right');
-    expect(first[8].textContent?.trim()).toBe('2.50');
-    expect(first[8].classList).toContain('is-right');
+    expect(first[1].textContent?.trim()).toBe(pos.bill().lines[0].name);
+    expect(first[2].textContent?.trim()).toBe('2.50');
+    expect(first[2].classList).toContain('is-right');
+    expect(first[6].textContent?.trim()).toBe('2.50');
+    expect(first[6].classList).toContain('is-right');
     expect(rows()[1].querySelectorAll('td')[0].textContent?.trim()).toBe('2');
-    expect(rows()[1].querySelectorAll('td')[8].textContent?.trim()).toBe('450.00');
-  });
-
-  it('shows the rep recorded on the bill', async () => {
-    const { fixture, rows, pos } = await render();
-    pos.setRep('rep-001');
-    fixture.detectChanges();
-    expect(rows()[0].querySelectorAll('td')[2].textContent?.trim()).toBe('Kamal Silva');
+    expect(rows()[1].querySelectorAll('td')[6].textContent?.trim()).toBe('450.00');
   });
 
   it('says what to do when there are no items', async () => {
@@ -109,7 +98,7 @@ describe('PosBillLinesComponent', () => {
       change(input(0, 'Quantity of'), '4');
       fixture.detectChanges();
       expect(pos.bill().lines[0].quantity).toBe(4);
-      expect(rows()[0].querySelectorAll('td')[8].textContent?.trim()).toBe('10.00');
+      expect(rows()[0].querySelectorAll('td')[6].textContent?.trim()).toBe('10.00');
       expect(pos.totals().subTotalCents).toBe(1000 + 45_000);
     });
 

@@ -13,7 +13,6 @@ import { PendingApproval } from '../pending-approval.model';
 interface BillRow {
   serial: number;
   line: BillLine;
-  repName: string;
   totalCents: number;
 }
 
@@ -38,9 +37,7 @@ export class PosBillLinesComponent {
   protected readonly buttonSize = signal<'lg' | 'xl'>('lg');
   protected readonly columns: readonly DataTableColumn<BillRow>[] = [
     { key: 'serial', label: 'S/N', kind: 'number' },
-    { key: 'sku', label: 'SKU', kind: 'code', value: row => row.line.sku },
-    { key: 'rep', label: 'Rep', value: row => row.repName },
-    { key: 'barcode', label: 'Barcode', kind: 'code', value: row => row.line.barcode },
+    { key: 'description', label: 'Description', value: row => row.line.name },
     { key: 'price', label: 'Sale Price', kind: 'money', value: row => row.line.unitPriceCents },
     { key: 'discount', label: 'Discount %' },
     { key: 'quantity', label: 'QTY' },
@@ -49,11 +46,9 @@ export class PosBillLinesComponent {
   ];
   protected readonly rows = computed<BillRow[]>(() => {
     const bill = this.posService.bill();
-    const repName = this.posService.reps().find(rep => rep.id === bill.repId)?.name ?? '–';
     return bill.lines.map((line, index) => ({
       serial: index + 1,
       line,
-      repName,
       totalCents: lineTotalCents(line),
     }));
   });

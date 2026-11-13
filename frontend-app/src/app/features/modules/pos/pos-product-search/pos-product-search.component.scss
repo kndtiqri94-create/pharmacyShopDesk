@@ -1,5 +1,6 @@
 :host {
   display: block;
+  position: relative;
 }
 
 .search {
@@ -9,14 +10,23 @@
 }
 
 .results {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 30;
   display: flex;
   flex-direction: column;
   gap: var(--sd-space-1);
   max-height: 320px;
   margin: 0;
-  padding: 0;
+  padding: var(--sd-space-1);
   overflow-y: auto;
   list-style: none;
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-md);
+  background: var(--sd-surface);
+  box-shadow: var(--sd-shadow-pop);
 }
 
 .result {

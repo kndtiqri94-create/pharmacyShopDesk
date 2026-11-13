@@ -35,7 +35,7 @@
               (billTypeRequested)="requestBillType($event)"
             />
           </app-card>
-          <app-card title="Items">
+          <app-card title="Items" [allowOverflow]="true">
             <div class="till__items">
               <app-pos-product-search />
               <app-pos-bill-lines
