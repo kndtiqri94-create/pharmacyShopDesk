@@ -10,6 +10,7 @@ import { InMemoryGrnDataService } from './in-memory/in-memory-grn-data.service';
 import { InMemoryLeaveDataService } from './in-memory/in-memory-leave-data.service';
 import { InMemoryPayrollDataService } from './in-memory/in-memory-payroll-data.service';
 import { InMemoryProductDataService } from './in-memory/in-memory-product-data.service';
+import { InMemoryProductSyncServer } from './in-memory/in-memory-product-sync-server';
 import { InMemoryPurchaseOrderDataService } from './in-memory/in-memory-purchase-order-data.service';
 import { InMemoryReloadDataService } from './in-memory/in-memory-reload-data.service';
 import { InMemoryRoleDataService } from './in-memory/in-memory-role-data.service';
@@ -22,6 +23,7 @@ import { InMemoryUserDataService } from './in-memory/in-memory-user-data.service
 import { LeaveDataService } from './leave-data.service';
 import { PayrollDataService } from './payroll-data.service';
 import { ProductDataService } from './product-data.service';
+import { ProductSyncServer } from './product-sync-server';
 import { PurchaseOrderDataService } from './purchase-order-data.service';
 import { ReloadDataService } from './reload-data.service';
 import { RoleDataService } from './role-data.service';
@@ -51,6 +53,7 @@ const IN_MEMORY_BINDINGS: readonly [DataToken, new () => object][] = [
   [LeaveDataService, InMemoryLeaveDataService],
   [PayrollDataService, InMemoryPayrollDataService],
   [BankAccountDataService, InMemoryBankAccountDataService],
+  [ProductSyncServer, InMemoryProductSyncServer],
 ];
 
 function notConfigured(): never {
