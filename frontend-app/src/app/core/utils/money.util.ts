@@ -19,10 +19,37 @@ export function formatRupees(cents: number): string {
   return `${sign}Rs. ${formatter.format(absolute / 100)}`;
 }
 
+export function formatRupeesExact(cents: number): string {
+  const sign = cents < 0 ? '-' : '';
+  return `${sign}Rs. ${TWO_DECIMAL_FORMAT.format(Math.abs(cents) / 100)}`;
+}
+
 export function formatMoneyCell(cents: number): string {
   return TWO_DECIMAL_FORMAT.format(cents / 100);
 }
 
 export function formatCount(value: number): string {
   return WHOLE_NUMBER_FORMAT.format(value);
+}
+
+export function formatRupeesInput(cents: number): string {
+  return (cents / 100).toFixed(2);
+}
+
+export function formatThousands(cents: number): string {
+  return (cents / 100_000).toFixed(1);
+}
+
+export function formatPercent(value: number): string {
+  return `${Math.round(value * 10) / 10}%`;
+}
+
+/**
+ * The single rounding rule for payroll money: exact integer division of two
+ * non-negative integers, rounded half up (0.5 goes up). Works on integers only,
+ * so there is no floating point drift. Negative or non-finite input gives 0.
+ */
+export function divideRoundHalfUp(numerator: number, denominator: number): number {
+  if (!Number.isFinite(numerator) || !(denominator > 0) || numerator <= 0) return 0;
+  return Math.floor((2 * numerator + denominator) / (2 * denominator));
 }

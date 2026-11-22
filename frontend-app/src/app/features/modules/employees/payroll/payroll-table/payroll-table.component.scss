@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+.warning {
+  display: block;
+  color: var(--sd-warning);
+  font-weight: 600;
+  text-align: right;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sd-space-3);
+  padding: var(--sd-space-3) var(--sd-space-5);
+}
+
+.footer__size {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sd-space-3);
+}
+
+.footer__select {
+  min-width: 72px;
+}
+
+.cell-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sd-primary);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}

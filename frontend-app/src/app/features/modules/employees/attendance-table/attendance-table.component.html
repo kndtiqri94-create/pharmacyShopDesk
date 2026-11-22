@@ -1,0 +1,15 @@
+<app-card title="Attendance today" subtitle="Everyone's attendance for today." [flush]="true">
+  <app-data-table
+    ariaLabel="Attendance today"
+    itemLabel="employees"
+    emptyTitle="No attendance yet"
+    emptyMessage="Attendance for today will show here once staff arrive."
+    [columns]="columns"
+    [rows]="rows()"
+    [rowKey]="rowKey"
+  >
+    <ng-template appDataTableCell="status" let-row>
+      <app-badge [label]="statusOf(row).label" [tone]="statusOf(row).tone" />
+    </ng-template>
+  </app-data-table>
+</app-card>

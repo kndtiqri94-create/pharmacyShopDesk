@@ -10,6 +10,7 @@ export const PURCHASE_ORDER_SEED: readonly PurchaseOrder[] = [
     supplierId: 'sup-002',
     status: PoStatus.RECEIVED,
     notes: '',
+    deliveryCents: 0,
     totalCents: 312_000,
     lines: [
       { productId: 'prod-004', orderedQuantity: 600, receivedQuantity: 600, unitCostCents: 520 },
@@ -23,6 +24,7 @@ export const PURCHASE_ORDER_SEED: readonly PurchaseOrder[] = [
     supplierId: 'sup-004',
     status: PoStatus.CANCELLED,
     notes: 'Cancelled, supplier could not deliver in time.',
+    deliveryCents: 0,
     totalCents: 1_120_000,
     lines: [
       { productId: 'prod-009', orderedQuantity: 40, receivedQuantity: 0, unitCostCents: 28000 },
@@ -36,6 +38,7 @@ export const PURCHASE_ORDER_SEED: readonly PurchaseOrder[] = [
     supplierId: 'sup-002',
     status: PoStatus.PART_RECEIVED,
     notes: '',
+    deliveryCents: 0,
     totalCents: 535_000,
     lines: [
       { productId: 'prod-001', orderedQuantity: 2000, receivedQuantity: 1000, unitCostCents: 180 },
@@ -50,6 +53,7 @@ export const PURCHASE_ORDER_SEED: readonly PurchaseOrder[] = [
     supplierId: 'sup-001',
     status: PoStatus.SENT,
     notes: 'Please deliver before noon.',
+    deliveryCents: 0,
     totalCents: 700_000,
     lines: [
       { productId: 'prod-002', orderedQuantity: 200, receivedQuantity: 0, unitCostCents: 1250 },
@@ -64,6 +68,7 @@ export const PURCHASE_ORDER_SEED: readonly PurchaseOrder[] = [
     supplierId: 'sup-003',
     status: PoStatus.DRAFT,
     notes: '',
+    deliveryCents: 0,
     totalCents: 380_000,
     lines: [
       { productId: 'prod-007', orderedQuantity: 10, receivedQuantity: 0, unitCostCents: 38000 },

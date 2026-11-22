@@ -18,6 +18,9 @@ export const PRODUCT_SEED: readonly Product[] = [
     stockOnHand: 0,
     prescriptionRequired: false,
     active: true,
+    taxRatePercent: 0,
+    shelfLocation: 'Shelf A1',
+    showInPosQuickList: true,
     batches: [
       { id: 'bat-002', batchNo: 'B2511', expiryDate: '2028-01-31', quantity: 2400, costCents: 180 },
       { id: 'bat-001', batchNo: 'B2405', expiryDate: '2027-03-31', quantity: 1200, costCents: 175 },
@@ -40,6 +43,9 @@ export const PRODUCT_SEED: readonly Product[] = [
     stockOnHand: 0,
     prescriptionRequired: true,
     active: true,
+    taxRatePercent: 0,
+    shelfLocation: 'Shelf A2',
+    showInPosQuickList: true,
     batches: [
       { id: 'bat-003', batchNo: 'B2406', expiryDate: '2026-11-15', quantity: 150, costCents: 1250 },
     ],
@@ -61,6 +67,9 @@ export const PRODUCT_SEED: readonly Product[] = [
     stockOnHand: 0,
     prescriptionRequired: false,
     active: true,
+    taxRatePercent: 0,
+    shelfLocation: 'Shelf A3',
+    showInPosQuickList: true,
     batches: [
       { id: 'bat-004', batchNo: 'B2403', expiryDate: '2027-08-31', quantity: 40, costCents: 300 },
     ],
@@ -82,6 +91,9 @@ export const PRODUCT_SEED: readonly Product[] = [
     stockOnHand: 0,
     prescriptionRequired: false,
     active: true,
+    taxRatePercent: 0,
+    shelfLocation: 'Shelf B1',
+    showInPosQuickList: true,
     batches: [
       { id: 'bat-005', batchNo: 'B2408', expiryDate: '2027-10-31', quantity: 600, costCents: 520 },
     ],
@@ -103,6 +115,9 @@ export const PRODUCT_SEED: readonly Product[] = [
     stockOnHand: 0,
     prescriptionRequired: false,
     active: true,
+    taxRatePercent: 0,
+    shelfLocation: 'Shelf B2',
+    showInPosQuickList: true,
     batches: [
       { id: 'bat-006', batchNo: 'B2501', expiryDate: '2028-02-29', quantity: 800, costCents: 350 },
     ],
@@ -124,6 +139,9 @@ export const PRODUCT_SEED: readonly Product[] = [
     stockOnHand: 0,
     prescriptionRequired: false,
     active: true,
+    taxRatePercent: 0,
+    shelfLocation: 'Shelf B3',
+    showInPosQuickList: true,
     batches: [],
   },
   {
@@ -143,6 +161,9 @@ export const PRODUCT_SEED: readonly Product[] = [
     stockOnHand: 0,
     prescriptionRequired: true,
     active: true,
+    taxRatePercent: 0,
+    shelfLocation: 'Shelf C1',
+    showInPosQuickList: true,
     batches: [
       { id: 'bat-007', batchNo: 'B2410', expiryDate: '2027-12-31', quantity: 18, costCents: 38000 },
     ],
@@ -164,6 +185,9 @@ export const PRODUCT_SEED: readonly Product[] = [
     stockOnHand: 0,
     prescriptionRequired: true,
     active: true,
+    taxRatePercent: 0,
+    shelfLocation: 'Shelf C2',
+    showInPosQuickList: true,
     batches: [
       { id: 'bat-008', batchNo: 'B2404', expiryDate: '2027-05-31', quantity: 260, costCents: 220 },
     ],
@@ -185,6 +209,9 @@ export const PRODUCT_SEED: readonly Product[] = [
     stockOnHand: 0,
     prescriptionRequired: false,
     active: true,
+    taxRatePercent: 0,
+    shelfLocation: 'Shelf D1',
+    showInPosQuickList: true,
     batches: [
       { id: 'bat-009', batchNo: 'B2409', expiryDate: '2028-03-31', quantity: 42, costCents: 28000 },
     ],
@@ -206,6 +233,9 @@ export const PRODUCT_SEED: readonly Product[] = [
     stockOnHand: 24,
     prescriptionRequired: false,
     active: true,
+    taxRatePercent: 0,
+    shelfLocation: 'Shelf D2',
+    showInPosQuickList: true,
     batches: [],
   },
 ];

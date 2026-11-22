@@ -1,0 +1,31 @@
+<app-pos-dialog heading="Add actual balance" [open]="open()" (closed)="closed.emit()">
+  <p class="sd-caption">Cash counted in the drawer for {{ dateOf(date()) }}.</p>
+  <div class="sd-form-grid">
+    <app-field
+      label="Counted cash"
+      fieldId="actual-balance-amount"
+      prefix="Rs."
+      size="xl"
+      [error]="error()"
+      hint="Zero or more, with up to two decimals."
+      [span]="12"
+    >
+      <input
+        appFieldControl
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        maxlength="12"
+        [value]="amountText()"
+        (input)="onAmountInput($event)"
+        (keydown.enter)="save()"
+      />
+    </app-field>
+  </div>
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close</app-button>
+    <app-button variant="primary" size="xl" [disabled]="busy()" (click)="save()">
+      Save actual balance
+    </app-button>
+  </div>
+</app-pos-dialog>

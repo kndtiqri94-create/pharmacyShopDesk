@@ -19,6 +19,12 @@ Sources: `docs/design/ShopDesk-design-system.md`, `docs/design/SHOPDESK_FRONTEND
 - Light and dark themes, both as CSS custom properties. The sidebar is always dark.
 - Text pairs meet 4.5:1; control borders and the focus ring meet 3:1, in both themes.
 
+## Narrow exception: POS billing screen (PRD A21, F-2.11)
+- On the POS billing screen only (`features/modules/pos/`), secondary buttons may be soft tinted and colour-coded (Hold and Held bills amber, Save green, other secondaries blue) via the `tone` input on Button and the `--sd-pos-*` tokens in `_tokens.scss`. The tints exist in a light and a dark set. Text meets 4.5:1 and borders 3:1, enforced by `npm run check:contrast`.
+- The billing screen also uses a muted grey page (`--sd-pos-bg`) with a slightly darker line-item panel (`--sd-pos-panel`).
+- Labels and icons always stay on tinted buttons; colour never carries meaning alone. Primary buttons stay indigo. Every other screen keeps the default rule: colour is for status only, never decoration.
+- `ShopDesk-design-system.md` is unchanged.
+
 ## Layout and responsiveness
 - Desktop-first: 232px sidebar plus a fluid content column at 1280px and wider. Forms use a 12-column grid with a 320px summary column beside the main form.
 - It MUST be responsive. Below desktop: the sidebar collapses (off-canvas or icon rail with a menu toggle); tables scroll horizontally or stack without losing key columns; form grids reflow to fewer columns; the 320px summary column moves below the main form; card grids reflow.
@@ -46,3 +52,8 @@ Till and reload screens and the login button use the `lg` control (46px). Keypad
 
 ## Standing instruction
 Flag any later request that conflicts with the above before building it.
+
+## POS payment panel additions (F-2.12)
+- On the POS billing screen only, the Button `tone` input also accepts `purple` (outline, Save), `muted` (outline, Save Quotation) and `slate` (solid fill, New and Cancel in Create Account), alongside `amber`, `green` and `blue`. Save and Print uses `green`. Tokens: `--sd-pos-purple-*`, `--sd-pos-muted-*`, `--sd-pos-slate-*` in `_tokens.scss`, light and dark, covered by `npm run check:contrast`.
+- The grey summary box and the Paid / Balance box use `--sd-pos-summary-bg`; the selected payment method tile uses `--sd-pos-tile-active-bg` with indigo text. Total uses `--sd-fs-total` (32px bold), Balance uses `--sd-fs-balance` (20px bold).
+- Shortcut hints sit at the bottom-right of the button or tile. Labels always stay visible; colour never carries meaning alone.

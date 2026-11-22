@@ -1,0 +1,24 @@
+<app-card title="Best sellers this week">
+  @if (sellers().length === 0) {
+    <app-empty-state
+      title="No sales yet this week"
+      message="Best sellers appear here once you start selling."
+    />
+  } @else {
+    <ul class="sellers">
+      @for (seller of sellers(); track seller.productId) {
+        <li class="sellers__row">
+          <div class="sellers__text">
+            <span class="sd-body-strong">{{ seller.productName }}</span>
+            <span class="sd-num">{{ formatCount(seller.unitsSold) }}</span>
+          </div>
+          <app-progress-bar
+            [value]="seller.unitsSold"
+            [max]="topUnits()"
+            [label]="unitsLabel(seller)"
+          />
+        </li>
+      }
+    </ul>
+  }
+</app-card>

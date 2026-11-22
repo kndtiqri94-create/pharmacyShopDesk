@@ -1,0 +1,67 @@
+<app-pos-print-sheet
+  [open]="saleReturn() !== null"
+  heading="Return receipt"
+  printLabel="Print return receipt"
+  (closed)="closed.emit()"
+>
+  @if (saleReturn(); as receipt) {
+    <header class="rc-header">
+      <p class="sd-body-strong">{{ settings()?.shopName ?? 'Return receipt' }}</p>
+      @if (settings()?.address) {
+        <p class="sd-caption">{{ settings()?.address }}</p>
+      }
+    </header>
+    <dl class="rc-meta">
+      <div>
+        <dt>Return</dt>
+        <dd class="sd-code" data-testid="return-receipt-no">{{ receipt.returnNo }}</dd>
+      </div>
+      <div>
+        <dt>Original invoice</dt>
+        <dd class="sd-code">{{ receipt.originalInvoiceNo }}</dd>
+      </div>
+      <div>
+        <dt>Date</dt>
+        <dd>{{ dateOf(receipt.date) }} {{ timeOf(receipt.createdAt) }}</dd>
+      </div>
+      <div>
+        <dt>Customer</dt>
+        <dd>{{ receipt.customerName }}</dd>
+      </div>
+      <div>
+        <dt>Processed by</dt>
+        <dd>{{ receipt.processedByName }}</dd>
+      </div>
+    </dl>
+    <table class="rc-lines" aria-label="Items returned">
+      <thead>
+        <tr>
+          <th scope="col">Item</th>
+          <th scope="col" class="is-right">Qty</th>
+          <th scope="col" class="is-right">Price</th>
+          <th scope="col" class="is-right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (line of receipt.lines; track line.productId) {
+          <tr>
+            <td>{{ line.name }}</td>
+            <td class="is-right sd-num">{{ line.quantity }}</td>
+            <td class="is-right sd-num">{{ cell(line.unitPriceCents) }}</td>
+            <td class="is-right sd-num">{{ cell(line.totalCents) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <dl class="rc-totals">
+      <div class="rc-grand">
+        <dt>Returned value</dt>
+        <dd class="sd-num">{{ money(receipt.totalCents) }}</dd>
+      </div>
+      <div>
+        <dt>{{ settlementLabels[receipt.settlement] }}</dt>
+        <dd class="sd-num">{{ money(receipt.totalCents) }}</dd>
+      </div>
+    </dl>
+  }
+</app-pos-print-sheet>

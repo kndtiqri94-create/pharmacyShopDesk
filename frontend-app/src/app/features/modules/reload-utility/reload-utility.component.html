@@ -1,0 +1,36 @@
+<div class="sd-stack">
+  <app-page-header
+    title="Reload & utility"
+    subtitle="Sell mobile reloads and take bill payments at the counter."
+  >
+    <div pageActions class="sd-row">
+      @if (!canWrite()) {
+        <app-badge label="View only" tone="info" />
+      }
+      <app-button icon="receipt" (click)="showStatementMessage()">Statement</app-button>
+      <ng-template [appCanWrite]="moduleKey">
+        <app-button variant="primary" icon="plus" (click)="openTopUp()">Top up float</app-button>
+      </ng-template>
+    </div>
+  </app-page-header>
+
+  <div class="sd-with-summary">
+    <app-mobile-reload-card [canWrite]="canWrite()" (sent)="refresh()" />
+    <div class="sd-stack">
+      <app-reload-float-card [float]="float()" [lowFloatCents]="lowFloatCents()" />
+      <app-bill-payment-card [canWrite]="canWrite()" (paid)="refresh()" />
+    </div>
+  </div>
+
+  <app-recent-transactions [transactions]="transactions()" />
+</div>
+
+<ng-template [appCanWrite]="moduleKey">
+  <app-top-up-dialog
+    [open]="topUpOpen()"
+    [busy]="topUpBusy()"
+    [serverError]="topUpError()"
+    (confirmed)="confirmTopUp($event)"
+    (cancelled)="closeTopUp()"
+  />
+</ng-template>

@@ -1,0 +1,97 @@
+<app-pos-print-sheet
+  [open]="report() !== null"
+  heading="Counter report"
+  printLabel="Print counter report"
+  (closed)="closed.emit()"
+>
+  @if (report(); as sheet) {
+    <header class="rc-header">
+      <p class="sd-body-strong">{{ settings()?.shopName ?? 'Counter report' }}</p>
+      <p class="sd-caption">Locked report for {{ dateOf(sheet.date) }}</p>
+    </header>
+    <dl class="rc-totals">
+      <div>
+        <dt>Opening balance</dt>
+        <dd class="sd-num">{{ money(sheet.openingCents) }}</dd>
+      </div>
+      <div>
+        <dt>Cash in</dt>
+        <dd class="sd-num">{{ money(sheet.cashInCents) }}</dd>
+      </div>
+      <div>
+        <dt>Cash out</dt>
+        <dd class="sd-num">{{ money(sheet.cashOutCents) }}</dd>
+      </div>
+      <div>
+        <dt>Expected cash</dt>
+        <dd class="sd-num">{{ money(sheet.expectedCents) }}</dd>
+      </div>
+      <div>
+        <dt>Counted cash</dt>
+        <dd class="sd-num">{{ money(sheet.countedCents) }}</dd>
+      </div>
+      <div class="rc-grand">
+        <dt>Difference</dt>
+        <dd class="sd-num">{{ money(sheet.differenceCents) }} {{ outcomeLabel(sheet) }}</dd>
+      </div>
+    </dl>
+    <dl class="rc-totals" data-testid="receipt-handover">
+      <div>
+        <dt>Cash handed to supervisor</dt>
+        <dd class="sd-num">{{ money(sheet.handoverCents) }}</dd>
+      </div>
+      @if (sheet.supervisorName) {
+        <div>
+          <dt>Supervisor</dt>
+          <dd>{{ sheet.supervisorName }}</dd>
+        </div>
+      }
+      <div>
+        <dt>Balance brought forward</dt>
+        <dd class="sd-num">{{ money(sheet.broughtForwardCents) }}</dd>
+      </div>
+      @if (sheet.unaccountedCents > 0) {
+        <div class="rc-grand">
+          <dt>Not accounted for</dt>
+          <dd class="sd-num" data-testid="receipt-unaccounted">
+            {{ money(sheet.unaccountedCents) }}
+          </dd>
+        </div>
+      }
+    </dl>
+    <dl class="rc-meta">
+      <div>
+        <dt>Closed by</dt>
+        <dd>{{ sheet.closedBy }}</dd>
+      </div>
+      <div>
+        <dt>Register</dt>
+        <dd>{{ sheet.register }}</dd>
+      </div>
+      <div>
+        <dt>Start Time</dt>
+        <dd>
+          @if (sheet.startTime; as start) {
+            {{ dateOf(start) }} {{ timeOf(start) }}
+          } @else {
+            No activity
+          }
+        </dd>
+      </div>
+      <div>
+        <dt>End Time</dt>
+        <dd>{{ dateOf(sheet.endTime) }} {{ timeOf(sheet.endTime) }}</dd>
+      </div>
+      <div>
+        <dt>Total Sales</dt>
+        <dd class="sd-num">{{ money(sheet.totalSalesCents) }}</dd>
+      </div>
+      @if (sheet.note) {
+        <div>
+          <dt>Note</dt>
+          <dd>{{ sheet.note }}</dd>
+        </div>
+      }
+    </dl>
+  }
+</app-pos-print-sheet>

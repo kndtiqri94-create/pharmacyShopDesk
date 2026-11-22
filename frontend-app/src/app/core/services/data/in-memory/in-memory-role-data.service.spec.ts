@@ -20,7 +20,9 @@ describe('InMemoryRoleDataService', () => {
       'purchase-orders': 'FULL',
       suppliers: 'FULL',
       employees: 'VIEW',
+      payroll: 'VIEW',
       'reload-utility': 'FULL',
+      pos: 'FULL',
       users: 'NONE',
       settings: 'NONE',
     });
@@ -31,7 +33,9 @@ describe('InMemoryRoleDataService', () => {
       'purchase-orders': 'VIEW',
       suppliers: 'VIEW',
       employees: 'NONE',
+      payroll: 'NONE',
       'reload-utility': 'VIEW',
+      pos: 'FULL',
       users: 'NONE',
       settings: 'NONE',
     });
@@ -42,7 +46,9 @@ describe('InMemoryRoleDataService', () => {
       'purchase-orders': 'NONE',
       suppliers: 'NONE',
       employees: 'NONE',
+      payroll: 'NONE',
       'reload-utility': 'FULL',
+      pos: 'FULL',
       users: 'NONE',
       settings: 'NONE',
     });

@@ -2,6 +2,7 @@ import {
   Component,
   Injector,
   afterNextRender,
+  computed,
   effect,
   inject,
   untracked,
@@ -36,6 +37,9 @@ export class AppShellComponent {
 
   protected readonly shellStateService = inject(ShellStateService);
   protected readonly viewportService = inject(ViewportService);
+  protected readonly drawerMode = computed(
+    () => this.viewportService.isDrawerMode() || this.shellStateService.sidebarHidden()
+  );
 
   constructor() {
     effect(() => this.redirectWhenAccessLost());
@@ -56,13 +60,14 @@ export class AppShellComponent {
     if (key === null || !this.authService.isSignedIn() || this.permissionService.canView(key))
       return;
     untracked(() => {
+      this.permissionService.noteDenied(key);
       this.router.navigateByUrl(ACCESS_DENIED_PATH, { replaceUrl: true }).catch(() => undefined);
     });
   }
 
   private moveFocusWithMenu(): void {
     const open = this.shellStateService.menuOpen();
-    const drawerMode = this.viewportService.isDrawerMode();
+    const drawerMode = this.drawerMode();
     if (open === this.menuWasOpen) return;
     this.menuWasOpen = open;
     if (!drawerMode) return;

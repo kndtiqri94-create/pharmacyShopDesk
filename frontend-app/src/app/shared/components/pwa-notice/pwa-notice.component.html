@@ -1,0 +1,22 @@
+<output class="pwa-region">
+  @if (updateAvailable()) {
+    <div class="pwa-card" data-testid="pwa-update-notice">
+      <p class="pwa-text">
+        A new version of ShopDesk is ready. It will start the next time you open the app, or you can
+        update now.
+      </p>
+      <div class="pwa-actions">
+        <app-button variant="primary" size="xl" (click)="applyUpdate()">Update now</app-button>
+        <app-button variant="ghost" size="xl" (click)="dismissUpdate()">Not now</app-button>
+      </div>
+    </div>
+  }
+  @if (canInstall()) {
+    <div class="pwa-card" data-testid="pwa-install-notice">
+      <p class="pwa-text">Install ShopDesk on this device to open it like an app.</p>
+      <div class="pwa-actions">
+        <app-button variant="soft" size="xl" (click)="install()">Install ShopDesk</app-button>
+      </div>
+    </div>
+  }
+</output>

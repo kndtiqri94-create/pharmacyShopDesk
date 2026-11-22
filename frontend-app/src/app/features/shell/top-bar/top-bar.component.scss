@@ -26,6 +26,10 @@
   }
 }
 
+.topbar__menu--always {
+  display: block;
+}
+
 .topbar__title {
   min-width: 80px;
 }
@@ -57,4 +61,30 @@
 
 .topbar__identity {
   line-height: var(--sd-lh-caption);
+}
+
+.pos-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sd-space-2);
+  min-height: var(--sd-control-lg);
+  padding: 0 var(--sd-space-5);
+  border: 2px solid var(--sd-info);
+  border-radius: var(--sd-radius-pill);
+  background: var(--sd-info);
+  color: var(--sd-on-info);
+  font-weight: 700;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+.pos-pill--active {
+  box-shadow:
+    0 0 0 2px var(--sd-surface),
+    0 0 0 4px var(--sd-info);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }

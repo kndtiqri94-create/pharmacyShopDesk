@@ -5,8 +5,8 @@ import {
   computed,
   contentChildren,
   input,
+  model,
   output,
-  signal,
 } from '@angular/core';
 import { formatCount, formatMoneyCell } from '../../../core/utils/money.util';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
@@ -40,15 +40,19 @@ export class DataTableComponent<T> {
   readonly actions = input<readonly DataTableRowAction[]>([]);
   readonly ariaLabel = input.required<string>();
   readonly stack = input(false);
+  readonly paginate = input(true);
   readonly pageSize = input(DEFAULT_PAGE_SIZE);
   readonly itemLabel = input('items');
   readonly emptyTitle = input('Nothing to show yet');
   readonly emptyMessage = input('Add the first item to see it here.');
+  readonly activeRowKey = input<string | number | null>(null);
+  readonly selectable = input(false);
+  readonly selectedKeys = model<readonly (string | number)[]>([]);
+  readonly pageNumber = model(1);
 
   readonly actionTriggered = output<DataTableRowActionEvent<T>>();
 
   private readonly cellDirectives = contentChildren(DataTableCellDirective);
-  private readonly pageSignal = signal(1);
 
   protected readonly displayColumns = computed(() =>
     this.columns().map(column =>
@@ -61,16 +65,21 @@ export class DataTableComponent<T> {
   protected readonly effectivePageSize = computed(() =>
     Math.min(Math.max(1, Math.floor(this.pageSize())), MAX_PAGE_SIZE)
   );
-  protected readonly showPagination = computed(() => this.rows().length > PAGINATION_THRESHOLD);
+  protected readonly showPagination = computed(
+    () => this.paginate() && this.rows().length > PAGINATION_THRESHOLD
+  );
   protected readonly page = computed(() => {
     const lastPage = Math.max(1, Math.ceil(this.rows().length / this.effectivePageSize()));
-    return Math.min(this.pageSignal(), lastPage);
+    return Math.min(this.pageNumber(), lastPage);
   });
   protected readonly pageRows = computed(() => {
     if (!this.showPagination()) return this.rows();
     const size = this.effectivePageSize();
     return this.rows().slice((this.page() - 1) * size, this.page() * size);
   });
+  private readonly pageRowKeys = computed(() =>
+    this.pageRows().map((row, index) => this.trackRow(row, index))
+  );
   protected readonly templates = computed(() => {
     const map = new Map<string, TemplateRef<DataTableCellContext<unknown>>>();
     for (const directive of this.cellDirectives()) {
@@ -79,8 +88,45 @@ export class DataTableComponent<T> {
     return map;
   });
 
+  protected readonly allPageRowsSelected = computed(() => {
+    const keys = this.pageRowKeys();
+    return keys.length > 0 && keys.every(key => this.selectedKeys().includes(key));
+  });
+
   protected setPage(page: number): void {
-    this.pageSignal.set(page);
+    this.pageNumber.set(page);
+  }
+
+  protected isActive(row: T, index: number): boolean {
+    const key = this.activeRowKey();
+    return key !== null && this.trackRow(row, index) === key;
+  }
+
+  protected isSelected(row: T, index: number): boolean {
+    return this.selectedKeys().includes(this.trackRow(row, index));
+  }
+
+  protected toggleRow(row: T, index: number): void {
+    const key = this.trackRow(row, index);
+    const current = this.selectedKeys();
+    this.selectedKeys.set(
+      current.includes(key) ? current.filter(item => item !== key) : [...current, key]
+    );
+  }
+
+  protected toggleAllOnPage(): void {
+    const keys = this.pageRowKeys();
+    const current = this.selectedKeys();
+    this.selectedKeys.set(
+      this.allPageRowsSelected()
+        ? current.filter(item => !keys.includes(item))
+        : [...current, ...keys.filter(key => !current.includes(key))]
+    );
+  }
+
+  protected selectLabel(row: T): string {
+    const firstColumn = this.columns()[0];
+    return firstColumn ? `Select ${this.cellText(row, firstColumn)}` : 'Select row';
   }
 
   protected trackRow(row: T, index: number): string | number {

@@ -1,0 +1,174 @@
+<div class="return">
+  <div class="sd-form-grid">
+    <app-field
+      label="Invoice number"
+      fieldId="return-invoice-lookup"
+      size="xl"
+      hint="Type the invoice number of the sale, like INV-0001."
+      [span]="6"
+    >
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        [attr.maxlength]="lookupMaxLength"
+        [value]="invoiceText()"
+        (input)="onInvoiceInput($event)"
+        (keydown.enter)="findInvoice()"
+      />
+      <app-button fieldAction size="xl" (click)="findInvoice()">Find sale</app-button>
+    </app-field>
+    <app-field
+      label="Return bill number"
+      fieldId="return-bill-lookup"
+      size="xl"
+      hint="Look up an earlier return to view or print it."
+      [span]="6"
+    >
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        [attr.maxlength]="lookupMaxLength"
+        [value]="returnText()"
+        (input)="onReturnInput($event)"
+        (keydown.enter)="findReturn()"
+      />
+      <app-button fieldAction size="xl" (click)="findReturn()">Find return</app-button>
+    </app-field>
+  </div>
+
+  @if (lookupMessage(); as message) {
+    <app-alert tone="warning">{{ message }}</app-alert>
+  }
+
+  @if (returnService.viewedReturn(); as earlier) {
+    <div class="return__block" data-testid="viewed-return">
+      <app-alert tone="info" title="This return is already saved">
+        It cannot be returned a second time. You can print it again.
+      </app-alert>
+      <dl class="pp-summary">
+        <div>
+          <dt>Return</dt>
+          <dd class="sd-code">{{ earlier.returnNo }}</dd>
+        </div>
+        <div>
+          <dt>Original invoice</dt>
+          <dd class="sd-code">{{ earlier.originalInvoiceNo }}</dd>
+        </div>
+        <div>
+          <dt>Customer</dt>
+          <dd>{{ earlier.customerName }}</dd>
+        </div>
+        <div>
+          <dt>Date</dt>
+          <dd>{{ dateOf(earlier.date) }} {{ timeOf(earlier.createdAt) }}</dd>
+        </div>
+        <div>
+          <dt>{{ settlementLabels[earlier.settlement] }}</dt>
+          <dd class="sd-num">{{ money(earlier.totalCents) }}</dd>
+        </div>
+      </dl>
+      <div class="pp-row-actions">
+        <app-button size="xl" icon="printer" (click)="printRequested.emit(earlier)">
+          Print return receipt
+        </app-button>
+        <app-button size="xl" (click)="clear()">Done</app-button>
+      </div>
+    </div>
+  }
+
+  @if (returnService.sale(); as sale) {
+    <div class="return__block" data-testid="return-sale">
+      <dl class="pp-summary">
+        <div>
+          <dt>Invoice</dt>
+          <dd class="sd-code">{{ sale.invoiceNo }}</dd>
+        </div>
+        <div>
+          <dt>Customer</dt>
+          <dd>{{ sale.customerName }}</dd>
+        </div>
+        <div>
+          <dt>Sale date</dt>
+          <dd>{{ dateOf(sale.date) }}</dd>
+        </div>
+      </dl>
+
+      <app-data-table
+        ariaLabel="Items on the original sale"
+        itemLabel="items"
+        emptyTitle="No items"
+        emptyMessage="This sale has no items."
+        [columns]="columns"
+        [rows]="rows()"
+        [rowKey]="rowKey"
+        [paginate]="false"
+      >
+        <ng-template appDataTableCell="quantity" let-row>
+          <input
+            class="pp-line-input sd-num"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            maxlength="5"
+            [attr.aria-label]="'Quantity of ' + row.line.name + ' to return'"
+            [attr.aria-invalid]="row.error ? 'true' : null"
+            [value]="quantityText(row)"
+            [disabled]="!canReturn() || row.line.returnableQuantity === 0"
+            (input)="onQuantityInput(row, $event)"
+          />
+          @if (row.error) {
+            <p class="return__error sd-caption" role="alert">{{ row.error }}</p>
+          }
+        </ng-template>
+      </app-data-table>
+
+      <fieldset class="pp-fieldset">
+        <legend class="sd-label">Give the customer</legend>
+        @for (option of returnService.options(); track option) {
+          <label class="pp-radio">
+            <input
+              type="radio"
+              name="return-settlement"
+              [value]="option"
+              [checked]="returnService.settlement() === option"
+              [disabled]="!canReturn()"
+              (change)="chooseSettlement(option)"
+            />
+            {{ settlementLabels[option] }}
+          </label>
+        }
+        @if (returnService.isWalkIn()) {
+          <p class="sd-caption">
+            Walk-in Customer gets a cash refund only. Credit needs a named customer.
+          </p>
+        }
+      </fieldset>
+
+      <dl class="pp-summary">
+        <div class="pp-summary__strong">
+          <dt>Return total</dt>
+          <dd class="sd-num" data-testid="return-total">
+            {{ money(returnService.selection().totalCents) }}
+          </dd>
+        </div>
+      </dl>
+
+      <div class="pp-row-actions">
+        <app-button size="xl" [disabled]="busy()" (click)="clear()">Clear</app-button>
+        <app-button
+          variant="primary"
+          size="xl"
+          icon="check"
+          [disabled]="!canReturn() || busy()"
+          (click)="complete()"
+        >
+          Complete return
+        </app-button>
+      </div>
+    </div>
+  } @else if (!returnService.viewedReturn()) {
+    <p class="sd-muted">Find the original sale by its invoice number to start a return.</p>
+  }
+</div>

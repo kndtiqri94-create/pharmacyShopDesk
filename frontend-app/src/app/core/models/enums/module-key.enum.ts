@@ -5,7 +5,9 @@ export const ModuleKey = {
   PURCHASE_ORDERS: 'purchase-orders',
   SUPPLIERS: 'suppliers',
   EMPLOYEES: 'employees',
+  PAYROLL: 'payroll',
   RELOAD_UTILITY: 'reload-utility',
+  POS: 'pos',
   USERS: 'users',
   SETTINGS: 'settings',
 } as const;

@@ -5,4 +5,5 @@ export const SYNC_STATUS_SEED: SyncStatus = {
   state: SyncState.ONLINE,
   pendingChanges: 0,
   minutesSinceSync: 2,
+  autoSyncEnabled: true,
 };

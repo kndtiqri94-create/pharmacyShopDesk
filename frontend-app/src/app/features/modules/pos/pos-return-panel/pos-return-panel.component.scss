@@ -1,0 +1,17 @@
+@use '../pos-parts';
+
+:host {
+  display: block;
+}
+
+.return,
+.return__block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+}
+
+.return__error {
+  margin: var(--sd-space-1) 0 0;
+  color: var(--sd-danger);
+}

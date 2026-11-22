@@ -1,0 +1,19 @@
+<app-card title="Leave Balance" [subtitle]="subtitle()" [flush]="hasEmployee()">
+  @if (hasEmployee()) {
+    <app-data-table
+      ariaLabel="Leave balance"
+      itemLabel="leave types"
+      emptyTitle="No leave types"
+      emptyMessage="Leave types will show here once they are set up."
+      [columns]="columns"
+      [rows]="rows()"
+      [rowKey]="rowKey"
+      [paginate]="false"
+    />
+  } @else {
+    <app-empty-state
+      title="Choose an employee first"
+      message="Pick an employee on the left to see their leave balance for the year."
+    />
+  }
+</app-card>

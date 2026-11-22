@@ -1,0 +1,9 @@
+:host {
+  display: contents;
+}
+
+.top-up {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-3);
+}

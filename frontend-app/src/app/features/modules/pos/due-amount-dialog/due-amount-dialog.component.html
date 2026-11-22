@@ -1,0 +1,136 @@
+<app-pos-dialog heading="Due amount" size="lg" [open]="open()" (closed)="closed.emit()">
+  @if (lastPayment(); as payment) {
+    <app-alert tone="success" title="Payment saved">
+      {{ money(payment.amountCents) }} from {{ payment.customerName }}. Receipt
+      <span class="sd-code">{{ payment.receiptNo }}</span>
+      <app-button size="xl" icon="printer" (click)="printRequested.emit(payment)">
+        Print receipt
+      </app-button>
+    </app-alert>
+  }
+
+  @if (selected(); as due) {
+    <div class="pp-stack" data-testid="take-payment">
+      <dl class="pp-summary">
+        <div>
+          <dt>Customer</dt>
+          <dd>{{ due.name }}</dd>
+        </div>
+        <div class="pp-summary__strong">
+          <dt>Owes</dt>
+          <dd class="sd-num">{{ money(due.owedCents) }}</dd>
+        </div>
+      </dl>
+      <div class="sd-form-grid">
+        <app-field
+          label="Amount"
+          fieldId="due-amount"
+          prefix="Rs."
+          size="xl"
+          [error]="error()"
+          hint="Up to what the customer owes."
+          [span]="6"
+        >
+          <input
+            appFieldControl
+            class="due__input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            maxlength="12"
+            [value]="amountText()"
+            [disabled]="!canChange()"
+            (input)="onAmountInput($event)"
+            (keydown.enter)="save()"
+          />
+        </app-field>
+        <app-field label="Method" fieldId="due-method" size="xl" [span]="6">
+          <select appFieldControl [disabled]="!canChange()" (change)="onMethodChange($event)">
+            @for (option of methods; track option) {
+              <option [value]="option" [selected]="option === method()">
+                {{ methodLabel(option) }}
+              </option>
+            }
+          </select>
+        </app-field>
+        @if (method() !== cash) {
+          <app-field
+            label="Reference"
+            fieldId="due-reference"
+            size="xl"
+            hint="Optional. Do not type card or bank numbers."
+            [span]="12"
+          >
+            <input
+              appFieldControl
+              type="text"
+              autocomplete="off"
+              [attr.maxlength]="referenceMaxLength"
+              [value]="reference()"
+              [disabled]="!canChange()"
+              (input)="onReferenceInput($event)"
+            />
+          </app-field>
+        }
+      </div>
+      <div class="pp-row-actions">
+        <app-button size="xl" (click)="cancelPayment()">Back to list</app-button>
+        <app-button
+          variant="primary"
+          size="xl"
+          icon="check"
+          [disabled]="!canChange() || busy()"
+          (click)="save()"
+        >
+          Save payment
+        </app-button>
+      </div>
+    </div>
+  } @else {
+    <div class="sd-form-grid">
+      <app-field label="Search customer" fieldId="due-search" size="xl" [span]="6">
+        <input
+          appFieldControl
+          type="search"
+          autocomplete="off"
+          [attr.maxlength]="searchMaxLength"
+          [value]="search()"
+          (input)="onSearchInput($event)"
+        />
+      </app-field>
+    </div>
+    @if (loaded() && dues().length === 0) {
+      <app-alert tone="info" title="No unpaid balances">
+        No customer owes anything right now.
+      </app-alert>
+    } @else {
+      <app-data-table
+        ariaLabel="Customers who owe money"
+        itemLabel="customers"
+        emptyTitle="No customer matches"
+        emptyMessage="Try a different name."
+        [columns]="columns"
+        [rows]="visible()"
+        [rowKey]="rowKey"
+        [paginate]="false"
+      >
+        <ng-template appDataTableCell="action" let-row>
+          <div class="pp-row-actions">
+            <app-button
+              variant="primary"
+              size="xl"
+              [ariaLabel]="'Take payment from ' + row.name"
+              [disabled]="!canChange()"
+              (click)="choose(row)"
+            >
+              Take payment
+            </app-button>
+          </div>
+        </ng-template>
+      </app-data-table>
+    }
+  }
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close</app-button>
+  </div>
+</app-pos-dialog>

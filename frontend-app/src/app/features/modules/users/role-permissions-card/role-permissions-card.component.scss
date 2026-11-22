@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+
+.matrix {
+  width: 100%;
+  font-size: var(--sd-fs-body);
+}
+
+th {
+  padding: var(--sd-space-3) var(--sd-space-5);
+  background: var(--sd-surface-sunken);
+  color: var(--sd-ink-muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+td,
+.matrix__module {
+  padding: var(--sd-space-3) var(--sd-space-5);
+  border-top: 1px solid var(--sd-border);
+  background: transparent;
+  color: var(--sd-ink);
+  font-size: var(--sd-fs-body);
+  font-weight: 600;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+td {
+  font-weight: 400;
+}

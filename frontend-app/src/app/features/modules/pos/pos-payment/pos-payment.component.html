@@ -1,0 +1,230 @@
+<div class="payment">
+  <div class="payment__tiles" role="group" aria-label="Payment method">
+    @for (tile of tiles; track tile.id) {
+      <button
+        type="button"
+        class="tile"
+        [attr.aria-pressed]="posService.activePaymentMethod() === tile.id"
+        [attr.aria-label]="tileName(tile)"
+        [class.tile--active]="posService.activePaymentMethod() === tile.id"
+        [disabled]="!posService.canSell()"
+        (click)="selectMethod(tile.id)"
+      >
+        <span>{{ tile.label }}</span>
+        @if (tile.shortcut) {
+          <kbd class="tile__key" aria-hidden="true">{{ tile.shortcut }}</kbd>
+        }
+      </button>
+    }
+  </div>
+
+  <div class="sd-form-grid">
+    @switch (posService.activePaymentMethod()) {
+      @case ('cash') {
+        <app-field
+          label="Cash Received"
+          fieldId="pos-pay-cash"
+          prefix="Rs."
+          size="xl"
+          [error]="posService.parsedPayments().errors.cash ?? null"
+        >
+          <input
+            appFieldControl
+            class="payment__input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            [attr.maxlength]="amountMaxLength"
+            [value]="posService.bill().payments.cash"
+            [disabled]="!posService.canSell()"
+            (input)="onAmountInput('cash', $event)"
+          />
+          <button
+            fieldAction
+            type="button"
+            class="payment__clear"
+            aria-label="Clear Cash Received"
+            [disabled]="!posService.canSell()"
+            (click)="clearAmount('cash')"
+          >
+            <app-icon name="x" />
+          </button>
+        </app-field>
+      }
+      @case ('card') {
+        <app-field
+          label="Paid"
+          fieldId="pos-pay-card"
+          prefix="Rs."
+          size="xl"
+          [error]="posService.parsedPayments().errors.card ?? null"
+        >
+          <input
+            appFieldControl
+            class="payment__input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            [attr.maxlength]="amountMaxLength"
+            [value]="posService.bill().payments.card"
+            [disabled]="!posService.canSell()"
+            (input)="onAmountInput('card', $event)"
+          />
+          <button
+            fieldAction
+            type="button"
+            class="payment__clear"
+            aria-label="Clear Paid"
+            [disabled]="!posService.canSell()"
+            (click)="clearAmount('card')"
+          >
+            <app-icon name="x" />
+          </button>
+        </app-field>
+        <app-field
+          label="Last 4 No."
+          fieldId="pos-card-last4"
+          size="xl"
+          hint="Optional."
+          [error]="last4Error()"
+        >
+          <input
+            appFieldControl
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            [attr.maxlength]="last4Length"
+            [value]="posService.bill().payments.cardLast4"
+            [disabled]="!posService.canSell()"
+            (input)="onLast4Input($event)"
+          />
+          <button
+            fieldAction
+            type="button"
+            class="payment__clear"
+            aria-label="Clear Last 4 No."
+            [disabled]="!posService.canSell()"
+            (click)="clearLast4()"
+          >
+            <app-icon name="x" />
+          </button>
+        </app-field>
+      }
+      @case ('online') {
+        <app-field
+          label="Paid"
+          fieldId="pos-pay-online"
+          prefix="Rs."
+          size="xl"
+          [error]="posService.parsedPayments().errors.online ?? null"
+        >
+          <input
+            appFieldControl
+            class="payment__input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            [attr.maxlength]="amountMaxLength"
+            [value]="posService.bill().payments.online"
+            [disabled]="!posService.canSell()"
+            (input)="onAmountInput('online', $event)"
+          />
+          <button
+            fieldAction
+            type="button"
+            class="payment__clear"
+            aria-label="Clear Paid"
+            [disabled]="!posService.canSell()"
+            (click)="clearAmount('online')"
+          >
+            <app-icon name="x" />
+          </button>
+        </app-field>
+        <div class="account">
+          <app-field
+            class="account__field"
+            label="Account"
+            fieldId="pos-pay-account"
+            size="xl"
+            [error]="accountError()"
+          >
+            <select
+              appFieldControl
+              [disabled]="!posService.canSell()"
+              (change)="onAccountChange($event)"
+            >
+              <option value="" [selected]="posService.bill().payments.onlineAccountId === null">
+                Choose an account
+              </option>
+              @for (option of accountOptions(); track option.id) {
+                <option
+                  [value]="option.id"
+                  [selected]="posService.bill().payments.onlineAccountId === option.id"
+                >
+                  {{ option.label }}
+                </option>
+              }
+            </select>
+            <span fieldAction class="account__info">
+              <app-icon
+                name="info"
+                [size]="16"
+                label="Choose the shop bank account that received this payment"
+              />
+            </span>
+          </app-field>
+          <app-button
+            class="account__add"
+            size="xl"
+            icon="plus"
+            ariaLabel="Add a new account"
+            [disabled]="!posService.canSell()"
+            (click)="openCreateAccount()"
+          />
+        </div>
+        <app-field label="Note" fieldId="pos-online-note" hint="Optional.">
+          <textarea
+            appFieldControl
+            rows="2"
+            autocomplete="off"
+            [attr.maxlength]="noteMaxLength"
+            [value]="posService.bill().payments.onlineNote"
+            [disabled]="!posService.canSell()"
+            (input)="onNoteInput($event)"
+          ></textarea>
+        </app-field>
+      }
+      @case ('credit') {
+        <app-field label="Credit amount" fieldId="pos-credit-amount" prefix="Rs." size="xl">
+          <input
+            appFieldControl
+            class="payment__input"
+            type="text"
+            readonly
+            [value]="creditText()"
+          />
+        </app-field>
+        @if (posService.isWalkIn()) {
+          <p class="payment__notice" data-testid="credit-note">{{ walkInMessage }}</p>
+        }
+      }
+    }
+  </div>
+
+  <dl class="payment__result" data-testid="paid-balance-box">
+    <div class="payment__result-row">
+      <dt>Paid</dt>
+      <dd class="sd-num" data-testid="paid">{{ money(posService.totals().paidCents) }}</dd>
+    </div>
+    <div class="payment__result-row payment__result-row--balance">
+      <dt data-testid="balance-label">{{ balanceLabel() }}</dt>
+      <dd class="sd-num" data-testid="balance">{{ money(posService.totals().balanceCents) }}</dd>
+    </div>
+  </dl>
+
+  <app-create-account-dialog
+    [open]="createOpen()"
+    (created)="onAccountCreated($event)"
+    (closed)="closeCreateAccount()"
+  />
+</div>

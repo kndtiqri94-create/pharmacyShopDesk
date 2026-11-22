@@ -1,0 +1,53 @@
+<div class="sd-stack">
+  <app-page-header [title]="greeting()" [subtitle]="view()?.subtitle ?? null">
+    <div pageActions class="sd-row">
+      <app-button (click)="showDailyReportMessage()">Daily report</app-button>
+      <app-button variant="primary" icon="plus" [disabled]="!canCreateGrn()" (click)="openNewGrn()">
+        New GRN
+      </app-button>
+    </div>
+  </app-page-header>
+
+  @if (view(); as view) {
+    <div class="sd-card-grid">
+      <app-stat-card
+        label="Today's sales"
+        icon="wallet"
+        tone="primary"
+        [value]="view.salesValue"
+        [note]="view.salesNote"
+      />
+      <app-stat-card
+        label="Today's profit"
+        icon="trend"
+        tone="info"
+        [value]="view.profitValue"
+        [note]="view.profitNote"
+      />
+      <app-stat-card
+        label="Low stock"
+        icon="alert"
+        tone="warning"
+        [value]="view.lowStockValue"
+        [note]="view.lowStockNote"
+      />
+      <app-stat-card
+        label="Expiring soon"
+        icon="clock"
+        tone="danger"
+        [value]="view.expiringValue"
+        [note]="view.expiringNote"
+      />
+    </div>
+
+    <div class="sd-with-summary">
+      <app-dashboard-sales-chart [points]="view.sales" [today]="today" />
+      <app-dashboard-needs-attention [rows]="view.attention" />
+    </div>
+
+    <div class="sd-with-summary">
+      <app-dashboard-low-stock [rows]="view.lowStockRows" />
+      <app-dashboard-best-sellers [sellers]="view.bestSellers" />
+    </div>
+  }
+</div>

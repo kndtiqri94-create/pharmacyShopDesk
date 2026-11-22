@@ -29,6 +29,8 @@ function ratio(foreground, background) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
+const posTones = ['amber', 'green', 'blue', 'purple', 'muted'];
+
 const textPairs = [
   ['ink', 'app-bg'],
   ['ink', 'surface'],
@@ -52,12 +54,30 @@ const textPairs = [
   ['danger', 'surface'],
   ['info', 'info-soft'],
   ['info', 'surface'],
+  ['on-info', 'info'],
   ['sidebar-ink', 'sidebar-bg'],
   ['sidebar-ink', 'sidebar-hover'],
   ['sidebar-label', 'sidebar-bg'],
   ['sidebar-ink-strong', 'sidebar-bg'],
   ['sidebar-ink-strong', 'sidebar-hover'],
   ['sidebar-accent-ink', 'sidebar-accent'],
+  ['ink', 'pos-bg'],
+  ['ink', 'pos-panel'],
+  ['ink-muted', 'pos-bg'],
+  ['ink-muted', 'pos-panel'],
+  ['ink-subtle', 'pos-bg'],
+  ['ink-subtle', 'pos-panel'],
+  ['pos-slate-ink', 'pos-slate-bg'],
+  ['pos-slate-ink', 'pos-slate-bg-hover'],
+  ['ink', 'pos-summary-bg'],
+  ['ink-muted', 'pos-summary-bg'],
+  ['ink-subtle', 'pos-summary-bg'],
+  ['primary', 'pos-tile-active-bg'],
+  ['ink', 'pos-tile-active-bg'],
+  ...posTones.flatMap(tone => [
+    [`pos-${tone}-ink`, `pos-${tone}-bg`],
+    [`pos-${tone}-ink`, `pos-${tone}-bg-hover`],
+  ]),
 ];
 
 const controlPairs = [
@@ -68,6 +88,18 @@ const controlPairs = [
   ['focus-ring-inverse', 'sidebar-bg'],
   ['primary', 'surface'],
   ['danger', 'surface'],
+  ['border-strong', 'pos-bg'],
+  ['border-strong', 'pos-panel'],
+  ['focus-ring', 'pos-bg'],
+  ['focus-ring', 'pos-panel'],
+  ['focus-ring', 'pos-summary-bg'],
+  ['pos-slate-bg', 'pos-bg'],
+  ['pos-slate-bg', 'pos-panel'],
+  ['pos-slate-bg', 'surface'],
+  ...posTones.flatMap(tone => [
+    [`pos-${tone}-border`, `pos-${tone}-bg`],
+    [`pos-${tone}-border`, 'pos-bg'],
+  ]),
 ];
 
 const light = readBlock(':root');

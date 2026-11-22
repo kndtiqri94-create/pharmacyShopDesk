@@ -1,0 +1,90 @@
+<app-side-panel
+  title="Add user"
+  [open]="open()"
+  [initialFocus]="initialFocus()"
+  (closed)="cancel()"
+>
+  <form id="add-user-form" class="sd-stack" novalidate [formGroup]="form" (ngSubmit)="create()">
+    <app-field
+      label="Employee"
+      [fieldId]="fieldId('employeeId')"
+      [required]="true"
+      [error]="error('employeeId')"
+    >
+      <select appFieldControl formControlName="employeeId">
+        <option value="">Choose an employee</option>
+        @for (employee of employees(); track employee.id) {
+          <option [value]="employee.id">{{ employeeOption(employee) }}</option>
+        }
+      </select>
+    </app-field>
+    <app-field
+      label="Username or email"
+      [fieldId]="fieldId('username')"
+      [required]="true"
+      [error]="error('username')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        formControlName="username"
+        [attr.maxlength]="limits.username"
+      />
+    </app-field>
+    <app-field
+      label="Role"
+      hint="Cashiers can sell and take reloads, nothing else."
+      [fieldId]="fieldId('role')"
+      [required]="true"
+      [error]="error('role')"
+    >
+      <select appFieldControl formControlName="role">
+        <option value="">Choose a role</option>
+        @for (role of roles; track role) {
+          <option [value]="role">{{ roleLabel(role) }}</option>
+        }
+      </select>
+    </app-field>
+    <app-field
+      label="Temporary password"
+      [fieldId]="fieldId('password')"
+      [required]="true"
+      [error]="error('password')"
+    >
+      <input
+        appFieldControl
+        type="password"
+        autocomplete="new-password"
+        formControlName="password"
+        [attr.maxlength]="limits.passwordMax"
+      />
+    </app-field>
+    <app-field
+      label="Quick PIN for the till"
+      hint="Used to unlock the POS screen."
+      [fieldId]="fieldId('pin')"
+      [error]="error('pin')"
+    >
+      <input
+        appFieldControl
+        type="password"
+        inputmode="numeric"
+        autocomplete="off"
+        formControlName="pin"
+        [attr.maxlength]="limits.pinLength"
+      />
+    </app-field>
+    <app-toggle
+      label="Change password at first sign-in"
+      [checked]="form.controls.mustChangePassword.value"
+      (checkedChange)="form.controls.mustChangePassword.setValue($event)"
+    />
+  </form>
+  <ng-container panelFooter>
+    <app-button [disabled]="saving()" (click)="cancel()">Cancel</app-button>
+    <app-button variant="primary" [disabled]="saving()" (click)="create()">
+      Create user
+    </app-button>
+  </ng-container>
+</app-side-panel>

@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+.sellers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sellers__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-2);
+}
+
+.sellers__text {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sd-space-3);
+}

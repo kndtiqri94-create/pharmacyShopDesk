@@ -1,0 +1,38 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.group {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: var(--sd-space-5);
+  padding: var(--sd-space-5);
+  border-top: 1px solid var(--sd-border);
+
+  &:first-child {
+    border-top: 0;
+  }
+
+  @include bp.below-laptop {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sd-space-4);
+}
+
+.form-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--sd-space-2);
+}
+
+.confirm-actions {
+  margin-top: var(--sd-space-2);
+}

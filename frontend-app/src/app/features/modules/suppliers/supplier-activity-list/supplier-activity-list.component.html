@@ -1,0 +1,15 @@
+@if (items().length === 0) {
+  <p class="sd-muted">Nothing has happened with this supplier yet.</p>
+} @else {
+  <ul class="activity">
+    @for (item of items(); track item.key) {
+      <li class="activity__item">
+        <div>
+          <p class="sd-body-strong">{{ item.text }}</p>
+          <p class="sd-caption">{{ formatDate(item.date) }}</p>
+        </div>
+        <app-badge [label]="item.stateLabel" [tone]="item.tone" />
+      </li>
+    }
+  </ul>
+}

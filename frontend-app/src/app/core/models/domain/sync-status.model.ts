@@ -4,4 +4,5 @@ export interface SyncStatus {
   state: SyncState;
   pendingChanges: number;
   minutesSinceSync: number;
+  autoSyncEnabled: boolean;
 }

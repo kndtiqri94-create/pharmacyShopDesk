@@ -1,0 +1,30 @@
+<div class="sd-card-grid">
+  <app-stat-card
+    label="Total staff"
+    icon="idcard"
+    tone="primary"
+    [value]="summary().total.toString()"
+    [note]="splitNote()"
+  />
+  <app-stat-card
+    label="On shift today"
+    icon="clock"
+    tone="success"
+    [value]="summary().onShift.toString()"
+    [note]="lateNote()"
+  />
+  <app-stat-card
+    label="On leave"
+    icon="calendar"
+    tone="warning"
+    [value]="summary().onLeave.toString()"
+    [note]="leaveNote()"
+  />
+  <app-stat-card
+    label="Can log in"
+    icon="shield"
+    tone="info"
+    [value]="summary().canLogIn.toString()"
+    [note]="loginNote()"
+  />
+</div>

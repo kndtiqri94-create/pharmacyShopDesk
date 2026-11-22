@@ -1,0 +1,56 @@
+<dialog #dialog class="held" [attr.aria-labelledby]="titleId" (cancel)="onCancel($event)">
+  <div class="held__surface">
+    <h2 class="sd-section-title" [id]="titleId">Held bills</h2>
+    <app-data-table
+      ariaLabel="Held bills"
+      itemLabel="held bills"
+      emptyTitle="No bills on hold"
+      emptyMessage="Press Hold to park a bill and serve the next customer."
+      [columns]="columns"
+      [rows]="heldBills()"
+      [rowKey]="rowKey"
+      [paginate]="false"
+    >
+      <ng-template appDataTableCell="action" let-row>
+        @if (discardingId() === row.id) {
+          <div class="held__confirm">
+            <span class="sd-body-strong">Discard {{ row.holdNo }}?</span>
+            <app-button size="xl" (click)="keep()">Keep it</app-button>
+            <app-button
+              variant="danger"
+              size="xl"
+              [disabled]="busy()"
+              (click)="confirmDiscard(row.id)"
+            >
+              Discard
+            </app-button>
+          </div>
+        } @else {
+          <div class="held__actions">
+            <app-button
+              variant="primary"
+              size="xl"
+              [ariaLabel]="'Resume ' + row.holdNo"
+              [disabled]="busy() || !canChange()"
+              (click)="resumed.emit(row.id)"
+            >
+              Resume
+            </app-button>
+            <app-button
+              variant="danger"
+              size="xl"
+              [ariaLabel]="'Discard ' + row.holdNo"
+              [disabled]="busy() || !canChange()"
+              (click)="askDiscard(row.id)"
+            >
+              Discard
+            </app-button>
+          </div>
+        }
+      </ng-template>
+    </app-data-table>
+    <div class="held__footer">
+      <app-button size="xl" (click)="closed.emit()">Close</app-button>
+    </div>
+  </div>
+</dialog>

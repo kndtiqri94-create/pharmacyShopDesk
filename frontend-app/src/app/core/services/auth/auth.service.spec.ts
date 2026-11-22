@@ -1,10 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { clearBrowserStorage, TEST_PROVIDERS } from '../../../../testing/auth-test.util';
 import { UserRole } from '../../models/enums/user-role.enum';
-import { MOCK_AUTH_ENABLED } from './auth.tokens';
+import { UserStatus } from '../../models/enums/user-status.enum';
+import { UserDataService } from '../data/user-data.service';
+import { MOCK_AUTH_ENABLED, SIGN_IN_THROTTLE_MS } from './auth.tokens';
 import { AuthService } from './auth.service';
 import { MOCK_CREDENTIALS } from './mock-credentials';
+import { SessionCredentialStore } from './session-credential-store.service';
 import { SESSION_STORAGE_KEY } from './session-storage.service';
 
 describe('AuthService', () => {
@@ -159,5 +163,193 @@ describe('AuthService restoreSession when sign-in is configured', () => {
     const service = TestBed.inject(AuthService);
     await service.restoreSession();
     expect(service.currentUser()?.id).toBe('usr-001');
+  });
+});
+
+describe('AuthService with users created in this session', () => {
+  beforeEach(() => {
+    clearBrowserStorage();
+    TestBed.configureTestingModule({ providers: TEST_PROVIDERS });
+  });
+
+  afterEach(clearBrowserStorage);
+
+  const createSession = async () => {
+    const userDataService = TestBed.inject(UserDataService);
+    const user = await firstValueFrom(
+      userDataService.save({
+        id: 'usr-005',
+        username: 'suresh',
+        displayName: 'Suresh Kumar',
+        initials: 'SK',
+        role: UserRole.CASHIER,
+        employeeId: 'emp-005',
+        status: UserStatus.ACTIVE,
+        lastSignIn: '',
+      })
+    );
+    TestBed.inject(SessionCredentialStore).register(user.username, {
+      userId: user.id,
+      password: 'Welcome-1',
+      pin: null,
+      mustChangePassword: true,
+    });
+    return userDataService;
+  };
+
+  it('signs a new user in with the temporary password', async () => {
+    await createSession();
+    const result = await TestBed.inject(AuthService).signIn('Suresh', 'Welcome-1', false);
+    expect(result.success).toBeTrue();
+  });
+
+  it('keeps the same failure for a wrong password on a new user', async () => {
+    await createSession();
+    const result = await TestBed.inject(AuthService).signIn('suresh', 'Welcome-2', false);
+    expect(result).toEqual({ success: false, reason: 'invalid' });
+  });
+
+  it('refuses a disabled user with its own reason, but only when the password is right', async () => {
+    const userDataService = await createSession();
+    const user = (await firstValueFrom(userDataService.getById('usr-005')))!;
+    await firstValueFrom(userDataService.save({ ...user, status: UserStatus.DISABLED }));
+    const service = TestBed.inject(AuthService);
+    expect(await service.signIn('suresh', 'Welcome-1', false)).toEqual({
+      success: false,
+      reason: 'disabled',
+    });
+    expect(await service.signIn('suresh', 'wrong-password', false)).toEqual({
+      success: false,
+      reason: 'invalid',
+    });
+    expect(service.isSignedIn()).toBeFalse();
+    expect(sessionStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
+  });
+
+  it('refuses a disabled sample user and does not restore a disabled stored session', async () => {
+    const userDataService = TestBed.inject(UserDataService);
+    const user = (await firstValueFrom(userDataService.getById('usr-004')))!;
+    await firstValueFrom(userDataService.save({ ...user, status: UserStatus.DISABLED }));
+    const service = TestBed.inject(AuthService);
+    const cashier = MOCK_CREDENTIALS[3];
+    expect(await service.signIn(cashier.username, cashier.password, false)).toEqual({
+      success: false,
+      reason: 'disabled',
+    });
+    sessionStorage.setItem(SESSION_STORAGE_KEY, 'usr-004');
+    await service.restoreSession();
+    expect(service.isSignedIn()).toBeFalse();
+    expect(sessionStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
+  });
+});
+
+describe('AuthService verifyCredentials', () => {
+  const ownerCredential = MOCK_CREDENTIALS[0];
+  const managerCredential = MOCK_CREDENTIALS[1];
+
+  beforeEach(() => {
+    clearBrowserStorage();
+    TestBed.configureTestingModule({ providers: TEST_PROVIDERS });
+  });
+
+  afterEach(clearBrowserStorage);
+
+  const service = () => TestBed.inject(AuthService);
+
+  it('returns the matched user id for a valid pair', async () => {
+    expect(await service().verifyCredentials('nimal', ownerCredential.password)).toBe('usr-001');
+    expect(await service().verifyCredentials(' KAMAL ', managerCredential.password)).toBe(
+      'usr-002'
+    );
+  });
+
+  it('returns null for a wrong password, an unknown user and a mixed pair', async () => {
+    expect(await service().verifyCredentials('nimal', 'wrong')).toBeNull();
+    expect(await service().verifyCredentials('ghost', 'wrong')).toBeNull();
+    expect(await service().verifyCredentials('nimal', managerCredential.password)).toBeNull();
+  });
+
+  it('returns null for empty fields and over-long input', async () => {
+    expect(await service().verifyCredentials('', 'x')).toBeNull();
+    expect(await service().verifyCredentials('nimal', '')).toBeNull();
+    expect(
+      await service().verifyCredentials('nimal', `${ownerCredential.password}${'x'.repeat(200)}`)
+    ).toBeNull();
+    expect(await service().verifyCredentials('n'.repeat(500), 'x')).toBeNull();
+  });
+
+  it('does not sign anyone in or write to storage', async () => {
+    await service().verifyCredentials('nimal', ownerCredential.password);
+    expect(service().isSignedIn()).toBeFalse();
+    expect(service().currentUser()).toBeNull();
+    expect(sessionStorage.length).toBe(0);
+    expect(localStorage.length).toBe(0);
+  });
+
+  it('leaves the signed-in user unchanged when another pair is verified', async () => {
+    await service().signIn('ruwani', MOCK_CREDENTIALS[3].password, false);
+    await service().verifyCredentials('nimal', ownerCredential.password);
+    expect(service().currentUser()?.id).toBe('usr-004');
+  });
+
+  it('still accepts a valid Admin pair after many failures', async () => {
+    for (let attempt = 0; attempt < 6; attempt += 1) {
+      await service().verifyCredentials('nimal', 'wrong');
+    }
+    expect(await service().verifyCredentials('nimal', ownerCredential.password)).toBe('usr-001');
+  });
+
+  describe('failure counter', () => {
+    const throttleMs = 7;
+
+    function throttleWaits(spy: jasmine.Spy): number {
+      return spy.calls.allArgs().filter(args => args[1] === throttleMs).length;
+    }
+
+    beforeEach(() => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [...TEST_PROVIDERS, { provide: SIGN_IN_THROTTLE_MS, useValue: throttleMs }],
+      });
+    });
+
+    it('is not reset by a valid non-Admin pair', async () => {
+      const timer = spyOn(window, 'setTimeout').and.callThrough();
+      for (let attempt = 0; attempt < 4; attempt += 1) {
+        await service().verifyCredentials('nimal', 'wrong');
+      }
+      expect(await service().verifyCredentials('kamal', managerCredential.password)).toBe(
+        'usr-002'
+      );
+      await service().verifyCredentials('nimal', 'wrong');
+      expect(throttleWaits(timer)).toBe(1);
+    });
+
+    it('is reset by a valid active Admin pair', async () => {
+      const timer = spyOn(window, 'setTimeout').and.callThrough();
+      for (let attempt = 0; attempt < 4; attempt += 1) {
+        await service().verifyCredentials('nimal', 'wrong');
+      }
+      await service().verifyCredentials('nimal', ownerCredential.password);
+      await service().verifyCredentials('nimal', 'wrong');
+      expect(throttleWaits(timer)).toBe(0);
+    });
+
+    it('does not share the count with sign-in failures', async () => {
+      const timer = spyOn(window, 'setTimeout').and.callThrough();
+      for (let attempt = 0; attempt < 4; attempt += 1) {
+        await service().signIn('nimal', 'wrong', false);
+      }
+      await service().verifyCredentials('nimal', 'wrong');
+      expect(throttleWaits(timer)).toBe(0);
+    });
+  });
+
+  it('is refused when sign-in is not configured', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [...TEST_PROVIDERS, { provide: MOCK_AUTH_ENABLED, useValue: false }],
+    });
+    expect(await service().verifyCredentials('nimal', ownerCredential.password)).toBeNull();
   });
 });

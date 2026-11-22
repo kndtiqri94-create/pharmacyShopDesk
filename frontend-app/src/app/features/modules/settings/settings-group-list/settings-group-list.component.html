@@ -1,0 +1,17 @@
+<nav class="groups" aria-label="Setting groups">
+  <ul class="groups__list">
+    @for (group of groups; track group.id) {
+      <li>
+        <button
+          type="button"
+          class="group"
+          [class.group--active]="group.id === active()"
+          [attr.aria-current]="group.id === active() ? 'true' : null"
+          (click)="selected.emit(group.id)"
+        >
+          {{ group.label }}
+        </button>
+      </li>
+    }
+  </ul>
+</nav>

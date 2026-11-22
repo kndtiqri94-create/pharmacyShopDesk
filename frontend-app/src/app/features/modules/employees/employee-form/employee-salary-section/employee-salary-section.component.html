@@ -1,0 +1,96 @@
+<app-card
+  title="Employee salaries and allowances"
+  subtitle="Basic salary, allowances and pay rates."
+>
+  <div class="sd-form-grid">
+    @for (field of payFields; track field.key) {
+      <app-field
+        [label]="field.label"
+        [fieldId]="fieldId(field.key)"
+        [span]="4"
+        [prefix]="field.kind === 'money' ? 'Rs.' : null"
+        [suffix]="field.kind === 'percent' ? '%' : null"
+        [error]="error(field.key)"
+      >
+        <input
+          appFieldControl
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          [readOnly]="readOnly()"
+          [value]="draft()[field.key]"
+          (input)="setPay(field.key, $event)"
+        />
+      </app-field>
+    }
+  </div>
+
+  <div class="salary__lines" id="employee-allowances">
+    <div class="salary__lines-head">
+      <h3 class="sd-label">Allowances</h3>
+      @if (!readOnly()) {
+        <app-button size="sm" icon="plus" [disabled]="atCap()" (click)="addLine()">
+          Add allowance
+        </app-button>
+      }
+    </div>
+    @if (error('allowances'); as listError) {
+      <p class="salary__error" role="alert">{{ listError }}</p>
+    }
+    @if (atCap()) {
+      <p class="sd-caption" id="employee-allowances-cap">
+        You can add up to {{ limits.maxAllowances }} allowances. Remove one to add another.
+      </p>
+    }
+    @if (draft().allowances.length === 0) {
+      <p class="sd-muted">No allowances yet.</p>
+    }
+    @for (line of draft().allowances; track line.id; let index = $index) {
+      <div class="salary__line">
+        <app-field
+          [label]="'Allowance name ' + (index + 1)"
+          [fieldId]="fieldId(nameKey(index))"
+          [error]="error(nameKey(index))"
+        >
+          <input
+            appFieldControl
+            type="text"
+            autocomplete="off"
+            [readOnly]="readOnly()"
+            [value]="line.name"
+            [attr.maxlength]="limits.allowanceName"
+            (input)="editLine(index, 'name', $event)"
+          />
+        </app-field>
+        <app-field
+          [label]="'Allowance amount ' + (index + 1)"
+          [fieldId]="fieldId(amountKey(index))"
+          prefix="Rs."
+          [error]="error(amountKey(index))"
+        >
+          <input
+            appFieldControl
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            [readOnly]="readOnly()"
+            [value]="line.amount"
+            (input)="editLine(index, 'amount', $event)"
+          />
+        </app-field>
+        @if (!readOnly()) {
+          <app-button
+            variant="ghost"
+            icon="trash"
+            [ariaLabel]="'Remove allowance ' + (index + 1)"
+            (click)="removeLine(index)"
+          />
+        }
+      </div>
+    }
+    <p class="salary__total">
+      <span class="sd-label">Total allowances</span>
+      <strong id="employee-allowances-total">{{ total() }}</strong>
+    </p>
+  </div>
+</app-card>

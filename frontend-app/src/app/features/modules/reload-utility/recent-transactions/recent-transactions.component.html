@@ -1,0 +1,16 @@
+<app-card title="Recent transactions" [flush]="true">
+  <app-button cardActions icon="download" (click)="showExportMessage()">Export</app-button>
+  <app-data-table
+    ariaLabel="Recent transactions"
+    itemLabel="transactions"
+    emptyTitle="No transactions yet"
+    emptyMessage="Reloads and bill payments you take will be listed here."
+    [columns]="columns"
+    [rows]="transactions()"
+    [rowKey]="rowKey"
+  >
+    <ng-template appDataTableCell="status" let-row>
+      <app-badge [label]="statusOf(row).label" [tone]="statusOf(row).tone" />
+    </ng-template>
+  </app-data-table>
+</app-card>

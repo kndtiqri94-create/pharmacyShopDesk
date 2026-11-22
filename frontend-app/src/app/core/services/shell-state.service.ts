@@ -8,9 +8,11 @@ import { getModuleDefinition, moduleKeyFromUrl } from '../utils/module-definitio
 export class ShellStateService {
   private readonly router = inject(Router);
   private readonly menuOpenSignal = signal(false);
+  private readonly sidebarHiddenSignal = signal(false);
   private readonly currentUrlSignal = signal(this.router.url);
 
   readonly menuOpen = this.menuOpenSignal.asReadonly();
+  readonly sidebarHidden = this.sidebarHiddenSignal.asReadonly();
   readonly currentUrl = this.currentUrlSignal.asReadonly();
   readonly pageTitle = computed(() => this.titleForUrl(this.currentUrlSignal()));
 
@@ -32,6 +34,11 @@ export class ShellStateService {
 
   closeMenu(): void {
     this.menuOpenSignal.set(false);
+  }
+
+  setSidebarHidden(hidden: boolean): void {
+    this.sidebarHiddenSignal.set(hidden);
+    if (hidden) this.menuOpenSignal.set(false);
   }
 
   toggleMenu(): void {

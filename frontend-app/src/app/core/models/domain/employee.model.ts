@@ -1,4 +1,7 @@
 import { EmployeeStatus } from '../enums/employee-status.enum';
+import { EmployeeTitle } from '../enums/employee-title.enum';
+import { SalaryType } from '../enums/salary-type.enum';
+import { EmployeeAllowance } from './employee-allowance.model';
 
 export interface Employee {
   id: string;
@@ -10,4 +13,36 @@ export interface Employee {
   employmentType: string;
   status: EmployeeStatus;
   userId: string | null;
+  title: EmployeeTitle;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  email: string;
+  dateOfBirth: string | null;
+  location: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  suburb: string;
+  state: string;
+  country: string;
+  zip: string;
+  calculateEpf: boolean;
+  calculateEtf: boolean;
+  salaryType: SalaryType;
+  basicSalaryCents: number;
+  allowances: EmployeeAllowance[];
+  overTimeRateCents: number;
+  commissionRate: number;
+  productDiscountRate: number;
+  invoiceDiscountRate: number;
+  monthlyTargetCents: number;
+  considerAsCustomer: boolean;
+  createUserAccount: boolean;
+  customField1: string;
+  customField2: string;
+  customField3: string;
+  customField4: string;
+  photoDataUrl: string | null;
+  createdAt: string;
 }

@@ -1,0 +1,32 @@
+<app-confirm-dialog
+  title="Top up float"
+  confirmLabel="Top up float"
+  [open]="open()"
+  [busy]="busy()"
+  (confirmed)="submit()"
+  (cancelled)="cancelled.emit()"
+>
+  <div class="top-up">
+    <p class="sd-muted">The amount is added to your available float straight away.</p>
+    <app-field
+      label="Amount to add"
+      [fieldId]="amountId"
+      prefix="Rs."
+      size="lg"
+      hint="Whole rupees, up to Rs. 1,000,000."
+      [required]="true"
+      [error]="error()"
+    >
+      <input
+        appFieldControl
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        [attr.maxlength]="amountMaxLength"
+        [value]="amount()"
+        (input)="onInput($event)"
+        (keydown.enter)="submit()"
+      />
+    </app-field>
+  </div>
+</app-confirm-dialog>

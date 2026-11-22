@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+.status-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-3);
+}

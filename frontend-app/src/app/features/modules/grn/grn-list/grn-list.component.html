@@ -1,0 +1,87 @@
+<div class="sd-stack">
+  <app-page-header
+    title="Goods received notes"
+    subtitle="Every delivery you receive, with batches, expiry and what you owe."
+  >
+    <div pageActions class="sd-row">
+      <app-button icon="download" (click)="showSampleMessage('Export')">Export</app-button>
+      <ng-template [appCanWrite]="moduleKey">
+        <app-button variant="primary" icon="plus" (click)="newGrn()">New GRN</app-button>
+      </ng-template>
+    </div>
+  </app-page-header>
+
+  @if (tiles(); as tiles) {
+    <div class="sd-card-grid sd-card-grid--3">
+      <app-stat-card
+        label="Received this month"
+        icon="inbox"
+        tone="primary"
+        [value]="tiles.receivedValue"
+        [note]="tiles.receivedNote"
+      />
+      <app-stat-card
+        label="Waiting to be received"
+        icon="clipboard"
+        tone="info"
+        [value]="tiles.waitingValue"
+        [note]="tiles.waitingNote"
+      />
+      <app-stat-card
+        label="Unpaid to suppliers"
+        icon="wallet"
+        tone="warning"
+        [value]="tiles.unpaidValue"
+        [note]="tiles.unpaidNote"
+      />
+    </div>
+  }
+
+  <app-card [flush]="true">
+    <div class="toolbar">
+      <div class="toolbar__row">
+        <div class="sd-field-box toolbar__search">
+          <app-icon class="toolbar__icon" name="search" [size]="18" />
+          <input
+            type="search"
+            class="sd-field-control"
+            aria-label="Search GRNs"
+            placeholder="Search by GRN no, invoice no or supplier"
+            [attr.maxlength]="searchMaxLength"
+            [value]="search()"
+            (input)="onSearch($event)"
+          />
+        </div>
+        <app-button icon="calendar" (click)="showSampleMessage('Choosing another date range')">
+          This month · {{ rangeText }}
+        </app-button>
+      </div>
+      <app-chips
+        ariaLabel="Filter by status"
+        [items]="chipItems()"
+        [value]="status()"
+        (valueChange)="setStatus($event)"
+      />
+    </div>
+
+    <app-data-table
+      ariaLabel="Goods received notes"
+      itemLabel="GRNs"
+      emptyTitle="No GRNs match"
+      emptyMessage="Clear the search, or choose All, to see every GRN."
+      [columns]="columns"
+      [rows]="rows()"
+      [rowKey]="rowKey"
+      [actions]="actions"
+      [(pageNumber)]="page"
+      (actionTriggered)="onAction($event)"
+    >
+      <ng-template appDataTableCell="payment" let-item>
+        <app-payment-status-badge [status]="item.grn.paymentStatus" />
+      </ng-template>
+      <ng-template appDataTableCell="status" let-item>
+        <app-grn-status-badge [status]="item.grn.status" />
+      </ng-template>
+    </app-data-table>
+  </app-card>
+</div>

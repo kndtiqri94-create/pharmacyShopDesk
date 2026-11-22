@@ -1,0 +1,86 @@
+<div class="sd-stack">
+  <app-breadcrumb [items]="breadcrumb()" />
+  <app-page-header [title]="title()" [subtitle]="subtitle()">
+    <div pageActions class="sd-row">
+      @if (loaded() && !notFound()) {
+        @if (readOnly()) {
+          <app-badge label="View only" tone="info" />
+          <app-button variant="primary" (click)="goToList()">Back to employees</app-button>
+        } @else {
+          <app-button [disabled]="saving()" (click)="cancel()">Cancel</app-button>
+          <app-button variant="primary" [disabled]="saving()" (click)="save()">
+            Save employee
+          </app-button>
+        }
+      }
+    </div>
+  </app-page-header>
+
+  @if (notFound()) {
+    <app-card>
+      <app-empty-state
+        title="That employee is not in your list"
+        message="It may have been typed wrongly in the address or removed. Go back to Employees and pick them from the list."
+      >
+        <app-button (click)="goToList()">Back to employees</app-button>
+      </app-empty-state>
+    </app-card>
+  } @else if (loaded()) {
+    <form class="sd-stack" novalidate (submit)="$event.preventDefault()">
+      <app-employee-basic-section
+        [draft]="draft()"
+        [errors]="errors()"
+        [readOnly]="readOnly()"
+        [locations]="locations()"
+        [today]="today"
+        (changed)="updateDraft($event)"
+      />
+      <app-employee-address-section
+        [draft]="draft()"
+        [errors]="errors()"
+        [readOnly]="readOnly()"
+        (changed)="updateDraft($event)"
+      />
+      @if (canViewSalary()) {
+        <app-employee-salary-section
+          [draft]="draft()"
+          [errors]="errors()"
+          [readOnly]="readOnly()"
+          (changed)="updateDraft($event)"
+        />
+      }
+      <app-employee-more-section
+        [draft]="draft()"
+        [errors]="errors()"
+        [readOnly]="readOnly()"
+        [linkedUser]="linkedUser()"
+        (changed)="updateDraft($event)"
+      />
+    </form>
+  }
+</div>
+
+<app-confirm-dialog
+  title="Leave without saving?"
+  confirmLabel="Leave without saving"
+  cancelLabel="Keep editing"
+  [open]="leaveConfirmOpen()"
+  (confirmed)="discardAndLeave()"
+  (cancelled)="keepEditing()"
+>
+  <p>Your changes to this employee have not been saved and will be lost.</p>
+</app-confirm-dialog>
+
+<app-confirm-dialog
+  title="Finish the user account"
+  confirmLabel="Go to Users"
+  cancelLabel="Not now"
+  [open]="reminderOpen()"
+  (confirmed)="goToUsers()"
+  (cancelled)="skipUsers()"
+>
+  <p>
+    The employee is saved, but no sign-in exists yet. Go to Users & roles to finish creating their
+    account with this employee already chosen.
+  </p>
+</app-confirm-dialog>

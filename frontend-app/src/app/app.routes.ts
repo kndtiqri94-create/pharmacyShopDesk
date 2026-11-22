@@ -57,6 +57,9 @@ export const routes: Routes = [
           file => file.RELOAD_UTILITY_ROUTES
         )
       ),
+      moduleRoute(ModuleKey.POS, () =>
+        import('./features/modules/pos/pos.routes').then(file => file.POS_ROUTES)
+      ),
       moduleRoute(ModuleKey.USERS, () =>
         import('./features/modules/users/users.routes').then(file => file.USERS_ROUTES)
       ),

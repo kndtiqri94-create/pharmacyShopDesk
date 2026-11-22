@@ -11,7 +11,12 @@ describe('SyncPillComponent', () => {
   async function renderWith(state: SyncState, pendingChanges = 0) {
     const fixture = TestBed.createComponent(SyncPillComponent);
     await firstValueFrom(
-      TestBed.inject(SyncDataService).setStatus({ state, pendingChanges, minutesSinceSync: 2 })
+      TestBed.inject(SyncDataService).setStatus({
+        state,
+        pendingChanges,
+        minutesSinceSync: 2,
+        autoSyncEnabled: true,
+      })
     );
     fixture.detectChanges();
     return fixture.nativeElement as HTMLElement;
@@ -38,7 +43,12 @@ describe('SyncPillComponent', () => {
 
   it('uses the singular for one waiting change', () => {
     expect(
-      describeSyncStatus({ state: SyncState.OFFLINE, pendingChanges: 1, minutesSinceSync: 0 })
+      describeSyncStatus({
+        state: SyncState.OFFLINE,
+        pendingChanges: 1,
+        minutesSinceSync: 0,
+        autoSyncEnabled: true,
+      })
     ).toBe('Offline · 1 change waiting');
   });
 

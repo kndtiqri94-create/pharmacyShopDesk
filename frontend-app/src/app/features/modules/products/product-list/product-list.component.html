@@ -1,0 +1,79 @@
+<div class="sd-stack">
+  <app-page-header title="Products" [subtitle]="subtitle()">
+    <div pageActions class="sd-row">
+      <app-button icon="upload" (click)="showSampleMessage('Import CSV')">Import CSV</app-button>
+      <app-button icon="download" (click)="showSampleMessage('Export')">Export</app-button>
+      <ng-template [appCanWrite]="moduleKey">
+        <app-button variant="primary" icon="plus" (click)="addProduct()">Add product</app-button>
+      </ng-template>
+    </div>
+  </app-page-header>
+
+  @if (!canWrite()) {
+    <app-alert tone="info">You can look at products but you cannot add or change them.</app-alert>
+  }
+
+  <app-card [flush]="true">
+    <div class="toolbar">
+      <div class="toolbar__row">
+        <div class="sd-field-box toolbar__search">
+          <app-icon class="toolbar__icon" name="search" [size]="18" />
+          <input
+            type="search"
+            class="sd-field-control"
+            aria-label="Search products"
+            placeholder="Search by name, generic name, SKU or barcode"
+            [attr.maxlength]="searchMaxLength"
+            [value]="search()"
+            (input)="onSearch($event)"
+          />
+        </div>
+        <div class="sd-field-box toolbar__category">
+          <select
+            class="sd-field-control"
+            aria-label="Category"
+            [value]="category()"
+            (change)="onCategory($event)"
+          >
+            <option [value]="allCategories">All categories</option>
+            @for (name of categories(); track name) {
+              <option [value]="name">{{ name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <app-chips
+        ariaLabel="Filter by status"
+        [items]="chipItems()"
+        [value]="status()"
+        (valueChange)="setStatus($event)"
+      />
+    </div>
+
+    <app-data-table
+      ariaLabel="Products"
+      itemLabel="products"
+      emptyTitle="No products match"
+      emptyMessage="Clear the search, or choose All and All categories, to see every product."
+      [columns]="columns"
+      [rows]="rows()"
+      [rowKey]="rowKey"
+      [actions]="actions()"
+      [selectable]="true"
+      [(selectedKeys)]="selectedKeys"
+      [(pageNumber)]="page"
+      (actionTriggered)="onAction($event)"
+    >
+      <ng-template appDataTableCell="name" let-item>
+        <span class="sd-body-strong">{{ item.product.name }}</span>
+        @if (!item.product.active) {
+          <app-badge [label]="inactiveDisplay.label" [tone]="inactiveDisplay.tone" />
+        }
+        <span class="cell-sub sd-caption">{{ details(item) }}</span>
+      </ng-template>
+      <ng-template appDataTableCell="status" let-item>
+        <app-product-status-badge [status]="item.status" />
+      </ng-template>
+    </app-data-table>
+  </app-card>
+</div>

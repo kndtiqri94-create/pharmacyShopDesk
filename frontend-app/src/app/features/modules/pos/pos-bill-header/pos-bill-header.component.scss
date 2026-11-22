@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.bill-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-4);
+}
+
+.bill-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sd-space-2);
+}

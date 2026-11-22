@@ -1,0 +1,204 @@
+<div class="sd-stack">
+  <app-breadcrumb [items]="breadcrumb()" />
+  <app-page-header [title]="title()" [subtitle]="subtitle()">
+    <div pageActions class="sd-row">
+      @if (readOnly()) {
+        <app-badge label="View only" tone="info" />
+        <app-button (click)="goToList()">Back to GRN</app-button>
+      } @else {
+        <app-button [disabled]="saving()" (click)="saveDraft()">Save draft</app-button>
+        <app-button variant="primary" [disabled]="saving()" (click)="receiveStock()">
+          Receive stock
+        </app-button>
+      }
+    </div>
+  </app-page-header>
+
+  @if (notFound()) {
+    <app-card>
+      <app-empty-state
+        title="That GRN is not in your list"
+        message="It may have been typed wrongly in the address. Go back to GRN and pick it from the list."
+      >
+        <app-button (click)="goToList()">Back to GRN</app-button>
+      </app-empty-state>
+    </app-card>
+  } @else if (loaded()) {
+    <form class="sd-stack" novalidate [formGroup]="form" (submit)="$event.preventDefault()">
+      <div class="sd-with-summary">
+        <div class="sd-stack">
+          <app-card title="Delivery details" subtitle="Who delivered and what the invoice says.">
+            <div class="sd-form-grid">
+              <app-field
+                label="Supplier"
+                [fieldId]="fieldId('supplierId')"
+                [required]="true"
+                [span]="6"
+                [error]="error('supplierId')"
+              >
+                <select
+                  appFieldControl
+                  formControlName="supplierId"
+                  (change)="onSupplierChange($event)"
+                >
+                  <option value="">Choose a supplier</option>
+                  @for (supplier of supplierOptions(); track supplier.id) {
+                    <option [value]="supplier.id">{{ supplier.name }}</option>
+                  }
+                </select>
+              </app-field>
+              <app-field
+                label="Purchase order"
+                hint="Lines are filled from the PO."
+                [fieldId]="fieldId('purchaseOrderId')"
+                [span]="6"
+                [error]="error('purchaseOrderId')"
+              >
+                <select
+                  appFieldControl
+                  formControlName="purchaseOrderId"
+                  (change)="onOrderChange($event)"
+                >
+                  <option value="">No PO</option>
+                  @for (order of orderOptions(); track order.id) {
+                    <option [value]="order.id">{{ orderLabel(order) }}</option>
+                  }
+                </select>
+              </app-field>
+              <app-field
+                label="Received date"
+                [fieldId]="fieldId('receivedDate')"
+                [required]="true"
+                [span]="4"
+                [error]="error('receivedDate')"
+              >
+                <input appFieldControl type="date" formControlName="receivedDate" />
+              </app-field>
+              <app-field
+                label="Supplier invoice no"
+                [fieldId]="fieldId('invoiceNo')"
+                [required]="true"
+                [span]="4"
+                [error]="error('invoiceNo')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  formControlName="invoiceNo"
+                  autocomplete="off"
+                  [attr.maxlength]="maxLength.invoiceNo"
+                />
+              </app-field>
+              <app-field
+                label="Invoice date"
+                [fieldId]="fieldId('invoiceDate')"
+                [span]="4"
+                [error]="error('invoiceDate')"
+              >
+                <input appFieldControl type="date" formControlName="invoiceDate" />
+              </app-field>
+              <app-field label="Received by" fieldId="grn-receivedBy" [span]="6">
+                <input
+                  appFieldControl
+                  type="text"
+                  readonly
+                  autocomplete="off"
+                  [value]="receivedBy()"
+                />
+              </app-field>
+            </div>
+          </app-card>
+
+          <app-card
+            [flush]="true"
+            title="Items received"
+            subtitle="One line for each batch you got."
+          >
+            <div cardActions class="sd-row">
+              @if (!readOnly()) {
+                <app-button icon="barcode" (click)="scanItem()">Scan item</app-button>
+                <app-button variant="soft" icon="plus" (click)="openItemPicker()"
+                  >Add item</app-button
+                >
+              }
+            </div>
+            @if (addingItem() && !readOnly()) {
+              <app-product-picker
+                [products]="pickerProducts()"
+                (picked)="addProduct($event)"
+                (dismissed)="closeItemPicker()"
+              />
+            }
+            @if (lineError(); as message) {
+              <p id="grn-lines" class="items-error" role="alert" tabindex="-1">{{ message }}</p>
+            }
+            @if (lines.length === 0) {
+              <app-empty-state
+                title="No items yet"
+                message="Choose a purchase order, or press Add item to start the list."
+              />
+            } @else {
+              <app-grn-items-table
+                [lines]="lines"
+                [productsById]="productsById()"
+                [orderedByProduct]="ordered()"
+                [lineTotals]="lineTotals()"
+                [errors]="errors()"
+                [shortDated]="shortDated()"
+                [readOnly]="readOnly()"
+                (removeLine)="removeLine($event)"
+              />
+            }
+          </app-card>
+
+          @for (warning of warnings(); track warning.lineIndex) {
+            <app-alert tone="warning" title="Short expiry">{{ warning.message }}</app-alert>
+          }
+          <app-alert tone="info">
+            Receiving adds each batch to stock and updates the cost price of the products.
+          </app-alert>
+        </div>
+
+        <aside class="sd-stack" aria-label="Payment and totals">
+          <app-card title="Payment" subtitle="What you paid the supplier now.">
+            <div class="sd-stack">
+              <app-field
+                label="Method"
+                [fieldId]="fieldId('paymentMethod')"
+                [error]="error('paymentMethod')"
+              >
+                <select appFieldControl formControlName="paymentMethod">
+                  @for (method of paymentOptions; track method) {
+                    <option [value]="method">{{ paymentLabel[method] }}</option>
+                  }
+                </select>
+              </app-field>
+              <app-field
+                label="Paid now"
+                prefix="Rs."
+                [fieldId]="fieldId('paidNow')"
+                [error]="error('paidNow')"
+              >
+                <input
+                  appFieldControl
+                  type="text"
+                  inputmode="decimal"
+                  formControlName="paidNow"
+                  autocomplete="off"
+                />
+              </app-field>
+              <app-field label="Due date" [fieldId]="fieldId('dueDate')" [error]="error('dueDate')">
+                <input appFieldControl type="date" formControlName="dueDate" />
+              </app-field>
+            </div>
+          </app-card>
+          <app-grn-totals-card
+            [totals]="totals()"
+            [discountControl]="form.controls.discount"
+            [discountError]="error('discount')"
+          />
+        </aside>
+      </div>
+    </form>
+  }
+</div>

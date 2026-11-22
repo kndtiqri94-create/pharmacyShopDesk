@@ -1,0 +1,28 @@
+<header class="pos-header">
+  <div class="pos-header__title">
+    <h1 class="sd-page-title">Point of sale</h1>
+    <p class="sd-muted sd-num">
+      <time [attr.datetime]="isoDate()">{{ dateText() }}</time>
+      <span aria-hidden="true"> · </span>
+      <span data-testid="pos-time">{{ timeText() }}</span>
+    </p>
+  </div>
+  <div class="pos-header__actions">
+    <app-button size="xl" [icon]="isDark() ? 'sun' : 'moon'" (click)="toggleTheme()">
+      {{ isDark() ? 'Light theme' : 'Dark theme' }}
+    </app-button>
+    <app-button size="xl" icon="refresh" (click)="refreshRequested.emit()">Refresh</app-button>
+    @if (fullscreenService.supported) {
+      <app-button
+        size="xl"
+        [icon]="fullscreenService.isFullscreen() ? 'minimize' : 'maximize'"
+        (click)="toggleFullscreen()"
+      >
+        {{ fullscreenService.isFullscreen() ? 'Exit full screen' : 'Enter full screen' }}
+      </app-button>
+    }
+    <app-button size="xl" icon="back" (click)="backRequested.emit()"
+      >Back to back office</app-button
+    >
+  </div>
+</header>

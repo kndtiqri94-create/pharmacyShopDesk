@@ -1,0 +1,58 @@
+<app-pos-dialog heading="Drawer (End)" [open]="open()" (closed)="closed.emit()">
+  @if (view(); as current) {
+    <dl class="pp-summary" data-testid="drawer-summary">
+      <div>
+        <dt>Opening balance</dt>
+        <dd class="sd-num">{{ money(current.book.openingCents) }}</dd>
+      </div>
+      <div>
+        <dt>Cash in</dt>
+        <dd class="sd-num">{{ money(current.book.cashInCents) }}</dd>
+      </div>
+      <div>
+        <dt>Cash out</dt>
+        <dd class="sd-num">{{ money(current.book.cashOutCents) }}</dd>
+      </div>
+      <div class="pp-summary__strong">
+        <dt>Closing cash expected</dt>
+        <dd class="sd-num" data-testid="drawer-expected">
+          {{ money(current.book.expectedCents) }}
+        </dd>
+      </div>
+    </dl>
+
+    @if (current.status.drawer; as drawer) {
+      @if (drawer.endedAt) {
+        <app-alert tone="success" title="Drawer ended">
+          Ended by {{ drawer.endedBy }} at {{ timeOf(drawer.endedAt) }} on {{ dateOf(today) }}.
+        </app-alert>
+      }
+    }
+
+    @if (confirming()) {
+      <div class="pp-confirm" role="alert">
+        <p class="sd-body-strong">End the drawer for today?</p>
+        <p>
+          You can still save a sale afterwards, but you will be warned that the drawer has ended.
+        </p>
+        <div class="pp-row-actions">
+          <app-button size="xl" (click)="keep()">Keep it open</app-button>
+          <app-button variant="primary" size="xl" [disabled]="busy()" (click)="confirmEnd()">
+            End drawer
+          </app-button>
+        </div>
+      </div>
+    }
+  }
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close</app-button>
+    <app-button
+      variant="primary"
+      size="xl"
+      [disabled]="!canChange() || busy() || confirming() || (view()?.status.drawerEnded ?? false)"
+      (click)="ask()"
+    >
+      End drawer
+    </app-button>
+  </div>
+</app-pos-dialog>

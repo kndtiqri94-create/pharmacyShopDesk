@@ -47,6 +47,11 @@ export const ICON_NAMES = [
   'moon',
   'menu',
   'info',
+  'maximize',
+  'minimize',
+  'refresh',
+  'pause',
+  'calculator',
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

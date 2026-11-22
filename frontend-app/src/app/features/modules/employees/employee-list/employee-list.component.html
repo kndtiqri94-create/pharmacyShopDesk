@@ -1,0 +1,123 @@
+<app-card [flush]="true">
+  <form class="filters sd-form-grid" aria-label="Filter employees" (submit)="applyFilters($event)">
+    <app-field label="Keyword" fieldId="employee-filter-keyword" [span]="3">
+      <input
+        appFieldControl
+        type="search"
+        autocomplete="off"
+        placeholder="Code, name, mobile or email"
+        [attr.maxlength]="keywordMaxLength"
+        [value]="keyword()"
+        (input)="onKeyword($event)"
+      />
+    </app-field>
+    <app-field label="Location" fieldId="employee-filter-location" [span]="2">
+      <select appFieldControl (change)="onLocation($event)">
+        <option value="" [selected]="location() === ''">All locations</option>
+        @for (name of locations(); track name) {
+          <option [value]="name" [selected]="name === location()">{{ name }}</option>
+        }
+      </select>
+    </app-field>
+    <app-field label="Created from" fieldId="employee-filter-created-from" [span]="2">
+      <input appFieldControl type="date" [value]="createdFrom()" (input)="onCreatedFrom($event)" />
+    </app-field>
+    <app-field label="Created to" fieldId="employee-filter-created-to" [span]="2">
+      <input appFieldControl type="date" [value]="createdTo()" (input)="onCreatedTo($event)" />
+    </app-field>
+    <app-field label="Status" fieldId="employee-filter-status" [span]="1">
+      <select appFieldControl (change)="onStatus($event)">
+        <option value="all" [selected]="status() === 'all'">All</option>
+        <option value="active" [selected]="status() === 'active'">Active</option>
+        <option value="inactive" [selected]="status() === 'inactive'">Inactive</option>
+      </select>
+    </app-field>
+    <div class="filters__actions sd-col-2">
+      <app-button type="submit" icon="filter">Filter</app-button>
+      <app-button variant="ghost" (click)="resetFilters()">Reset</app-button>
+    </div>
+  </form>
+
+  <div class="list-bar">
+    <div class="sd-row">
+      <app-button icon="download" [disabled]="exporting()" (click)="exportCsv()">
+        Export CSV
+      </app-button>
+      <app-button icon="download" [disabled]="exporting()" (click)="exportPdf()">
+        Export PDF
+      </app-button>
+    </div>
+    <ng-template [appCanWrite]="moduleKey">
+      <app-button variant="primary" icon="plus" (click)="addEmployee()">Add employee</app-button>
+    </ng-template>
+  </div>
+
+  @if (filtered().length === 0) {
+    @if (hasEmployees()) {
+      <app-empty-state
+        title="No employees match"
+        message="Change the filters, or reset them, to see every employee."
+      >
+        <app-button (click)="resetFilters()">Reset filters</app-button>
+      </app-empty-state>
+    } @else {
+      <app-empty-state title="No employees yet" message="Add an employee to see them here." />
+    }
+  } @else {
+    <app-data-table
+      ariaLabel="Employees"
+      itemLabel="employees"
+      [paginate]="false"
+      [columns]="columns"
+      [rows]="pageData().rows"
+      [rowKey]="rowKey"
+      [actions]="actions()"
+      (actionTriggered)="onAction($event)"
+    >
+      <ng-template appDataTableCell="image" let-employee>
+        @if (employee.photoDataUrl) {
+          <img class="photo" alt="" [src]="employee.photoDataUrl" />
+        } @else {
+          <app-avatar size="sm" [name]="employee.name" />
+        }
+      </ng-template>
+      <ng-template appDataTableCell="status" let-employee>
+        <app-badge [label]="statusOf(employee).label" [tone]="statusOf(employee).tone" />
+      </ng-template>
+    </app-data-table>
+  }
+
+  <div class="footer">
+    <div class="footer__size">
+      <label class="sd-label" for="employee-page-size">Page size</label>
+      <div class="sd-field-box footer__select">
+        <select id="employee-page-size" class="sd-field-control" (change)="onPageSize($event)">
+          @for (size of pageSizes; track size) {
+            <option [value]="size" [selected]="size === pageSize()">{{ size }}</option>
+          }
+        </select>
+      </div>
+      <p class="sd-caption" data-testid="entries-text" aria-live="polite">
+        {{ pageData().entriesText }}
+      </p>
+    </div>
+    <app-pagination
+      [total]="filtered().length"
+      [pageSize]="pageSize()"
+      [showSummary]="false"
+      [(page)]="page"
+    />
+  </div>
+</app-card>
+
+<app-confirm-dialog
+  confirmLabel="Delete employee"
+  [danger]="true"
+  [title]="deleteTitle()"
+  [open]="pendingDelete() !== null"
+  [busy]="deleting()"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+>
+  <p>{{ deleteMessage() }}</p>
+</app-confirm-dialog>

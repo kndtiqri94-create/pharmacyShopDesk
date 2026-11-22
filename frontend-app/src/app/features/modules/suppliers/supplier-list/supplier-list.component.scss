@@ -1,0 +1,43 @@
+:host {
+  display: block;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-3);
+  padding: var(--sd-space-4) var(--sd-space-5);
+}
+
+.toolbar__search {
+  align-items: center;
+  padding-left: var(--sd-space-3);
+}
+
+.toolbar__icon {
+  color: var(--sd-ink-muted);
+}
+
+.supplier-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--sd-space-3);
+}
+
+.supplier-cell__name {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sd-ink);
+  text-align: left;
+
+  &:hover {
+    color: var(--sd-primary);
+    text-decoration: underline;
+  }
+}
+
+.supplier-cell__contact {
+  display: block;
+}

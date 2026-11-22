@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+.chip-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-3);
+  padding: var(--sd-space-4) var(--sd-space-5);
+  border-bottom: 1px solid var(--sd-border);
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--sd-space-2);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sd-space-3);
+  padding: var(--sd-space-3) var(--sd-space-5);
+}
+
+.footer__size {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sd-space-3);
+}
+
+.footer__select {
+  min-width: 72px;
+}

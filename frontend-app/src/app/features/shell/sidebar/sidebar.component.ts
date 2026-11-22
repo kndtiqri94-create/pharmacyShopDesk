@@ -10,6 +10,7 @@ import { GrnDataService } from '../../../core/services/data/grn-data.service';
 import { ProductDataService } from '../../../core/services/data/product-data.service';
 import { SettingsDataService } from '../../../core/services/data/settings-data.service';
 import { PermissionService } from '../../../core/services/permission.service';
+import { SettingsService } from '../../../core/services/settings.service';
 import { ShellStateService } from '../../../core/services/shell-state.service';
 import { MODULE_GROUP_ORDER } from '../../../core/utils/module-definitions.util';
 import { SidebarCounts, computeSidebarCounts } from '../../../core/utils/sidebar-counts.util';
@@ -37,6 +38,7 @@ export class SidebarComponent {
   private readonly productDataService = inject(ProductDataService);
   private readonly grnDataService = inject(GrnDataService);
   private readonly settingsDataService = inject(SettingsDataService);
+  private readonly settingsService = inject(SettingsService);
   private readonly clockService = inject(ClockService);
   private readonly navigation = viewChild<ElementRef<HTMLElement>>('navigation');
 
@@ -50,7 +52,12 @@ export class SidebarComponent {
   );
 
   protected readonly counts = toSignal<SidebarCounts, SidebarCounts>(
-    toObservable(this.shellStateService.currentUrl).pipe(
+    toObservable(
+      computed(() => ({
+        url: this.shellStateService.currentUrl(),
+        settingsChanges: this.settingsService.changed(),
+      }))
+    ).pipe(
       switchMap(() =>
         forkJoin({
           products: this.productDataService.getAll(),

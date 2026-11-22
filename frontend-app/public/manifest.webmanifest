@@ -1,0 +1,16 @@
+{
+  "name": "ShopDesk",
+  "short_name": "ShopDesk",
+  "description": "ShopDesk, the quiet back office for a one-shop pharmacy.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F6F7FC",
+  "theme_color": "#4A4DB0",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

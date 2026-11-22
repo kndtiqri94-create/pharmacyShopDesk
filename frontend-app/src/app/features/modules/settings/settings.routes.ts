@@ -1,4 +1,11 @@
+import { Routes } from '@angular/router';
 import { ModuleKey } from '../../../core/models/enums/module-key.enum';
-import { createModuleRoutes } from '../module-routes.factory';
 
-export const SETTINGS_ROUTES = createModuleRoutes(ModuleKey.SETTINGS);
+export const SETTINGS_ROUTES: Routes = [
+  {
+    path: '',
+    title: 'Settings',
+    data: { module: ModuleKey.SETTINGS },
+    loadComponent: () => import('./settings.component').then(file => file.SettingsComponent),
+  },
+];

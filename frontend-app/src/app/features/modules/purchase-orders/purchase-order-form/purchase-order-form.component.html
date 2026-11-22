@@ -1,0 +1,127 @@
+<div class="sd-stack">
+  <app-breadcrumb [items]="breadcrumb()" />
+  <app-page-header [title]="title()" [subtitle]="subtitle()">
+    <div pageActions class="sd-row">
+      @if (readOnly()) {
+        <app-badge label="View only" tone="info" />
+        <app-button (click)="goToList()">Back to purchase orders</app-button>
+      } @else {
+        <app-button [disabled]="saving()" (click)="saveDraft()">Save draft</app-button>
+        <app-button icon="printer" (click)="print()">Print</app-button>
+        <app-button variant="primary" [disabled]="saving()" (click)="markAsSent()">
+          Mark as sent
+        </app-button>
+      }
+    </div>
+  </app-page-header>
+
+  @if (notFound()) {
+    <app-card>
+      <app-empty-state
+        title="That purchase order is not in your list"
+        message="It may have been typed wrongly in the address. Go back to Purchase orders and pick it from the list."
+      >
+        <app-button (click)="goToList()">Back to purchase orders</app-button>
+      </app-empty-state>
+    </app-card>
+  } @else if (loaded()) {
+    <form class="sd-stack" novalidate [formGroup]="form" (submit)="$event.preventDefault()">
+      <div class="sd-with-summary">
+        <div class="sd-stack">
+          <app-card title="Order details" subtitle="Who you are ordering from and when.">
+            <div class="sd-form-grid">
+              <app-field
+                label="Supplier"
+                [fieldId]="fieldId('supplierId')"
+                [required]="true"
+                [span]="6"
+                [error]="error('supplierId')"
+              >
+                <select appFieldControl formControlName="supplierId">
+                  <option value="">Choose a supplier</option>
+                  @for (supplier of supplierOptions(); track supplier.id) {
+                    <option [value]="supplier.id">{{ supplier.name }}</option>
+                  }
+                </select>
+              </app-field>
+              <app-field
+                label="Order date"
+                [fieldId]="fieldId('orderDate')"
+                [span]="3"
+                [error]="error('orderDate')"
+              >
+                <input appFieldControl type="date" formControlName="orderDate" />
+              </app-field>
+              <app-field
+                label="Expected delivery"
+                [fieldId]="fieldId('expectedDate')"
+                [span]="3"
+                [error]="error('expectedDate')"
+              >
+                <input appFieldControl type="date" formControlName="expectedDate" />
+              </app-field>
+              <app-field
+                label="Notes to supplier"
+                [fieldId]="fieldId('notes')"
+                [span]="12"
+                [error]="error('notes')"
+              >
+                <textarea
+                  appFieldControl
+                  formControlName="notes"
+                  [attr.maxlength]="notesMaxLength"
+                ></textarea>
+              </app-field>
+            </div>
+          </app-card>
+
+          <app-card [flush]="true" title="Items to order" subtitle="What you need and how many.">
+            <div cardActions class="sd-row">
+              @if (!readOnly()) {
+                <app-button icon="plus" (click)="openItemPicker()">Add item</app-button>
+                <app-button variant="soft" icon="zap" (click)="addLowStockItems()">
+                  Add all low-stock items
+                </app-button>
+              }
+            </div>
+            @if (addingItem() && !readOnly()) {
+              <app-product-picker
+                [products]="pickerProducts()"
+                (picked)="addProduct($event)"
+                (dismissed)="closeItemPicker()"
+              />
+            }
+            @if (lineError(); as message) {
+              <p id="po-lines" class="items-error" role="alert" tabindex="-1">{{ message }}</p>
+            }
+            @if (lines.length === 0) {
+              <app-empty-state
+                title="No items yet"
+                message="Press Add item, or Add all low-stock items, to start the order."
+              />
+            } @else {
+              <app-po-items-table
+                [lines]="lines"
+                [productsById]="productsById()"
+                [lineTotals]="lineTotals()"
+                [errors]="errors()"
+                [readOnly]="readOnly()"
+                (removeLine)="removeLine($event)"
+              />
+            }
+          </app-card>
+        </div>
+
+        <aside class="sd-stack" aria-label="Supplier and totals">
+          <app-supplier-side-card [supplier]="chosenSupplier()" [owedCents]="owedCents()" />
+          <app-po-totals-card
+            [totals]="totals()"
+            [expectedDate]="values().expectedDate"
+            [deliveryControl]="form.controls.delivery"
+            [deliveryError]="error('delivery')"
+          />
+        </aside>
+      </div>
+    </form>
+  }
+</div>

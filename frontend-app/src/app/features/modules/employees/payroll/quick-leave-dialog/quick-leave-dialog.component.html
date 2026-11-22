@@ -1,0 +1,22 @@
+<app-confirm-dialog
+  title="Create Leave"
+  confirmLabel="Save"
+  [open]="true"
+  [busy]="working()"
+  (confirmed)="save()"
+  (cancelled)="cancel()"
+>
+  <p class="employee sd-body-strong">{{ row().employee.name }}</p>
+  @if (formError(); as message) {
+    <p class="form-error" role="alert" data-testid="form-error">{{ message }}</p>
+  }
+  <app-field
+    label="Date"
+    [fieldId]="fieldIds.date"
+    [required]="true"
+    [error]="error('date')"
+    hint="One day of Casual Leave, approved straight away."
+  >
+    <input appFieldControl type="date" [value]="date()" (input)="onDate($event)" />
+  </app-field>
+</app-confirm-dialog>

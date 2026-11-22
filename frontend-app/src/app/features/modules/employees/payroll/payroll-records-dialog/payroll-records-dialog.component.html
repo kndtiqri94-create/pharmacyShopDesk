@@ -1,0 +1,64 @@
+<app-confirm-dialog
+  [title]="kind() === 'advance' ? 'Salary advances' : 'Leave records'"
+  confirmLabel="Close"
+  [showCancel]="false"
+  [open]="true"
+  (confirmed)="closed.emit()"
+  (cancelled)="closed.emit()"
+>
+  <p class="employee sd-body-strong">{{ row().employee.name }}</p>
+  <p class="sd-caption" data-testid="records-month">{{ monthLabel() }}</p>
+  @if (failed()) {
+    <p class="form-error" role="alert">The records did not load. Close this and try again.</p>
+  } @else if (records(); as data) {
+    @if (kind() === 'advance') {
+      @if (data.advances.length === 0) {
+        <p data-testid="records-empty">No salary advances in this month.</p>
+      } @else {
+        <table class="records" aria-label="Salary advances">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Counter</th>
+              <th scope="col" class="num">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of data.advances; track item.id) {
+              <tr>
+                <td>{{ date(item.date) }}</td>
+                <td>{{ item.counter }}</td>
+                <td class="num">{{ money(item.amountCents) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    } @else {
+      @if (data.leaves.length === 0) {
+        <p data-testid="records-empty">No approved leave in this month.</p>
+      } @else {
+        <table class="records" aria-label="Leave records">
+          <thead>
+            <tr>
+              <th scope="col">Leave type</th>
+              <th scope="col">From</th>
+              <th scope="col">To</th>
+              <th scope="col" class="num">Days in month</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of data.leaves; track item.id) {
+              <tr>
+                <td>{{ item.leaveTypeName }}</td>
+                <td>{{ date(item.fromDate) }}</td>
+                <td>{{ date(item.toDate) }}</td>
+                <td class="num">{{ item.daysInMonth }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    }
+  }
+</app-confirm-dialog>

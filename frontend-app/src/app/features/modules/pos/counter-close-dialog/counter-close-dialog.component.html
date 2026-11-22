@@ -1,0 +1,367 @@
+<app-pos-dialog heading="Counter Close" size="xl" [open]="open()" (closed)="closed.emit()">
+  @if (view(); as current) {
+    @if (current.locked) {
+      <app-alert tone="info" title="This day is closed and locked">
+        The report below cannot be changed.
+      </app-alert>
+    } @else {
+      @if (hasUnsavedBill()) {
+        <app-alert tone="warning" title="A bill is still open on the till">
+          It is not saved. Go back and save or hold it if you want it in today's figures.
+        </app-alert>
+      }
+      @if (preview()?.heldBillCount; as held) {
+        <app-alert tone="info">
+          {{ held }} bill(s) are on hold. They do not stop the close.
+        </app-alert>
+      }
+    }
+
+    <div
+      class="cc-grid"
+      [attr.data-testid]="current.locked ? 'locked-report' : 'counter-form'"
+      [class.cc-grid--locked]="current.locked"
+    >
+      <div class="cc-column" data-testid="column-summary">
+        <section class="cc-card" aria-labelledby="cc-shift-title">
+          <h3 class="sd-section-title cc-card__title" id="cc-shift-title">
+            {{ labels.shiftSummary.english }}
+            <span lang="si">({{ labels.shiftSummary.sinhala }})</span>
+          </h3>
+          <dl class="pp-summary cc-list" data-testid="shift-summary">
+            <div>
+              <dt>Cashier</dt>
+              <dd>{{ current.cashier }}</dd>
+            </div>
+            <div>
+              <dt>Register</dt>
+              <dd>{{ current.register }}</dd>
+            </div>
+            <div>
+              <dt>Start Time</dt>
+              <dd data-testid="start-time">
+                @if (current.startTime; as start) {
+                  {{ dateOf(start) }} {{ timeOf(start) }}
+                } @else {
+                  {{ noActivityText }}
+                }
+              </dd>
+            </div>
+            <div>
+              <dt>End Time</dt>
+              <dd data-testid="end-time">
+                @if (current.endTime; as end) {
+                  {{ dateOf(end) }} {{ timeOf(end) }}
+                } @else {
+                  {{ endPendingText }}
+                }
+              </dd>
+            </div>
+            <div class="pp-summary__strong">
+              <dt>Total Sales</dt>
+              <dd class="sd-num" data-testid="total-sales">{{ money(current.totalSalesCents) }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="cc-card" aria-labelledby="cc-breakdown-title">
+          <h3 class="sd-section-title cc-card__title" id="cc-breakdown-title">
+            {{ labels.salesBreakdown.english }}
+            <span lang="si">({{ labels.salesBreakdown.sinhala }})</span>
+          </h3>
+          <dl class="pp-summary cc-list" data-testid="counter-summary">
+            <div>
+              <dt>Opening Amount</dt>
+              <dd class="sd-num">{{ money(current.openingCents) }}</dd>
+            </div>
+            <div>
+              <dt>Cash In</dt>
+              <dd class="sd-num">{{ money(current.cashInCents) }}</dd>
+            </div>
+            <div>
+              <dt>Cash Out</dt>
+              <dd class="sd-num">{{ money(current.cashOutCents) }}</dd>
+            </div>
+            <div class="pp-summary__strong">
+              <dt>Net Total</dt>
+              <dd class="sd-num" data-testid="counter-net-total">
+                {{ money(current.expectedCents) }}
+              </dd>
+            </div>
+          </dl>
+        </section>
+      </div>
+
+      <div class="cc-column" data-testid="column-count">
+        <section class="cc-card" aria-labelledby="cc-count-title">
+          <h3 class="sd-section-title cc-card__title" id="cc-count-title">
+            {{ labels.cashCount.english }}
+            <span lang="si">({{ labels.cashCount.sinhala }})</span>
+          </h3>
+          <div class="cc-expected" data-testid="expected-banner">
+            <p class="sd-caption">
+              {{ labels.expectedCash.english }}
+              <span lang="si">({{ labels.expectedCash.sinhala }})</span>
+            </p>
+            <p class="cc-expected__value sd-num" data-testid="counter-expected">
+              {{ money(current.expectedCents) }}
+            </p>
+          </div>
+
+          @if (current.locked) {
+            <dl class="pp-summary cc-list" data-testid="locked-count">
+              <div>
+                <dt>
+                  {{ labels.countedCash.english }}
+                  <span lang="si">({{ labels.countedCash.sinhala }})</span>
+                </dt>
+                <dd class="sd-num">{{ money(current.countedCents ?? 0) }}</dd>
+              </div>
+              <div>
+                <dt>
+                  {{ labels.handover.english }}
+                  <span lang="si">({{ labels.handover.sinhala }})</span>
+                </dt>
+                <dd class="sd-num" data-testid="locked-handover">
+                  {{ money(current.handoverCents ?? 0) }}
+                </dd>
+              </div>
+              @if (current.supervisorName; as supervisor) {
+                <div>
+                  <dt>Supervisor</dt>
+                  <dd data-testid="locked-supervisor">{{ supervisor }}</dd>
+                </div>
+              }
+              <div>
+                <dt>
+                  {{ labels.broughtForward.english }}
+                  <span lang="si">({{ labels.broughtForward.sinhala }})</span>
+                </dt>
+                <dd class="sd-num" data-testid="locked-bf">
+                  {{ money(current.broughtForwardCents ?? 0) }}
+                </dd>
+              </div>
+            </dl>
+          } @else {
+            <div class="cc-fields">
+              <app-field
+                [label]="bilingual(labels.countedCash)"
+                fieldId="counter-counted"
+                prefix="Rs."
+                size="xl"
+                [error]="fieldError('counted')"
+              >
+                <input
+                  appFieldControl
+                  class="cc-input"
+                  type="text"
+                  inputmode="decimal"
+                  autocomplete="off"
+                  placeholder="0.00"
+                  [attr.maxlength]="amountMaxLength"
+                  [value]="countedText()"
+                  [disabled]="!canChange()"
+                  (input)="onCountedInput($event)"
+                />
+                <app-button
+                  fieldAction
+                  #calculator
+                  size="xl"
+                  icon="calculator"
+                  ariaLabel="Count notes and coins"
+                  [disabled]="!canChange()"
+                  (click)="openDenominations()"
+                />
+              </app-field>
+
+              <app-field
+                [label]="bilingual(labels.handover)"
+                fieldId="counter-handover"
+                prefix="Rs."
+                size="xl"
+                [error]="fieldError('handover')"
+              >
+                <input
+                  appFieldControl
+                  class="cc-input"
+                  type="text"
+                  inputmode="decimal"
+                  autocomplete="off"
+                  placeholder="0.00"
+                  [attr.maxlength]="amountMaxLength"
+                  [value]="handoverText()"
+                  [disabled]="!canChange()"
+                  (input)="onHandoverInput($event)"
+                />
+              </app-field>
+
+              @if (supervisorNeeded()) {
+                <app-field
+                  label="Supervisor who received the cash"
+                  fieldId="counter-supervisor"
+                  size="xl"
+                  [error]="fieldError('supervisor')"
+                >
+                  <select
+                    appFieldControl
+                    [disabled]="!canChange()"
+                    [value]="supervisorUserId()"
+                    (change)="onSupervisorChange($event)"
+                  >
+                    <option value="">Choose a supervisor</option>
+                    @for (supervisor of preview()?.supervisors ?? []; track supervisor.id) {
+                      <option
+                        [value]="supervisor.id"
+                        [selected]="supervisor.id === supervisorUserId()"
+                      >
+                        {{ supervisor.displayName }}
+                      </option>
+                    }
+                  </select>
+                </app-field>
+              }
+
+              <app-field
+                [label]="bilingual(labels.broughtForward)"
+                fieldId="counter-bf"
+                prefix="Rs."
+                size="xl"
+                [error]="fieldError('broughtForward')"
+              >
+                <input
+                  appFieldControl
+                  class="cc-input"
+                  type="text"
+                  inputmode="decimal"
+                  autocomplete="off"
+                  placeholder="0.00"
+                  [attr.maxlength]="amountMaxLength"
+                  [value]="broughtForwardDisplay()"
+                  [disabled]="!canChange()"
+                  (input)="onBroughtForwardInput($event)"
+                />
+              </app-field>
+            </div>
+          }
+        </section>
+      </div>
+
+      <div class="cc-column" data-testid="column-reconciliation">
+        <section class="cc-card" aria-labelledby="cc-recon-title">
+          <h3 class="sd-section-title cc-card__title" id="cc-recon-title">
+            {{ labels.reconciliation.english }}
+            <span lang="si">({{ labels.reconciliation.sinhala }})</span>
+          </h3>
+          @if (current.countedCents !== null && current.differenceCents !== null) {
+            <dl class="pp-summary cc-list" data-testid="reconciliation">
+              <div>
+                <dt>Expected</dt>
+                <dd class="sd-num">{{ money(current.expectedCents) }}</dd>
+              </div>
+              <div>
+                <dt>Counted</dt>
+                <dd class="sd-num">{{ money(current.countedCents) }}</dd>
+              </div>
+              <div class="pp-summary__strong">
+                <dt>Difference</dt>
+                <dd class="sd-num" data-testid="counter-difference">
+                  {{ money(current.differenceCents) }}
+                  @if (outcome(); as word) {
+                    <span class="cc-outcome pp-word" [attr.data-outcome]="word">
+                      <app-icon [name]="outcomeIcons[word]" />
+                      {{ outcomeLabels[word] }}
+                    </span>
+                  }
+                </dd>
+              </div>
+            </dl>
+            @if ((current.unaccountedCents ?? 0) > 0) {
+              <app-alert tone="warning" title="Cash not accounted for">
+                <span data-testid="unaccounted">
+                  {{ money(current.unaccountedCents ?? 0) }} is neither handed over nor brought
+                  forward.
+                </span>
+              </app-alert>
+            }
+            @if (current.locked) {
+              @if (current.note) {
+                <dl class="pp-summary cc-list">
+                  <div>
+                    <dt>Note</dt>
+                    <dd>{{ current.note }}</dd>
+                  </div>
+                </dl>
+              }
+            } @else if (current.differenceCents !== 0) {
+              <app-field
+                label="Note"
+                fieldId="counter-note"
+                size="xl"
+                hint="Optional. Say why the cash is over or short."
+              >
+                <textarea
+                  appFieldControl
+                  rows="2"
+                  [attr.maxlength]="noteMaxLength"
+                  [value]="note()"
+                  [disabled]="!canChange()"
+                  (input)="onNoteInput($event)"
+                ></textarea>
+              </app-field>
+            }
+          }
+        </section>
+      </div>
+    </div>
+
+    @if (!current.locked) {
+      @if (confirming()) {
+        <div class="pp-confirm" role="alert">
+          <p class="sd-body-strong">Close the counter for today?</p>
+          <p>The report is locked after this and nobody can change it.</p>
+          <div class="pp-row-actions">
+            <app-button size="xl" (click)="keep()">Go back</app-button>
+            <app-button variant="primary" size="xl" [disabled]="busy()" (click)="confirmClose()">
+              Close counter
+            </app-button>
+          </div>
+        </div>
+      }
+      @if (formError(); as message) {
+        <app-alert tone="warning" title="The counter was not closed">{{ message }}</app-alert>
+      }
+      <div class="cc-complete">
+        <app-button
+          variant="primary"
+          size="xl"
+          icon="check"
+          [disabled]="!completeEnabled() || !canChange() || busy() || confirming()"
+          [ariaDescribedBy]="completeEnabled() ? null : completeHintId"
+          (click)="ask()"
+        >
+          Complete Counter Close
+        </app-button>
+        @if (!completeEnabled()) {
+          <p class="sd-caption cc-complete__hint" [id]="completeHintId">
+            Enter cash count to enable completion
+          </p>
+        }
+      </div>
+    }
+  }
+
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close window</app-button>
+    @if (preview()?.report; as report) {
+      <app-button variant="primary" size="xl" icon="printer" (click)="printRequested.emit(report)">
+        Print report
+      </app-button>
+    }
+  </div>
+</app-pos-dialog>
+
+<app-denomination-dialog
+  [open]="denominationsOpen()"
+  (confirmed)="useDenominationTotal($event)"
+  (closed)="closeDenominations()"
+/>

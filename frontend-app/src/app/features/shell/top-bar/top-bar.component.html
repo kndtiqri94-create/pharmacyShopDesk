@@ -1,5 +1,9 @@
 <header class="topbar">
-  <div #menuButton class="topbar__menu">
+  <div
+    #menuButton
+    class="topbar__menu"
+    [class.topbar__menu--always]="shellStateService.sidebarHidden()"
+  >
     <app-button
       variant="ghost"
       icon="menu"
@@ -31,6 +35,18 @@
   </div>
   @if (user(); as currentUser) {
     <div class="topbar__user">
+      @if (showPosButton()) {
+        <button
+          type="button"
+          class="pos-pill"
+          [class.pos-pill--active]="posActive()"
+          [attr.aria-current]="posActive() ? 'page' : null"
+          (click)="openPos()"
+        >
+          <app-icon name="receipt" />
+          <span>POS</span>
+        </button>
+      }
       <app-avatar [name]="currentUser.displayName" [initials]="currentUser.initials" />
       <div class="topbar__identity">
         <p class="sd-body-strong">{{ currentUser.displayName }}</p>

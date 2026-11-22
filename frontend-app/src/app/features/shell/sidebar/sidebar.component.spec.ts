@@ -1,7 +1,11 @@
 import { TestBed } from '@angular/core/testing';
+import { firstValueFrom } from 'rxjs';
 import { provideRouter } from '@angular/router';
 import { clearBrowserStorage, signInAs, TEST_PROVIDERS } from '../../../../testing/auth-test.util';
 import { UserRole } from '../../../core/models/enums/user-role.enum';
+import { SettingsDataService } from '../../../core/services/data/settings-data.service';
+import { SettingsService } from '../../../core/services/settings.service';
+import { toDraft } from '../../../core/utils/settings-diff.util';
 import { SidebarComponent } from './sidebar.component';
 
 describe('SidebarComponent', () => {
@@ -51,6 +55,17 @@ describe('SidebarComponent', () => {
     ]);
   });
 
+  it('never lists Payroll in the sidebar, even for roles that can open it', async () => {
+    for (const role of [UserRole.ADMIN, UserRole.MANAGER]) {
+      const { labels, element } = await render(role);
+      expect(labels).not.toContain('Payroll');
+      const hrefs = Array.from(element.querySelectorAll('a.nav-link')).map(link =>
+        link.getAttribute('href')
+      );
+      expect(hrefs).not.toContain('/employees/payroll');
+    }
+  });
+
   it('hides modules the role has no access to', async () => {
     const manager = await render(UserRole.MANAGER);
     expect(manager.labels).not.toContain('Users');
@@ -92,5 +107,28 @@ describe('SidebarComponent', () => {
     fixture.componentRef.setInput('drawerMode', true);
     fixture.detectChanges();
     expect(element.querySelector('.sidebar')?.classList).toContain('sidebar--open');
+  });
+
+  it('hides and shows the low-stock count as soon as the setting is saved, without leaving the page', async () => {
+    const { fixture, element } = await render(UserRole.ADMIN);
+    const productsCount = () =>
+      Array.from(element.querySelectorAll('a.nav-link'))
+        .find(link => link.textContent?.includes('Products'))
+        ?.querySelector('.nav-link__count')?.textContent;
+    expect(productsCount()).toBe('3');
+    const settings = await firstValueFrom(TestBed.inject(SettingsDataService).get());
+    const service = TestBed.inject(SettingsService);
+
+    expect(
+      (await service.save({ ...toDraft(settings), showLowStockCountInSidebar: false })).ok
+    ).toBeTrue();
+    fixture.detectChanges();
+    expect(productsCount()).toBeUndefined();
+
+    expect(
+      (await service.save({ ...toDraft(settings), showLowStockCountInSidebar: true })).ok
+    ).toBeTrue();
+    fixture.detectChanges();
+    expect(productsCount()).toBe('3');
   });
 });

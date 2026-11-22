@@ -32,6 +32,13 @@ describe('InMemoryCollection', () => {
     expect(new InMemoryCollection<Item>(seed).byId('missing')).toBeNull();
   });
 
+  it('removes an item by id and reports whether it existed', () => {
+    const collection = new InMemoryCollection<Item>(seed);
+    expect(collection.remove('1')).toBeTrue();
+    expect(collection.remove('1')).toBeFalse();
+    expect(collection.all()).toEqual([]);
+  });
+
   it('starts from the original seed for every new instance', () => {
     const first = new InMemoryCollection<Item>(seed);
     first.upsert({ id: '1', name: 'Edited' });

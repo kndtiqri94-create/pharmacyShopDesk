@@ -19,7 +19,7 @@ import { ButtonComponent } from './button.component';
 })
 class HostComponent {
   variant: 'default' | 'primary' | 'soft' | 'danger' | 'ghost' = 'default';
-  size: 'sm' | 'md' | 'lg' = 'md';
+  size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
   icon: 'plus' | null = null;
   block = false;
   disabled = false;
@@ -46,11 +46,16 @@ describe('ButtonComponent', () => {
     }
   });
 
-  it('supports small, medium and large sizes', () => {
-    for (const size of ['sm', 'md', 'lg'] as const) {
+  it('supports small, medium, large and extra large sizes', () => {
+    for (const size of ['sm', 'md', 'lg', 'xl'] as const) {
       const { button } = render(host => (host.size = size));
       expect(button.getAttribute('data-size')).toBe(size);
     }
+  });
+
+  it('makes the extra large size at least 52px tall for touch screens', () => {
+    const { button } = render(host => (host.size = 'xl'));
+    expect(parseFloat(getComputedStyle(button).minHeight)).toBeGreaterThanOrEqual(52);
   });
 
   it('shows a leading icon when asked', () => {
@@ -74,5 +79,32 @@ describe('ButtonComponent', () => {
     const { fixture, button } = render();
     button.click();
     expect(fixture.componentInstance.clicks).toBe(1);
+  });
+});
+
+@Component({
+  imports: [ButtonComponent],
+  template: `<app-button [tone]="tone">Hold</app-button>`,
+})
+class ToneHostComponent {
+  tone: 'amber' | 'green' | 'blue' | null = null;
+}
+
+describe('ButtonComponent tone', () => {
+  function renderTone(tone: 'amber' | 'green' | 'blue' | null) {
+    const fixture = TestBed.createComponent(ToneHostComponent);
+    fixture.componentInstance.tone = tone;
+    fixture.detectChanges();
+    return fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+  }
+
+  it('adds no tone attribute by default so other screens render unchanged', () => {
+    expect(renderTone(null).hasAttribute('data-tone')).toBeFalse();
+  });
+
+  it('marks the button with its tone and keeps its label', () => {
+    const button = renderTone('amber');
+    expect(button.getAttribute('data-tone')).toBe('amber');
+    expect(button.textContent?.trim()).toBe('Hold');
   });
 });

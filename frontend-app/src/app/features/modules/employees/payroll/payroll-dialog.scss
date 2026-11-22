@@ -1,0 +1,27 @@
+:host {
+  display: contents;
+}
+
+.employee {
+  margin: 0;
+}
+
+.form-error {
+  margin: 0;
+  color: var(--sd-danger);
+}
+
+.records {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--sd-space-1) var(--sd-space-2);
+    text-align: left;
+  }
+
+  .num {
+    text-align: right;
+  }
+}

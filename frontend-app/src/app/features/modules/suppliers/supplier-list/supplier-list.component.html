@@ -1,0 +1,54 @@
+<app-card [flush]="true">
+  <div class="toolbar">
+    <div class="sd-field-box toolbar__search">
+      <app-icon class="toolbar__icon" name="search" [size]="18" />
+      <input
+        type="search"
+        class="sd-field-control"
+        aria-label="Search suppliers"
+        placeholder="Search by supplier or contact"
+        [attr.maxlength]="searchMaxLength"
+        [value]="search()"
+        (input)="onSearch($event)"
+      />
+    </div>
+    <app-chips
+      ariaLabel="Filter suppliers"
+      [items]="chipItems()"
+      [value]="filter()"
+      (valueChange)="setFilter($event)"
+    />
+  </div>
+
+  <app-data-table
+    ariaLabel="Suppliers"
+    itemLabel="suppliers"
+    emptyTitle="No suppliers match"
+    emptyMessage="Clear the search, or choose All, to see every supplier."
+    [columns]="columns"
+    [rows]="rows()"
+    [rowKey]="rowKey"
+    [activeRowKey]="selectedId()"
+    [(pageNumber)]="page"
+  >
+    <ng-template appDataTableCell="supplier" let-item>
+      <div class="supplier-cell">
+        <app-avatar size="sm" [name]="item.supplier.name" />
+        <div>
+          <button
+            type="button"
+            class="supplier-cell__name sd-body-strong"
+            [attr.aria-pressed]="item.supplier.id === selectedId()"
+            (click)="selected.emit(item.supplier.id)"
+          >
+            {{ item.supplier.name }}
+          </button>
+          <span class="supplier-cell__contact sd-caption">{{ item.supplier.contactPerson }}</span>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template appDataTableCell="status" let-item>
+      <app-badge [label]="statusOf(item).label" [tone]="statusOf(item).tone" />
+    </ng-template>
+  </app-data-table>
+</app-card>

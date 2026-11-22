@@ -1,0 +1,53 @@
+.rc-header {
+  text-align: center;
+}
+
+.rc-meta,
+.rc-totals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-1);
+  margin: 0;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sd-space-3);
+  }
+
+  dt {
+    color: var(--sd-ink-muted);
+  }
+
+  dd {
+    margin: 0;
+    text-align: right;
+  }
+}
+
+.rc-grand {
+  padding-top: var(--sd-space-1);
+  border-top: 1px solid var(--sd-border);
+  font-weight: 700;
+}
+
+.rc-lines {
+  width: 100%;
+  font-size: var(--sd-fs-caption);
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--sd-space-1);
+    border-bottom: 1px solid var(--sd-border);
+    text-align: left;
+  }
+
+  .is-right {
+    text-align: right;
+  }
+}
+
+.rc-thanks {
+  text-align: center;
+}

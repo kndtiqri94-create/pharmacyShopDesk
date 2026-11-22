@@ -1,0 +1,16 @@
+<dialog #dialog class="details" [attr.aria-labelledby]="titleId" (cancel)="onCancel($event)">
+  <div class="details__surface">
+    <h2 class="sd-section-title" [id]="titleId">{{ title() }}</h2>
+    <dl class="details__list">
+      @for (line of lines(); track line.label) {
+        <div class="details__line">
+          <dt class="sd-caption">{{ line.label }}</dt>
+          <dd>{{ line.value }}</dd>
+        </div>
+      }
+    </dl>
+    <div class="details__actions">
+      <app-button variant="primary" (click)="closed.emit()">Close</app-button>
+    </div>
+  </div>
+</dialog>

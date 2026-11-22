@@ -10,4 +10,5 @@ export interface ModuleDefinition {
   icon: IconName;
   group: ModuleGroup;
   subtitle: string;
+  hideFromSidebar?: boolean;
 }

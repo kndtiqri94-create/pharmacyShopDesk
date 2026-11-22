@@ -1,0 +1,57 @@
+<app-card [flush]="true">
+  <div class="detail">
+    <div class="detail__head">
+      <app-avatar size="lg" [name]="supplier().name" />
+      <div class="detail__title">
+        <h2 class="sd-section-title">{{ supplier().name }}</h2>
+        <p class="sd-caption">Supplier since {{ supplier().sinceYear }}</p>
+      </div>
+      <app-badge [label]="status().label" [tone]="status().tone" />
+    </div>
+
+    <div class="detail__owed">
+      <div>
+        <p class="sd-label-caps">Outstanding</p>
+        <p class="sd-stat-value sd-num" data-testid="supplier-outstanding">{{ owedText() }}</p>
+      </div>
+      <ng-template [appCanWrite]="suppliersModule">
+        <app-button size="sm" [disabled]="!hasBalance()" (click)="recordPayment.emit()">
+          Record payment
+        </app-button>
+      </ng-template>
+    </div>
+
+    <dl class="detail__facts">
+      <div>
+        <dt class="sd-caption">Contact person</dt>
+        <dd>{{ supplier().contactPerson }}</dd>
+      </div>
+      <div>
+        <dt class="sd-caption">Phone</dt>
+        <dd>{{ supplier().phone }}</dd>
+      </div>
+      <div>
+        <dt class="sd-caption">Email</dt>
+        <dd>{{ supplier().email }}</dd>
+      </div>
+      <div>
+        <dt class="sd-caption">Terms</dt>
+        <dd>{{ terms() }}</dd>
+      </div>
+    </dl>
+
+    <section class="detail__section" aria-labelledby="recent-activity-title">
+      <h3 id="recent-activity-title" class="sd-label-caps">Recent activity</h3>
+      <app-supplier-activity-list [items]="activity()" />
+    </section>
+
+    <ng-template [appCanWrite]="suppliersModule">
+      <div class="detail__actions">
+        <app-button (click)="edit.emit()">Edit</app-button>
+        <app-button icon="plus" [disabled]="!canOrder()" (click)="newOrder.emit()"
+          >New PO</app-button
+        >
+      </div>
+    </ng-template>
+  </div>
+</app-card>

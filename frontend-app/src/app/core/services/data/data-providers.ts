@@ -1,22 +1,36 @@
 import { Provider } from '@angular/core';
+import { AttendanceDataService } from './attendance-data.service';
+import { BankAccountDataService } from './bank-account-data.service';
 import { EmployeeDataService } from './employee-data.service';
 import { GrnDataService } from './grn-data.service';
+import { InMemoryAttendanceDataService } from './in-memory/in-memory-attendance-data.service';
+import { InMemoryBankAccountDataService } from './in-memory/in-memory-bank-account-data.service';
 import { InMemoryEmployeeDataService } from './in-memory/in-memory-employee-data.service';
 import { InMemoryGrnDataService } from './in-memory/in-memory-grn-data.service';
+import { InMemoryLeaveDataService } from './in-memory/in-memory-leave-data.service';
+import { InMemoryPayrollDataService } from './in-memory/in-memory-payroll-data.service';
 import { InMemoryProductDataService } from './in-memory/in-memory-product-data.service';
+import { InMemoryProductSyncServer } from './in-memory/in-memory-product-sync-server';
 import { InMemoryPurchaseOrderDataService } from './in-memory/in-memory-purchase-order-data.service';
 import { InMemoryReloadDataService } from './in-memory/in-memory-reload-data.service';
 import { InMemoryRoleDataService } from './in-memory/in-memory-role-data.service';
+import { InMemorySalesDataService } from './in-memory/in-memory-sales-data.service';
 import { InMemorySettingsDataService } from './in-memory/in-memory-settings-data.service';
 import { InMemorySupplierDataService } from './in-memory/in-memory-supplier-data.service';
+import { InMemorySupplierPaymentDataService } from './in-memory/in-memory-supplier-payment-data.service';
 import { InMemorySyncDataService } from './in-memory/in-memory-sync-data.service';
 import { InMemoryUserDataService } from './in-memory/in-memory-user-data.service';
+import { LeaveDataService } from './leave-data.service';
+import { PayrollDataService } from './payroll-data.service';
 import { ProductDataService } from './product-data.service';
+import { ProductSyncServer } from './product-sync-server';
 import { PurchaseOrderDataService } from './purchase-order-data.service';
 import { ReloadDataService } from './reload-data.service';
 import { RoleDataService } from './role-data.service';
+import { SalesDataService } from './sales-data.service';
 import { SettingsDataService } from './settings-data.service';
 import { SupplierDataService } from './supplier-data.service';
+import { SupplierPaymentDataService } from './supplier-payment-data.service';
 import { SyncDataService } from './sync-data.service';
 import { UserDataService } from './user-data.service';
 
@@ -32,7 +46,14 @@ const IN_MEMORY_BINDINGS: readonly [DataToken, new () => object][] = [
   [RoleDataService, InMemoryRoleDataService],
   [ReloadDataService, InMemoryReloadDataService],
   [SettingsDataService, InMemorySettingsDataService],
+  [SalesDataService, InMemorySalesDataService],
   [SyncDataService, InMemorySyncDataService],
+  [SupplierPaymentDataService, InMemorySupplierPaymentDataService],
+  [AttendanceDataService, InMemoryAttendanceDataService],
+  [LeaveDataService, InMemoryLeaveDataService],
+  [PayrollDataService, InMemoryPayrollDataService],
+  [BankAccountDataService, InMemoryBankAccountDataService],
+  [ProductSyncServer, InMemoryProductSyncServer],
 ];
 
 function notConfigured(): never {

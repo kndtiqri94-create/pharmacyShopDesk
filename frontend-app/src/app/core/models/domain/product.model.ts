@@ -17,5 +17,8 @@ export interface Product {
   stockOnHand: number;
   prescriptionRequired: boolean;
   active: boolean;
+  taxRatePercent: number;
+  shelfLocation: string;
+  showInPosQuickList: boolean;
   batches: Batch[];
 }

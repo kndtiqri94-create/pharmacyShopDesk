@@ -34,7 +34,9 @@ describe('permission matrix consistency (sidebar, page access and actions)', () 
         const reachable = guardResult === true;
         const message = `${role} ${definition.key}`;
 
-        expect(sidebarPaths.includes(definition.path)).withContext(message).toBe(reachable);
+        expect(sidebarPaths.includes(definition.path))
+          .withContext(message)
+          .toBe(reachable && !definition.hideFromSidebar);
         expect(permissionService.canView(definition.key)).withContext(message).toBe(reachable);
         expect(reachable)
           .withContext(message)

@@ -1,0 +1,32 @@
+<app-card title="Supplier">
+  @if (supplier(); as supplier) {
+    <div class="supplier">
+      <div class="supplier__head">
+        <app-avatar [name]="supplier.name" />
+        <div>
+          <p class="sd-body-strong">{{ supplier.name }}</p>
+          <p class="sd-caption">Supplier since {{ supplier.sinceYear }}</p>
+        </div>
+      </div>
+      <dl class="supplier__facts">
+        <div>
+          <dt class="sd-caption">Phone</dt>
+          <dd>{{ supplier.phone }}</dd>
+        </div>
+        <div>
+          <dt class="sd-caption">Payment terms</dt>
+          <dd>{{ supplier.creditDays }} days credit</dd>
+        </div>
+        <div>
+          <dt class="sd-caption">Usual delivery</dt>
+          <dd>{{ supplier.deliveryDays }}</dd>
+        </div>
+      </dl>
+      <p class="supplier__owed sd-body-strong" data-testid="supplier-owed">
+        You owe them {{ formatRupees(owedCents()) }}
+      </p>
+    </div>
+  } @else {
+    <p class="sd-muted">Choose a supplier to see their phone, terms and what you owe them.</p>
+  }
+</app-card>

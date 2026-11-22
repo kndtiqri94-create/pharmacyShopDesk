@@ -1,0 +1,60 @@
+<app-pos-dialog heading="Count notes and coins" [open]="open()" (closed)="closed.emit()">
+  <p class="sd-caption">Type how many of each note and coin are in the drawer.</p>
+  <table class="pp-table dd-table" aria-label="Notes and coins">
+    <thead>
+      <tr>
+        <th scope="col">Note or coin</th>
+        <th scope="col" class="is-right">Count</th>
+        <th scope="col" class="is-right">Amount (Rs.)</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (entry of summary().entries; track entry.denomination.valueRupees) {
+        <tr>
+          <th scope="row">{{ entry.label }}</th>
+          <td class="is-right">
+            <input
+              class="pp-line-input dd-count"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="0"
+              [attr.maxlength]="countMaxLength"
+              [attr.aria-label]="entry.label + ' count'"
+              [attr.aria-invalid]="entry.error ? 'true' : null"
+              [attr.aria-describedby]="
+                entry.error ? 'dd-error-' + entry.denomination.valueRupees : null
+              "
+              [value]="countText(entry)"
+              (input)="onCount(entry, $event)"
+              (keydown.enter)="confirm()"
+            />
+            @if (entry.error) {
+              <p class="dd-error" [id]="'dd-error-' + entry.denomination.valueRupees">
+                {{ entry.error }}
+              </p>
+            }
+          </td>
+          <td class="is-right sd-num">{{ cell(entry.lineCents) }}</td>
+        </tr>
+      }
+    </tbody>
+    <tfoot>
+      <tr>
+        <th scope="row" colspan="2">Total</th>
+        <td class="is-right sd-num" data-testid="denomination-total">
+          {{ money(summary().totalCents) }}
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+  @if (refused(); as message) {
+    <p class="dd-error" role="alert">{{ message }}</p>
+  }
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Cancel</app-button>
+    <app-button variant="primary" size="xl" icon="check" (click)="confirm()">
+      Use this total
+    </app-button>
+  </div>
+</app-pos-dialog>

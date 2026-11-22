@@ -47,6 +47,11 @@
     padding: 0 var(--sd-space-5);
   }
 
+  &[data-size='xl'] {
+    min-height: var(--sd-control-touch);
+    padding: 0 var(--sd-space-5);
+  }
+
   &[data-variant='primary'] {
     background: var(--sd-primary);
     border-color: var(--sd-primary);
@@ -71,6 +76,29 @@
   &[data-variant='danger'] {
     border-color: var(--sd-danger);
     color: var(--sd-danger);
+  }
+
+  @each $tone in ('amber', 'green', 'blue', 'purple', 'muted') {
+    &[data-variant='default'][data-tone='#{$tone}'] {
+      background: var(--sd-pos-#{$tone}-bg);
+      border-color: var(--sd-pos-#{$tone}-border);
+      color: var(--sd-pos-#{$tone}-ink);
+
+      &:hover:not(:disabled) {
+        background: var(--sd-pos-#{$tone}-bg-hover);
+      }
+    }
+  }
+
+  &[data-variant='default'][data-tone='slate'] {
+    background: var(--sd-pos-slate-bg);
+    border-color: var(--sd-pos-slate-bg);
+    color: var(--sd-pos-slate-ink);
+
+    &:hover:not(:disabled) {
+      background: var(--sd-pos-slate-bg-hover);
+      border-color: var(--sd-pos-slate-bg-hover);
+    }
   }
 
   &[data-variant='ghost'] {

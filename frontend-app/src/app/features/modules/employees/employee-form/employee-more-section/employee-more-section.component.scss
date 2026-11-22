@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+.more__photo {
+  margin-bottom: var(--sd-space-5);
+}
+
+.more__toggles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--sd-space-3) var(--sd-space-4);
+  margin-top: var(--sd-space-5);
+}
+
+.more__linked {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-1);
+  margin: 0;
+  color: var(--sd-ink-muted);
+}

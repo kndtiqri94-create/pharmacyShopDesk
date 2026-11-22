@@ -1,0 +1,35 @@
+<div class="sd-stack">
+  <app-page-header title="Suppliers" [subtitle]="subtitle()">
+    <div pageActions class="sd-row">
+      <ng-template [appCanWrite]="moduleKey">
+        <app-button variant="primary" icon="plus" (click)="showSampleMessage('Add supplier')">
+          Add supplier
+        </app-button>
+      </ng-template>
+    </div>
+  </app-page-header>
+
+  <div class="sd-with-summary">
+    <app-supplier-list [items]="items()" [selectedId]="selectedKey()" (selected)="select($event)" />
+    @if (selectedItem(); as item) {
+      <app-supplier-detail-panel
+        [item]="item"
+        [activity]="activity()"
+        (recordPayment)="openPayment()"
+        (edit)="showSampleMessage('Edit supplier')"
+        (newOrder)="newOrder()"
+      />
+      <ng-template [appCanWrite]="moduleKey">
+        <app-record-payment-dialog
+          [open]="paymentOpen()"
+          [supplierName]="item.supplier.name"
+          [owedCents]="item.owedCents"
+          [busy]="paymentBusy()"
+          [serverError]="paymentError()"
+          (confirmed)="recordPayment($event)"
+          (cancelled)="closePayment()"
+        />
+      </ng-template>
+    }
+  </div>
+</div>

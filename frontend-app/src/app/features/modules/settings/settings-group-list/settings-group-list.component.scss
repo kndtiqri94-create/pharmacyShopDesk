@@ -1,0 +1,54 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.groups {
+  padding: var(--sd-space-2);
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  box-shadow: var(--sd-shadow-card);
+}
+
+.groups__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include bp.below-laptop {
+    flex-flow: row wrap;
+  }
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--sd-control-md);
+  padding: 0 var(--sd-space-3);
+  border: 0;
+  border-radius: var(--sd-radius-md);
+  background: transparent;
+  color: var(--sd-ink);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sd-surface-sunken);
+  }
+
+  @include bp.below-laptop {
+    min-height: var(--sd-touch-min);
+  }
+}
+
+.group--active {
+  background: var(--sd-primary-soft);
+  color: var(--sd-primary);
+}

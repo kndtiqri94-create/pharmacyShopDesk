@@ -1,6 +1,8 @@
 @if (visible()) {
   <nav class="pagination" aria-label="Pagination">
-    <p class="sd-caption" data-testid="pagination-summary">{{ summary() }}</p>
+    @if (showSummary()) {
+      <p class="sd-caption" data-testid="pagination-summary">{{ summary() }}</p>
+    }
     <ul class="pagination__pages">
       <li>
         <button

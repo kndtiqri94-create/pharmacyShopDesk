@@ -1,0 +1,16 @@
+<div class="sd-form-grid">
+  <app-field label="Currency" fieldId="settings-currency" hint="Fixed for this shop." [span]="4">
+    <input appFieldControl type="text" readonly [value]="currency" />
+  </app-field>
+  <app-field
+    label="Date format"
+    fieldId="settings-date-format"
+    hint="Fixed for this shop."
+    [span]="4"
+  >
+    <input appFieldControl type="text" readonly [value]="dateFormat" />
+  </app-field>
+  <app-field label="Time zone" fieldId="settings-time-zone" hint="Fixed for this shop." [span]="4">
+    <input appFieldControl type="text" readonly [value]="timeZone" />
+  </app-field>
+</div>

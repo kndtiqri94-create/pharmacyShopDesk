@@ -1,0 +1,113 @@
+<div class="sd-stack">
+  <app-page-header
+    title="Purchase orders"
+    subtitle="Orders you have sent to suppliers and what is still on the way."
+  >
+    <div pageActions class="sd-row">
+      <app-button icon="download" (click)="showSampleMessage('Export')">Export</app-button>
+      <ng-template [appCanWrite]="moduleKey">
+        <app-button variant="primary" icon="plus" (click)="newOrder()">
+          New purchase order
+        </app-button>
+      </ng-template>
+    </div>
+  </app-page-header>
+
+  @if (!canWrite()) {
+    <app-alert tone="info">
+      You can look at purchase orders but you cannot add or change them.
+    </app-alert>
+  }
+
+  @if (overdueMessage(); as message) {
+    <app-alert tone="warning" title="Overdue">{{ message }}</app-alert>
+  }
+
+  <app-card [flush]="true">
+    <div class="toolbar">
+      <div class="toolbar__row">
+        <div class="sd-field-box toolbar__search">
+          <app-icon class="toolbar__icon" name="search" [size]="18" />
+          <input
+            type="search"
+            class="sd-field-control"
+            aria-label="Search purchase orders"
+            placeholder="Search by PO number or supplier"
+            [attr.maxlength]="searchMaxLength"
+            [value]="search()"
+            (input)="onSearch($event)"
+          />
+        </div>
+        <app-button icon="calendar" (click)="showSampleMessage('Choosing another date range')">
+          Last 30 days · {{ rangeText }}
+        </app-button>
+      </div>
+      <app-chips
+        ariaLabel="Filter by status"
+        [items]="chipItems()"
+        [value]="status()"
+        (valueChange)="setStatus($event)"
+      />
+    </div>
+
+    <app-data-table
+      ariaLabel="Purchase orders"
+      itemLabel="purchase orders"
+      emptyTitle="No purchase orders match"
+      emptyMessage="Clear the search, or choose All, to see every purchase order."
+      [columns]="columns"
+      [rows]="rows()"
+      [rowKey]="rowKey"
+      [(pageNumber)]="page"
+    >
+      <ng-template appDataTableCell="expected" let-item>
+        @if (item.overdue) {
+          <span class="overdue sd-body-strong">{{ item.expectedLabel }}</span>
+        } @else {
+          {{ item.expectedLabel }}
+        }
+      </ng-template>
+      <ng-template appDataTableCell="status" let-item>
+        <app-po-status-badge [status]="item.order.status" />
+      </ng-template>
+      <ng-template appDataTableCell="actions" let-item>
+        <div class="sd-row row-actions">
+          @if (canReceiveOrder(item.order)) {
+            <app-button
+              variant="soft"
+              size="sm"
+              [ariaLabel]="'Receive ' + item.order.number"
+              (click)="receive(item.order)"
+            >
+              Receive
+            </app-button>
+          }
+          @if (canEditOrder(item.order)) {
+            <app-button
+              variant="ghost"
+              size="sm"
+              icon="edit"
+              [ariaLabel]="'Edit ' + item.order.number"
+              (click)="edit(item.order)"
+            />
+          } @else {
+            <app-button
+              variant="ghost"
+              size="sm"
+              icon="eye"
+              [ariaLabel]="'View ' + item.order.number"
+              (click)="view(item.order)"
+            />
+          }
+          <app-button
+            variant="ghost"
+            size="sm"
+            icon="more"
+            [ariaLabel]="'More options for ' + item.order.number"
+            (click)="showSampleMessage('More actions')"
+          />
+        </div>
+      </ng-template>
+    </app-data-table>
+  </app-card>
+</div>

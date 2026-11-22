@@ -9,6 +9,7 @@ export interface PurchaseOrder {
   supplierId: string;
   status: PoStatus;
   notes: string;
+  deliveryCents: number;
   totalCents: number;
   lines: PurchaseOrderLine[];
 }

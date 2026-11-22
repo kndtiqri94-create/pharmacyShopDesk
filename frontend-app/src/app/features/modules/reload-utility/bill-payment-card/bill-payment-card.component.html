@@ -1,0 +1,55 @@
+<app-card title="Bill payment">
+  <form class="bill" novalidate (submit)="pay($event)">
+    <app-field
+      label="Provider"
+      [fieldId]="fieldId('provider')"
+      [required]="true"
+      [error]="error('provider')"
+    >
+      <select appFieldControl [disabled]="!canWrite()" (change)="onProviderChange($event)">
+        <option value="" [selected]="provider() === ''">Choose a provider</option>
+        @for (item of providers; track item) {
+          <option [value]="item" [selected]="item === provider()">{{ item }}</option>
+        }
+      </select>
+    </app-field>
+    <app-field
+      label="Account number"
+      [fieldId]="fieldId('account')"
+      [required]="true"
+      [error]="error('account')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        [attr.maxlength]="accountMaxLength"
+        [disabled]="!canWrite()"
+        [value]="account()"
+        (input)="onAccountInput($event)"
+      />
+    </app-field>
+    <app-field
+      label="Amount (Rs.)"
+      prefix="Rs."
+      [fieldId]="fieldId('amount')"
+      [required]="true"
+      [error]="error('amount')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [attr.maxlength]="amountMaxLength"
+        [disabled]="!canWrite()"
+        [value]="amount()"
+        (input)="onAmountInput($event)"
+      />
+    </app-field>
+    <p class="sd-caption" data-testid="bill-fee-hint">{{ feeHint }}</p>
+    @if (canWrite()) {
+      <app-button type="submit" [block]="true" [disabled]="busy()">Pay bill</app-button>
+    }
+  </form>
+</app-card>

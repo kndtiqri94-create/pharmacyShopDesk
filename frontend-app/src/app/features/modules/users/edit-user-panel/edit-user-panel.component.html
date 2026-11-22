@@ -1,0 +1,35 @@
+<app-side-panel title="Edit user" [open]="open()" [initialFocus]="initialFocus" (closed)="cancel()">
+  @if (row(); as row) {
+    <div class="sd-stack">
+      <dl class="facts">
+        <div>
+          <dt class="sd-caption">Name</dt>
+          <dd>{{ row.user.displayName }}</dd>
+        </div>
+        <div>
+          <dt class="sd-caption">Username and employee</dt>
+          <dd>{{ subline(row) }}</dd>
+        </div>
+      </dl>
+      <app-field
+        label="Role"
+        [fieldId]="roleFieldId"
+        [required]="true"
+        [hint]="isOwnAccount() ? 'You cannot change your own role.' : null"
+        [error]="error()"
+      >
+        <select appFieldControl [disabled]="isOwnAccount()" (change)="onRoleChange($event)">
+          @for (option of roles; track option) {
+            <option [value]="option" [selected]="option === role()">{{ roleLabel(option) }}</option>
+          }
+        </select>
+      </app-field>
+    </div>
+  }
+  <ng-container panelFooter>
+    <app-button [disabled]="saving()" (click)="cancel()">Cancel</app-button>
+    <app-button variant="primary" [disabled]="saving() || isOwnAccount()" (click)="save()">
+      Save changes
+    </app-button>
+  </ng-container>
+</app-side-panel>

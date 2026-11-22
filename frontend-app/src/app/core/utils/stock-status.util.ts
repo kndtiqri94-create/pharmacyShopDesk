@@ -3,7 +3,7 @@ import { Product } from '../models/domain/product.model';
 import { daysBetween } from './date.util';
 
 export function getStockOnHand(product: Product): number {
-  if (!product.trackBatches) return product.stockOnHand;
+  if (!product.trackBatches || product.batches.length === 0) return product.stockOnHand;
   return product.batches.reduce((total, batch) => total + batch.quantity, 0);
 }
 

@@ -18,13 +18,23 @@ th {
 }
 
 td {
-  padding: var(--sd-space-3) var(--sd-space-5);
+  height: var(--sd-table-row-height, auto);
+  padding: var(--sd-table-cell-padding-y, var(--sd-space-3)) var(--sd-space-5);
   border-top: 1px solid var(--sd-border);
   vertical-align: middle;
 }
 
 tbody tr:hover {
   background: var(--sd-surface-sunken);
+}
+
+.cell-select {
+  width: 1%;
+  padding-right: 0;
+}
+
+.is-selected {
+  background: var(--sd-primary-soft);
 }
 
 .is-right {

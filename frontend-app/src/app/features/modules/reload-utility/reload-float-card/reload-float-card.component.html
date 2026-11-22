@@ -1,0 +1,37 @@
+<app-card title="Reload float">
+  @if (view(); as figures) {
+    <div class="float">
+      <div>
+        <p class="sd-label float__label">Available float</p>
+        <p class="sd-stat-value" data-testid="available-float">{{ figures.available }}</p>
+      </div>
+      <app-progress-bar
+        [value]="figures.progress"
+        [max]="fullCents"
+        [label]="progressLabel"
+        [tone]="low() ? 'warning' : 'primary'"
+      />
+      @if (low()) {
+        <app-alert tone="warning">{{ warning() }}</app-alert>
+      }
+      <dl class="float__figures">
+        <div class="float__figure">
+          <dt class="sd-caption">Reloads today</dt>
+          <dd class="sd-body-strong sd-num" data-testid="reloads-today">{{ figures.reloads }}</dd>
+        </div>
+        <div class="float__figure">
+          <dt class="sd-caption">Bills paid today</dt>
+          <dd class="sd-body-strong sd-num" data-testid="bills-today">{{ figures.bills }}</dd>
+        </div>
+        <div class="float__figure">
+          <dt class="sd-caption">Commission today</dt>
+          <dd class="sd-body-strong sd-num" data-testid="commission-today">
+            {{ figures.commission }}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  } @else {
+    <p class="sd-muted">There is no float on record yet.</p>
+  }
+</app-card>

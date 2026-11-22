@@ -1,0 +1,24 @@
+<div class="attachment">
+  <span class="sd-label">Attachment</span>
+  <div class="attachment__actions">
+    <input
+      class="attachment__input"
+      type="file"
+      accept="application/pdf,image/jpeg,image/png,.pdf,.jpg,.jpeg,.png"
+      [id]="inputId"
+      [attr.aria-describedby]="shownError() ? inputId + '-error' : inputId + '-hint'"
+      [attr.aria-invalid]="shownError() ? 'true' : null"
+      (change)="onFileChosen($event)"
+    />
+    <label class="attachment__browse" [for]="inputId">Browse</label>
+    @if (fileName(); as name) {
+      <span class="attachment__name">{{ name }}</span>
+      <app-button size="sm" variant="ghost" icon="trash" (click)="remove()">Remove</app-button>
+    }
+  </div>
+  @if (shownError(); as message) {
+    <p class="attachment__error" role="alert" [id]="inputId + '-error'">{{ message }}</p>
+  } @else {
+    <p class="sd-caption" [id]="inputId + '-hint'">PDF, JPG or PNG, up to 2 MB.</p>
+  }
+</div>

@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 
-export type FieldSize = 'md' | 'lg';
+export type FieldSize = 'md' | 'lg' | 'xl';
 
 @Component({
   selector: 'app-field',

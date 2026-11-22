@@ -51,3 +51,38 @@ describe('ShellStateService', () => {
     expect(service.pageTitle()).toBe('Page not found');
   });
 });
+
+describe('ShellStateService sidebar hiding for the till', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideRouter([{ path: '**', component: BlankComponent }])],
+    });
+  });
+
+  it('shows the sidebar until the till asks for it to be hidden', () => {
+    expect(TestBed.inject(ShellStateService).sidebarHidden()).toBeFalse();
+  });
+
+  it('hides and shows the sidebar on request', () => {
+    const service = TestBed.inject(ShellStateService);
+    service.setSidebarHidden(true);
+    expect(service.sidebarHidden()).toBeTrue();
+    service.setSidebarHidden(false);
+    expect(service.sidebarHidden()).toBeFalse();
+  });
+
+  it('closes an open menu when the sidebar becomes hidden, but still lets the menu open afterwards', () => {
+    const service = TestBed.inject(ShellStateService);
+    service.openMenu();
+    service.setSidebarHidden(true);
+    expect(service.menuOpen()).toBeFalse();
+    service.openMenu();
+    expect(service.menuOpen()).toBeTrue();
+  });
+
+  it('titles the till page POS', async () => {
+    const service = TestBed.inject(ShellStateService);
+    await TestBed.inject(Router).navigateByUrl('/pos');
+    expect(service.pageTitle()).toBe('POS');
+  });
+});

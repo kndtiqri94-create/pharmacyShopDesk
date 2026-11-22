@@ -1,0 +1,95 @@
+<div class="alerts">
+  <div class="sd-form-grid">
+    <app-field
+      label="Warn about expiry"
+      suffix="days"
+      hint="Batches that expire within this many days show as Expiring soon."
+      [fieldId]="fieldId('expiryAlertDays')"
+      [required]="true"
+      [span]="4"
+      [error]="error('expiryAlertDays')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        [attr.maxlength]="numberMaxLength"
+        [disabled]="disabled()"
+        [value]="draft().expiryAlertDays"
+        (input)="onNumberInput('expiryAlertDays', $event)"
+      />
+    </app-field>
+    <app-field
+      label="Default reorder level"
+      suffix="units"
+      hint="Pre-fills the reorder level when you add a product."
+      [fieldId]="fieldId('defaultReorderLevel')"
+      [required]="true"
+      [span]="4"
+      [error]="error('defaultReorderLevel')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        [attr.maxlength]="numberMaxLength"
+        [disabled]="disabled()"
+        [value]="draft().defaultReorderLevel"
+        (input)="onNumberInput('defaultReorderLevel', $event)"
+      />
+    </app-field>
+    <app-field
+      label="Warn when reload float is below (Rs.)"
+      prefix="Rs."
+      hint="Shows the low float warning and the Top up reminder on the Dashboard."
+      [fieldId]="fieldId('lowFloatRupees')"
+      [required]="true"
+      [span]="4"
+      [error]="error('lowFloatRupees')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        [attr.maxlength]="numberMaxLength"
+        [disabled]="disabled()"
+        [value]="draft().lowFloatRupees"
+        (input)="onNumberInput('lowFloatRupees', $event)"
+      />
+    </app-field>
+  </div>
+
+  <fieldset class="options" [disabled]="disabled()">
+    <legend class="sd-label">Stock options</legend>
+    <label class="sd-checkbox">
+      <input
+        type="checkbox"
+        [id]="optionIdPrefix + 'sellEarliestExpiringFirst'"
+        [checked]="draft().sellEarliestExpiringFirst"
+        (change)="onOptionChange('sellEarliestExpiringFirst', $event)"
+      />
+      <span>Sell the earliest-expiring batch first (FEFO)</span>
+    </label>
+    <label class="sd-checkbox">
+      <input
+        type="checkbox"
+        [id]="optionIdPrefix + 'blockExpiredSales'"
+        [checked]="draft().blockExpiredSales"
+        (change)="onOptionChange('blockExpiredSales', $event)"
+      />
+      <span>Block sales of expired batches</span>
+    </label>
+    <label class="sd-checkbox">
+      <input
+        type="checkbox"
+        [id]="optionIdPrefix + 'showLowStockCountInSidebar'"
+        [checked]="draft().showLowStockCountInSidebar"
+        (change)="onOptionChange('showLowStockCountInSidebar', $event)"
+      />
+      <span>Show low-stock count in the sidebar</span>
+    </label>
+  </fieldset>
+</div>

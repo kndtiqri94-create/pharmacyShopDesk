@@ -1,0 +1,155 @@
+<app-card title="Basic details" subtitle="Who they are and how to reach them.">
+  <div class="sd-form-grid">
+    <app-field
+      label="Title"
+      [fieldId]="fieldId('title')"
+      [required]="true"
+      [span]="4"
+      [error]="error('title')"
+    >
+      <select
+        appFieldControl
+        [disabled]="readOnly()"
+        [value]="draft().title"
+        (change)="changed.emit({ title: valueOf($event) })"
+      >
+        <option value="">Choose a title</option>
+        @for (title of titles; track title) {
+          <option [value]="title" [selected]="draft().title === title">{{ title }}</option>
+        }
+      </select>
+    </app-field>
+    <app-field
+      label="EMP Code"
+      [fieldId]="fieldId('code')"
+      [required]="true"
+      [span]="4"
+      [error]="error('code')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        [readOnly]="readOnly()"
+        [value]="draft().code"
+        [attr.maxlength]="limits.codeMax"
+        (input)="changed.emit({ code: valueOf($event) })"
+      />
+    </app-field>
+    <app-field
+      label="Location"
+      [fieldId]="fieldId('location')"
+      [required]="true"
+      [span]="4"
+      [error]="error('location')"
+    >
+      <select
+        appFieldControl
+        [disabled]="readOnly()"
+        [value]="draft().location"
+        (change)="changed.emit({ location: valueOf($event) })"
+      >
+        @for (location of locationOptions(); track location) {
+          <option [value]="location" [selected]="draft().location === location">
+            {{ location }}
+          </option>
+        }
+      </select>
+    </app-field>
+    <app-field
+      label="First name"
+      [fieldId]="fieldId('firstName')"
+      [required]="true"
+      [span]="4"
+      [error]="error('firstName')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        [readOnly]="readOnly()"
+        [value]="draft().firstName"
+        [attr.maxlength]="limits.name"
+        (input)="changed.emit({ firstName: valueOf($event) })"
+      />
+    </app-field>
+    <app-field
+      label="Middle name"
+      [fieldId]="fieldId('middleName')"
+      [span]="4"
+      [error]="error('middleName')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        [readOnly]="readOnly()"
+        [value]="draft().middleName"
+        [attr.maxlength]="limits.name"
+        (input)="changed.emit({ middleName: valueOf($event) })"
+      />
+    </app-field>
+    <app-field
+      label="Last name"
+      [fieldId]="fieldId('lastName')"
+      [required]="true"
+      [span]="4"
+      [error]="error('lastName')"
+    >
+      <input
+        appFieldControl
+        type="text"
+        autocomplete="off"
+        [readOnly]="readOnly()"
+        [value]="draft().lastName"
+        [attr.maxlength]="limits.name"
+        (input)="changed.emit({ lastName: valueOf($event) })"
+      />
+    </app-field>
+    <app-field label="Email" [fieldId]="fieldId('email')" [span]="4" [error]="error('email')">
+      <input
+        appFieldControl
+        type="email"
+        autocomplete="off"
+        [readOnly]="readOnly()"
+        [value]="draft().email"
+        [attr.maxlength]="limits.email"
+        (input)="changed.emit({ email: valueOf($event) })"
+      />
+    </app-field>
+    <app-field
+      label="Date of birth"
+      [fieldId]="fieldId('dateOfBirth')"
+      [span]="4"
+      [error]="error('dateOfBirth')"
+    >
+      <input
+        appFieldControl
+        type="date"
+        [readOnly]="readOnly()"
+        [value]="draft().dateOfBirth"
+        [attr.max]="today()"
+        (input)="changed.emit({ dateOfBirth: valueOf($event) })"
+      />
+    </app-field>
+    <app-field
+      label="Mobile number"
+      hint="Example: 77XXXXXXX"
+      [fieldId]="fieldId('mobile')"
+      [required]="true"
+      [span]="4"
+      [error]="error('mobile')"
+    >
+      <input
+        appFieldControl
+        type="tel"
+        inputmode="numeric"
+        autocomplete="off"
+        [readOnly]="readOnly()"
+        [value]="draft().mobile"
+        [attr.maxlength]="12"
+        (input)="changed.emit({ mobile: valueOf($event) })"
+      />
+    </app-field>
+  </div>
+</app-card>

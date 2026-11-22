@@ -1,0 +1,45 @@
+<div class="picker">
+  <div class="picker__row">
+    <app-field
+      class="picker__select"
+      label="Covering Employee"
+      [fieldId]="fieldId"
+      [error]="error()"
+    >
+      <select appFieldControl [value]="value()" (change)="changed.emit(valueOf($event))">
+        <option value="">No covering employee</option>
+        @for (employee of options(); track employee.id) {
+          <option [value]="employee.id" [selected]="value() === employee.id">
+            {{ label(employee) }}
+          </option>
+        }
+      </select>
+    </app-field>
+    <app-button
+      icon="search"
+      [ariaExpanded]="searchOpen()"
+      [ariaControls]="searchId"
+      (click)="toggleSearch()"
+    >
+      Search employees
+    </app-button>
+  </div>
+  @if (searchOpen()) {
+    <app-field
+      label="Search employees"
+      hint="Type a code or a name. Only active employees are listed."
+      [fieldId]="searchId"
+    >
+      <input
+        appFieldControl
+        type="search"
+        autocomplete="off"
+        [value]="term()"
+        (input)="setTerm(valueOf($event))"
+      />
+    </app-field>
+    @if (matches().length === 0) {
+      <p class="sd-caption" role="status">No active employee matches that search.</p>
+    }
+  }
+</div>

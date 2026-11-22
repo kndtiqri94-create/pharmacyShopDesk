@@ -1,0 +1,47 @@
+<app-confirm-dialog
+  title="Create Salary Advance"
+  confirmLabel="Save"
+  [open]="true"
+  [busy]="working()"
+  (confirmed)="save()"
+  (cancelled)="cancel()"
+>
+  <p class="employee sd-body-strong">{{ row().employee.name }}</p>
+  @if (formError(); as message) {
+    <p class="form-error" role="alert" data-testid="form-error">{{ message }}</p>
+  }
+  <app-field
+    label="Counter"
+    [fieldId]="fieldIds.counter"
+    [required]="true"
+    [error]="error('counter')"
+  >
+    <select appFieldControl (change)="onCounter($event)">
+      <option value="" [selected]="counter() === ''">Choose a counter</option>
+      @for (name of counters(); track name) {
+        <option [value]="name" [selected]="name === counter()">{{ name }}</option>
+      }
+    </select>
+  </app-field>
+  <app-field label="Date" [fieldId]="fieldIds.date" [required]="true" [error]="error('date')">
+    <input appFieldControl type="date" [value]="date()" (input)="onDate($event)" />
+  </app-field>
+  <app-field
+    label="Advance Amount"
+    prefix="Rs."
+    [fieldId]="fieldIds.amount"
+    [required]="true"
+    [error]="error('amount')"
+    [hint]="limitHint()"
+  >
+    <input
+      appFieldControl
+      type="text"
+      inputmode="decimal"
+      autocomplete="off"
+      placeholder="Enter Advance Amount"
+      [value]="amount()"
+      (input)="onAmount($event)"
+    />
+  </app-field>
+</app-confirm-dialog>

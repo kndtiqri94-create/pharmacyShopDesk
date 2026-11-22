@@ -8,6 +8,7 @@
   class="sd-field-box"
   [class.sd-field-box--error]="!!error()"
   [class.sd-field-box--lg]="size() === 'lg'"
+  [class.sd-field-box--xl]="size() === 'xl'"
 >
   @if (prefix()) {
     <span class="field__affix">{{ prefix() }}</span>

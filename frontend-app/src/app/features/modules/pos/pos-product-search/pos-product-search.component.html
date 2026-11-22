@@ -1,0 +1,48 @@
+<div class="search">
+  <app-field
+    label="Find a product"
+    fieldId="pos-search"
+    size="xl"
+    hint="Type a name, generic name, SKU or barcode, then press Enter. A scanned barcode is added straight away."
+  >
+    <input
+      #searchInput
+      appFieldControl
+      type="text"
+      autocomplete="off"
+      [attr.maxlength]="maxLength"
+      [disabled]="!posService.canSell()"
+      (input)="onInput($event)"
+      (keydown.enter)="onEnter($event)"
+    />
+  </app-field>
+  <output class="sd-sr-only">{{ resultSummary() }}</output>
+  @if (rows().length > 0) {
+    <ul class="results" aria-label="Search results">
+      @for (row of rows(); track row.product.id) {
+        <li class="results__item">
+          <button
+            type="button"
+            class="result"
+            [disabled]="!row.addable || !posService.canSell()"
+            (click)="add(row.product.id)"
+          >
+            <span class="result__name">
+              <span class="sd-body-strong">{{ row.product.name }}</span>
+              <span class="sd-caption">
+                <span class="sd-code">{{ row.product.sku }}</span>
+                @if (row.product.genericName) {
+                  · {{ row.product.genericName }}
+                }
+              </span>
+            </span>
+            <span class="result__price sd-num">Rs. {{ row.priceText }}</span>
+            <app-badge [label]="row.badgeLabel" [tone]="row.badgeTone" />
+          </button>
+        </li>
+      }
+    </ul>
+  } @else if (term().trim().length > 0) {
+    <p class="sd-muted">No product matches that. Check the spelling, or scan the barcode again.</p>
+  }
+</div>

@@ -1,0 +1,20 @@
+<app-card title="Today's attendance" subtitle="Who has arrived for their shift.">
+  <div cardActions>
+    <ng-template [appCanWrite]="employeesModule">
+      <app-button size="sm" (click)="markAttendance.emit()">Mark attendance</app-button>
+    </ng-template>
+  </div>
+  <ul class="attendance">
+    @for (row of rows(); track row.employee.id) {
+      <li class="attendance__item">
+        <span class="sd-body-strong">{{ row.employee.name }}</span>
+        <span class="attendance__state">
+          @if (row.timeIn !== null) {
+            <span class="sd-caption">{{ formatTimeIn(row.timeIn) }}</span>
+          }
+          <app-badge [label]="statusOf(row).label" [tone]="statusOf(row).tone" />
+        </span>
+      </li>
+    }
+  </ul>
+</app-card>

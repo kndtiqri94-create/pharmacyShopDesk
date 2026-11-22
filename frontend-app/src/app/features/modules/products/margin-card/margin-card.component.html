@@ -1,0 +1,17 @@
+<app-card title="Margin">
+  @switch (margin().kind) {
+    @case ('profit') {
+      <p class="sd-stat-value" data-testid="margin-percent">{{ percentText() }}</p>
+      <p class="sd-muted" data-testid="margin-profit">{{ profitText() }}</p>
+      <app-progress-bar label="Margin on selling price" [value]="barValue()" tone="success" />
+    }
+    @case ('loss') {
+      <p class="sd-body-strong" data-testid="margin-loss">Selling below cost</p>
+      <p class="sd-muted">{{ lossText() }}</p>
+    }
+    @default {
+      <p class="sd-body-strong" data-testid="margin-none">No margin yet</p>
+      <p class="sd-muted">Enter a cost price and a selling price to see your margin.</p>
+    }
+  }
+</app-card>

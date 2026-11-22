@@ -9,7 +9,12 @@ function resolveAccess(moduleKey: unknown, requestedUrl: string): boolean | UrlT
   if (!inject(AuthService).isSignedIn()) {
     return router.createUrlTree(['/sign-in'], { queryParams: { returnUrl: requestedUrl } });
   }
-  if (isModuleKey(moduleKey) && inject(PermissionService).canView(moduleKey)) return true;
+  const permissionService = inject(PermissionService);
+  if (isModuleKey(moduleKey) && permissionService.canView(moduleKey)) {
+    permissionService.noteDenied(null);
+    return true;
+  }
+  permissionService.noteDenied(isModuleKey(moduleKey) ? moduleKey : null);
   return router.parseUrl(ACCESS_DENIED_PATH);
 }
 

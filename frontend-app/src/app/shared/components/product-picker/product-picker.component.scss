@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sd-space-2);
+  padding: var(--sd-space-3) var(--sd-space-5);
+  border-top: 1px solid var(--sd-border);
+  background: var(--sd-surface-sunken);
+}
+
+.picker__box {
+  flex: 1 1 280px;
+}

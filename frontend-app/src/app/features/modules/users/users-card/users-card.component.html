@@ -1,0 +1,58 @@
+<app-card title="Users" [subtitle]="subtitle()" [flush]="true">
+  <div class="sd-scroll-x">
+    <table class="users" aria-label="Users">
+      <thead>
+        <tr>
+          <th scope="col" class="sd-label-caps">User</th>
+          <th scope="col" class="sd-label-caps">Role</th>
+          <th scope="col" class="sd-label-caps">Last sign-in</th>
+          <th scope="col" class="sd-label-caps">Status</th>
+          <th scope="col"><span class="sd-sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.user.id) {
+          <tr>
+            <td>
+              <div class="users__person">
+                <app-avatar
+                  size="sm"
+                  [name]="row.user.displayName"
+                  [initials]="row.user.initials"
+                />
+                <div>
+                  <span class="sd-body-strong users__block">{{ row.user.displayName }}</span>
+                  <span class="sd-caption users__block">{{ subline(row) }}</span>
+                </div>
+              </div>
+            </td>
+            <td><app-badge [label]="roleLabel(row.user.role)" tone="primary" /></td>
+            <td>{{ lastSignIn(row) }}</td>
+            <td><app-badge [label]="statusOf(row).label" [tone]="statusOf(row).tone" /></td>
+            <td class="users__actions">
+              @if (canEdit()) {
+                <button
+                  type="button"
+                  class="icon-button"
+                  [attr.aria-label]="'Edit ' + row.user.displayName"
+                  (click)="editUser.emit(row)"
+                >
+                  <app-icon name="edit" />
+                </button>
+                <button
+                  type="button"
+                  class="icon-button"
+                  [attr.aria-label]="lockLabel(row)"
+                  [disabled]="isOwnRow(row)"
+                  (click)="toggleLock.emit(row)"
+                >
+                  <app-icon name="lock" />
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</app-card>

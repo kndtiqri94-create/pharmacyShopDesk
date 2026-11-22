@@ -1,0 +1,40 @@
+<div class="photo">
+  <div class="photo__frame">
+    @if (photoDataUrl(); as src) {
+      <img class="photo__img" [src]="src" [alt]="altText()" />
+    } @else {
+      <span class="photo__placeholder" role="img" aria-label="No picture chosen">
+        <app-icon name="user" [size]="22" />
+      </span>
+    }
+  </div>
+  <div class="photo__body">
+    <span class="sd-label" id="employee-photo-label">Profile picture</span>
+    @if (!readOnly()) {
+      <div class="photo__actions">
+        <input
+          class="photo__input"
+          type="file"
+          accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+          [id]="inputId"
+          [attr.aria-describedby]="shownError() ? inputId + '-error' : inputId + '-hint'"
+          [attr.aria-invalid]="shownError() ? 'true' : null"
+          (change)="onFileChosen($event)"
+        />
+        <label class="photo__choose" [for]="inputId">
+          {{ photoDataUrl() ? 'Replace picture' : 'Choose picture' }}
+        </label>
+        @if (photoDataUrl()) {
+          <app-button size="sm" variant="ghost" icon="trash" (click)="remove()">Remove</app-button>
+        }
+      </div>
+      @if (shownError(); as message) {
+        <p class="photo__error" role="alert" [id]="inputId + '-error'">{{ message }}</p>
+      } @else {
+        <p class="sd-caption" [id]="inputId + '-hint'">JPG or PNG, up to 2 MB.</p>
+      }
+    } @else if (!photoDataUrl()) {
+      <p class="sd-caption">No picture added.</p>
+    }
+  </div>
+</div>

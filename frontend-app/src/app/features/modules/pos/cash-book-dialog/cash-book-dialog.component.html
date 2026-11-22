@@ -1,0 +1,208 @@
+<app-pos-dialog heading="Cash Book" size="xl" [open]="open()" (closed)="closed.emit()">
+  <form class="cb-filter" aria-label="Cash book filter" (submit)="$event.preventDefault()">
+    <fieldset class="cb-filter__dates">
+      <legend class="sd-body-strong">Created at</legend>
+      <div class="sd-form-grid">
+        <app-field label="From" fieldId="cash-book-from" size="xl" [span]="6">
+          <input
+            appFieldControl
+            type="date"
+            [max]="today"
+            [value]="fromDraft()"
+            (change)="onFromChange($event)"
+          />
+        </app-field>
+        <app-field label="To" fieldId="cash-book-to" size="xl" [span]="6">
+          <input
+            appFieldControl
+            type="date"
+            [max]="today"
+            [value]="toDraft()"
+            (change)="onToChange($event)"
+          />
+        </app-field>
+      </div>
+    </fieldset>
+    <div class="cb-filter__buttons">
+      <app-button variant="primary" size="xl" (click)="filter()">Filter</app-button>
+      <app-button size="xl" (click)="reset()">Reset</app-button>
+    </div>
+    <div class="cb-filter__buttons cb-filter__buttons--end">
+      <app-button size="xl" icon="download" tone="muted" [disabled]="busy() || !report()" (click)="exportCsv()">
+        Export CSV
+      </app-button>
+      <app-button size="xl" icon="download" tone="muted" [disabled]="busy() || !report()" (click)="exportPdf()">
+        Export PDF
+      </app-button>
+    </div>
+  </form>
+
+  <div class="cb-actions">
+    <app-button size="xl" tone="blue" [disabled]="!canRecord()" (click)="openAction('ACTUAL')">
+      Add Actual Balance
+    </app-button>
+    <app-button size="xl" tone="blue" [disabled]="!canRecord()" (click)="openAction('ADJUSTMENT')">
+      Adjustment
+    </app-button>
+    <app-button size="xl" tone="blue" [disabled]="!canRecord()" (click)="openAction('OPENING')">
+      Add OB
+    </app-button>
+  </div>
+  @if (!canRecord()) {
+    <p class="sd-caption" data-testid="cash-book-admin-note">{{ adminOnlyMessage }}</p>
+  }
+
+  @if (message(); as text) {
+    <app-alert tone="warning" title="Check the dates" data-testid="cash-book-range-error">
+      {{ text }}
+    </app-alert>
+  }
+
+  @if (report(); as current) {
+    @if (current.toDayLocked) {
+      <app-alert tone="info">
+        This day's counter is closed, so it is locked and shown for viewing only.
+      </app-alert>
+    }
+
+    <table class="cb-table" data-testid="cash-ledger">
+      <caption class="sd-body-strong">
+        Cash ledger,
+        {{
+          dateOf(current.from)
+        }}
+        @if (current.from !== current.to) {
+          to {{ dateOf(current.to) }}
+        }
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Description</th>
+          <th scope="col" class="is-right">Credit (Rs.)</th>
+          <th scope="col" class="is-right">Debit (Rs.)</th>
+          <th scope="col" class="is-right">Balance (Rs.)</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of current.ledger.rows; track row.key) {
+          <tr [attr.data-row]="row.key">
+            <th scope="row">
+              {{ row.description }}
+              @if (row.isMock) {
+                <span class="cb-sample">Sample</span>
+              }
+            </th>
+            <td class="is-right sd-num">{{ money(row.creditCents) }}</td>
+            <td class="is-right sd-num">{{ money(row.debitCents) }}</td>
+            <td class="is-right sd-num">{{ money(row.balanceCents) }}</td>
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr class="cb-summary" data-row="BALANCE">
+          <th scope="row">Balance</th>
+          <td class="is-right sd-num">{{ money(current.ledger.totalCreditCents) }}</td>
+          <td class="is-right sd-num">{{ money(current.ledger.totalDebitCents) }}</td>
+          <td class="is-right sd-num" data-testid="cash-balance">
+            {{ money(current.ledger.balanceCents) }}
+          </td>
+        </tr>
+        <tr class="cb-summary" data-row="ACTUAL_BALANCE">
+          <th scope="row">Actual Balance</th>
+          <td></td>
+          <td></td>
+          <td class="is-right sd-num" data-testid="cash-actual">
+            @if (current.ledger.actualBalanceCents !== null) {
+              {{ money(current.ledger.actualBalanceCents) }}
+            } @else {
+              Not entered yet
+            }
+          </td>
+        </tr>
+        <tr class="cb-summary" data-row="DIFFERENCE">
+          <th scope="row">Difference</th>
+          <td></td>
+          <td></td>
+          <td class="is-right sd-num" data-testid="cash-difference">
+            @if (current.ledger.differenceCents !== null) {
+              {{ money(current.ledger.differenceCents) }}
+              ({{ status(current.ledger.differenceCents) }})
+            } @else {
+              Not available
+            }
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    <p class="sd-caption">Rows marked Sample use made-up figures until those modules exist.</p>
+
+    <div class="cb-pair">
+      <table class="cb-table" data-testid="cash-other-payments">
+        <caption class="sd-body-strong">
+          Other Payment Invoices
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Method</th>
+            <th scope="col" class="is-right">Invoices</th>
+            <th scope="col" class="is-right">Amount (Rs.)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of current.paymentInvoices; track line.method) {
+            <tr>
+              <th scope="row">{{ line.method }}</th>
+              <td class="is-right sd-num">{{ line.invoiceCount }}</td>
+              <td class="is-right sd-num">{{ money(line.amountCents) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <table class="cb-table" data-testid="cash-daily-summary">
+        <caption class="sd-body-strong">
+          Daily Sales Summary
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col" class="is-right">Count</th>
+            <th scope="col" class="is-right">Amount (Rs.)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of current.dailySales; track line.key) {
+            <tr>
+              <th scope="row">{{ line.label }}</th>
+              <td class="is-right sd-num">{{ line.count ?? '' }}</td>
+              <td class="is-right sd-num">{{ money(line.amountCents) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="sd-caption">Tax is not recorded on sales yet, so it shows zero.</p>
+  }
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close</app-button>
+  </div>
+</app-pos-dialog>
+
+@if (report(); as current) {
+  <app-actual-balance-dialog
+    [open]="action() === 'ACTUAL'"
+    [date]="current.to"
+    (closed)="closeAction()"
+  />
+  <app-adjustment-dialog
+    [open]="action() === 'ADJUSTMENT'"
+    [date]="current.to"
+    (closed)="closeAction()"
+  />
+}
+<app-add-ob-dialog
+  [open]="action() === 'OPENING'"
+  [adminOnly]="true"
+  [canChange]="canRecord()"
+  (closed)="closeAction()"
+/>

@@ -1,0 +1,100 @@
+<app-pos-dialog heading="Add opening balance" [open]="open()" (closed)="closed.emit()">
+  @if (status(); as current) {
+    @if (current.counterClosed) {
+      <app-alert tone="warning" title="Today is locked">
+        The counter is closed for today, so the opening balance cannot be changed.
+      </app-alert>
+    }
+    @if (current.opening; as opening) {
+      <dl class="pp-summary" data-testid="existing-opening">
+        <div>
+          <dt>Opening balance for {{ dateOf(today) }}</dt>
+          <dd class="sd-num">{{ money(opening.amountCents) }}</dd>
+        </div>
+        <div>
+          <dt>Set by</dt>
+          <dd>{{ opening.setBy }} at {{ timeOf(opening.setAt) }}</dd>
+        </div>
+      </dl>
+      @if (opening.changeLog.length > 0) {
+        <table class="pp-table" aria-label="Opening balance changes">
+          <thead>
+            <tr>
+              <th scope="col">Changed by</th>
+              <th scope="col" class="is-right">From (Rs.)</th>
+              <th scope="col" class="is-right">To (Rs.)</th>
+              <th scope="col">Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (change of opening.changeLog; track change.at) {
+              <tr>
+                <td>{{ change.by }}</td>
+                <td class="is-right sd-num">{{ money(change.oldCents) }}</td>
+                <td class="is-right sd-num">{{ money(change.newCents) }}</td>
+                <td>{{ timeOf(change.at) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    }
+
+    @if (broughtForward(); as carried) {
+      @if (!current.opening) {
+        <p class="sd-caption" data-testid="ob-source">
+          Brought forward from {{ dateOf(carried.fromDate) }} counter close. You can change it.
+        </p>
+      }
+    }
+
+    <div class="sd-form-grid">
+      <app-field
+        label="Opening balance"
+        fieldId="add-ob-amount"
+        prefix="Rs."
+        size="xl"
+        [error]="error()"
+        hint="Zero or more, with up to two decimals."
+        [span]="12"
+      >
+        <input
+          appFieldControl
+          class="ob__input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          maxlength="12"
+          [value]="amountText()"
+          [disabled]="!canChange() || current.counterClosed"
+          (input)="onAmountInput($event)"
+          (keydown.enter)="save()"
+        />
+      </app-field>
+    </div>
+
+    @if (confirming()) {
+      <div class="pp-confirm" role="alert">
+        <p class="sd-body-strong">Replace the opening balance?</p>
+        <p>This change is recorded with your name and the time.</p>
+        <div class="pp-row-actions">
+          <app-button size="xl" (click)="keep()">Keep the old balance</app-button>
+          <app-button variant="primary" size="xl" [disabled]="busy()" (click)="confirmChange()">
+            Change balance
+          </app-button>
+        </div>
+      </div>
+    }
+  }
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close</app-button>
+    <app-button
+      variant="primary"
+      size="xl"
+      [disabled]="!canChange() || busy() || confirming() || (status()?.counterClosed ?? false)"
+      (click)="save()"
+    >
+      {{ status()?.opening ? 'Change balance' : 'Save balance' }}
+    </app-button>
+  </div>
+</app-pos-dialog>

@@ -4,9 +4,11 @@
   [disabled]="disabled()"
   [attr.data-variant]="variant()"
   [attr.data-size]="size()"
+  [attr.data-tone]="tone()"
   [attr.aria-label]="ariaLabel()"
   [attr.aria-expanded]="ariaExpanded()"
   [attr.aria-controls]="ariaControls()"
+  [attr.aria-describedby]="ariaDescribedBy()"
 >
   @if (icon(); as iconName) {
     <app-icon [name]="iconName" [size]="size() === 'sm' ? 16 : 18" />

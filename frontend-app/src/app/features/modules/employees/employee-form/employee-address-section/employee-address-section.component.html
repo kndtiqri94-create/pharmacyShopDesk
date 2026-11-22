@@ -1,0 +1,22 @@
+<app-card title="Address" subtitle="Where they live.">
+  <div class="sd-form-grid">
+    @for (field of fields; track field.key) {
+      <app-field
+        [label]="field.label"
+        [fieldId]="fieldId(field.key)"
+        [span]="field.span"
+        [error]="error(field.key)"
+      >
+        <input
+          appFieldControl
+          type="text"
+          autocomplete="off"
+          [readOnly]="readOnly()"
+          [value]="draft()[field.key]"
+          [attr.maxlength]="field.max"
+          (input)="set(field.key, $event)"
+        />
+      </app-field>
+    }
+  </div>
+</app-card>

@@ -1,0 +1,71 @@
+<app-pos-dialog heading="Item details" [open]="open()" (closed)="closed.emit()">
+  @if (product(); as item) {
+    <dl class="pp-summary" data-testid="item-details">
+      <div>
+        <dt>Name</dt>
+        <dd>{{ item.name }}</dd>
+      </div>
+      <div>
+        <dt>Generic name</dt>
+        <dd>{{ item.genericName }}</dd>
+      </div>
+      <div>
+        <dt>Category</dt>
+        <dd>{{ item.category }}</dd>
+      </div>
+      <div>
+        <dt>Form</dt>
+        <dd>{{ item.form }}</dd>
+      </div>
+      <div>
+        <dt>Unit</dt>
+        <dd>{{ item.unit }}</dd>
+      </div>
+      <div>
+        <dt>SKU</dt>
+        <dd class="sd-code">{{ item.sku }}</dd>
+      </div>
+      <div>
+        <dt>Barcode</dt>
+        <dd class="sd-code">{{ item.barcode }}</dd>
+      </div>
+      <div>
+        <dt>Manufacturer</dt>
+        <dd>{{ item.manufacturer }}</dd>
+      </div>
+      <div>
+        <dt>Shelf location</dt>
+        <dd>{{ item.shelfLocation }}</dd>
+      </div>
+      <div>
+        <dt>Sale price</dt>
+        <dd class="sd-num">{{ money(item.priceCents) }}</dd>
+      </div>
+      @if (canSeeCost()) {
+        <div data-testid="item-cost">
+          <dt>Cost price</dt>
+          <dd class="sd-num">{{ money(item.costCents) }}</dd>
+        </div>
+      }
+      <div>
+        <dt>Tax rate</dt>
+        <dd class="sd-num">{{ item.taxRatePercent }}%</dd>
+      </div>
+      <div>
+        <dt>Stock on hand</dt>
+        <dd class="sd-num">{{ item.stockOnHand }}</dd>
+      </div>
+      <div>
+        <dt>Reorder level</dt>
+        <dd class="sd-num">{{ item.reorderLevel }}</dd>
+      </div>
+      <div>
+        <dt>Prescription required</dt>
+        <dd>{{ item.prescriptionRequired ? 'Yes' : 'No' }}</dd>
+      </div>
+    </dl>
+  }
+  <div dialogActions>
+    <app-button size="xl" (click)="closed.emit()">Close</app-button>
+  </div>
+</app-pos-dialog>
