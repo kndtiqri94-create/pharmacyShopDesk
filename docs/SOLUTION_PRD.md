@@ -1,14 +1,14 @@
 # Product Requirements Document — ShopDesk
 
 > **Status:** Draft
-> **Version:** v0.14
-> **Last updated:** 2026-11-13
+> **Version:** v0.15
+> **Last updated:** 2026-11-23
 > **Owner:** Product Owner (agent: product-owner)
 
 ## 1. Vision
 ShopDesk is "the quiet back office for a one-shop business": the back office of a one-shop pharmacy POS app. It serves a single branch with a handful of staff and must keep working offline. It covers nine modules: Dashboard, Products, GRN, Purchase orders, Suppliers, Employees, Reload & Utility, Users and Settings.
 
-This phase delivers the **frontend only**: a working, responsive back-office web app that follows the ShopDesk design system faithfully (13 finished screens plus a sign-in screen, shared components, light and dark themes). All data is mock or in-memory behind service interfaces, so a real API can replace it later without changing screens.
+This phase delivers the **frontend only**: a working, responsive back-office web app that follows the ShopDesk design system faithfully (13 finished screens plus a sign-in screen, shared components, light and dark themes). All data is mock or in-memory behind service interfaces, so a real API can replace it later without changing screens. (v0.15: Phase 2 now adds offline-capable local storage, a backend API and hosting behind those same interfaces, section 5.10.)
 
 ## 2. Goals & Non-Goals
 ### 2.1 Goals
@@ -20,12 +20,12 @@ This phase delivers the **frontend only**: a working, responsive back-office web
 - G6 Isolate all data access behind service interfaces backed by mock or in-memory data, ready to swap for a real API.
 
 ### 2.2 Non-Goals (explicit)
-- NG1 Backend, real API, real authentication, or persistence beyond the session/in-memory mock (a backend is a later phase).
+- NG1 (REVISED v0.15) Backend, real API, real authentication and persistence were out of scope for the frontend phase (E-2). They are now IN scope for Phase 2 (section 5.10, epic E-3). Still out of scope: multi-branch, real payment/printer/SMS integrations (NG4, NG5).
 - NG2 (REVISED v0.4) The POS till/sales screen is now IN scope as a frontend-only, mock-data screen (section 5.9, FR-POS). Still out of scope for it: real payment/card-terminal integration, real receipt/drawer hardware, real barcode-scanner hardware, and a real backend (NG1, NG5 still apply).
-- NG3 Real offline sync, queueing, or conflict handling. The sync pill is a UI-only state indicator for now.
+- NG3 (REVISED v0.15) Real offline sync, queueing and conflict handling are now IN scope (section 5.10, FR-OFF). Still out of scope: merging conflicting edits field by field, peer-to-peer device sync, and multi-branch sync (server always wins, FR-OFF-8).
 - NG4 Multi-branch features. There is no branch selector anywhere.
 - NG5 Real printing, CSV import/export file generation, report generation, SMS/reload gateways, or payment integrations (see Open Questions OQ4).
-- NG6 Dedicated mobile mockups or a native/PWA mobile app. Responsiveness is delivered by reflowing the desktop design.
+- NG6 (REVISED v0.15) Dedicated mobile mockups or a native mobile app. Responsiveness is still delivered by reflowing the desktop design. The existing web app becoming an installable PWA is now IN scope (FR-OFF-1).
 - NG7 Localization beyond English copy (see Constraints for the i18n standard).
 
 ## 3. Primary Users / Personas
@@ -57,7 +57,8 @@ This phase delivers the **frontend only**: a working, responsive back-office web
 
 ### 5.2 App shell, sign-in and access (FR-SHELL, FR-AUTH)
 - **FR-SHELL-1** AppShell: dark 232px sidebar at 1280px and wider with the nine modules in groups (OVERVIEW: Dashboard; INVENTORY: Products with count badge, GRN with badge, Purchase orders, Suppliers; PEOPLE: Employees, Users; SERVICES: Reload & Utility; SYSTEM: Settings), brand block ("S" tile, "ShopDesk", "Main Shop"), footer text "ShopDesk 1.0 · Offline ready". Top bar: short page title, search ("Search products, GRN, suppliers…" with a Ctrl K hint), sync pill, bell, avatar with name and role. No second nav row, no footer, no branch selector.
-- **FR-SHELL-2** Sync pill is on every screen and always shows its state (online / syncing / offline, with the count of pending changes when offline). It is UI-only in this phase, driven by a mock service, and never blocks a screen.
+- **FR-SHELL-2** (REVISED v0.15) Sync pill is on every screen and always shows the REAL state: Online (nothing pending), Syncing (with count remaining), Offline (with count of pending changes) and Needs attention (with count of changes the server rejected, FR-OFF-9). It is driven by the real connectivity and outbox state (section 5.10) and never blocks a screen. Until Phase 2 sync ships, the mock-driven pill remains.
+  - AC: with the network off, the pill shows Offline and the number of unsent changes, and it goes up by one for each sale completed. On reconnect it shows Syncing, then Online with no pending count, without a reload.
 - **FR-SHELL-3** One lazy-loaded route per module; the sidebar lists exactly the nine modules.
 - **FR-AUTH-1** Sign-in screen: one card on the dark navy ground per the design (brand block, "Welcome back", username/email, password with show/hide, "Forgot password?" link, "Keep me signed in on this device", full-width primary lg "Log in", outline "Show on-screen keyboard", footer "Works offline · last synced today 09:12"). A wrong password shows an error under the password field.
 - **FR-AUTH-2** Mock session: sign-in validates against mock users behind an auth service interface and stores a mock session; an auth guard redirects unauthenticated users to sign-in; a sign-out action ends the session. No real credentials or tokens are involved.
@@ -105,7 +106,8 @@ This phase delivers the **frontend only**: a working, responsive back-office web
 - **FR-SVC-2** Reload float card: available float, progress bar, warning below the float-low threshold (Rs. 10,000, a setting), reloads/bills/commission today. Send reload reduces float; Top up float increases it (mock).
 - **FR-SVC-3** Bill payment card (provider, account number, amount, service fee hint, Pay bill) and a Recent transactions table with Success/Pending/Failed statuses and an Export button. Failed and Pending rows stay listed so they can be retried or refunded.
 - **FR-SET-1** Settings: left group list and right card with sections Shop profile, Currency & region, Inventory alerts (expiry window, default reorder level, FEFO, block expired, sidebar low-stock count) and Backup & sync, per design.
-- **FR-SET-2** Changes apply only on Save changes (with Discard to revert), except the Backup & sync toggles, which apply instantly. Back up now and Sync now are UI-only (mock) actions.
+- **FR-SET-2** Changes apply only on Save changes (with Discard to revert), except the Backup & sync toggles, which apply instantly. Back up now and Sync now are UI-only (mock) actions. (REVISED v0.15: once Phase 2 ships, Sync now immediately pushes pending changes and pulls server changes, and Back up now triggers a sync and confirms the server holds every local change; see FR-OFF-10. The two toggles still apply instantly and now control automatic background sync.)
+  - AC: with "automatic sync" off, changes made online stay pending until Sync now is pressed; pressing Sync now clears the pending count and shows the time of the last successful sync. With it on, pending changes are sent without any press within the sync interval in FR-OFF-6.
 - **FR-SET-4** (v0.6) Settings gains a "Point of sale" section holding POS configuration, saved with Save changes / Discard like the other sections (FR-SET-2): (a) discounts (REVISED v0.7): line discount on/off, bill discount on/off, a **default discount %** (0 or more; pre-filled on new lines and on the bill when the matching discount is on; changing a discount away from it needs Admin credentials, FR-POS-16), and a maximum discount % cap (hard limit for everyone, including Admin; the default must not exceed it). The v0.6 per-role "approval above" levels are removed; (b) "Hide sidebar when POS opens" on/off (default on; replaces the v0.5 "Open POS maximised" setting, see FR-POS-2, A10 and A18). Browser fullscreen is never a setting, it is only entered by the user's click.
 - **FR-SET-3** Settings values that drive behaviour elsewhere (expiry alert window, default reorder level, float-low threshold, sidebar low-stock count) are read from the mock settings service.
 
@@ -286,12 +288,50 @@ This phase delivers the **frontend only**: a working, responsive back-office web
 - A43 (PO recommendation, OQ40-5 detail; for user review) Batches already applied stay applied (no rollback). The error response lists the succeeded batches and the failed batch with a clear message. Running the sync again must be safe: it continues correctly and never double-applies stock movements.
 - A44 (assumed reading of OQ40-4 "modal closes that is"; flagged for user confirmation) The result is shown only in the modal until it auto-closes; nothing is kept afterwards (no toast, no log, no audit trail).
 
+### 5.10 Offline-capable PWA, backend and production hosting (Phase 2) — added v0.15
+
+User direction (2026-11-23): the site must work both offline and online, on a cost-friendly and faster path. Screens do not change; only the data layer, sync, backend and hosting are added. Technology choices below are the user's agreed direction, recorded as constraints (section 7.2), not PO design.
+
+**Offline-first (FR-OFF)**
+- **FR-OFF-1** Installable PWA: the web app can be installed to the desktop/home screen, opens in its own window, and after the first successful visit its app shell loads with no network. When a new version is available the user sees a notice and the update applies only when they choose (or on next start), never in the middle of a sale.
+  - AC: install the app, switch the network off, close and reopen it: sign-in and screens load. With a new build deployed, the notice appears and the open sale is not interrupted.
+- **FR-OFF-2** Local-first data: every read and write goes to a database on the device first, so screens respond the same offline and online. Existing screens, forms and rules do not change (data access stays behind the existing service interfaces, G6).
+  - AC: with the network off, a user can search products, build a bill, and see batch and stock figures, all identical to online behaviour.
+- **FR-OFF-3** Offline scope (proposed, see OQ46): every function in section 5.9 (POS till, hold, quotations, returns, cash book, counter close, due amount) and product, GRN and PO entry works offline. Functions that need the server by nature (first sign-in on a new device, Update Products sync FR-POS-25, user/role administration) show a clear "needs connection" message offline and never fail silently.
+- **FR-OFF-4** Survives reload and restart: unsent changes are kept on the device across reload, browser restart and device restart until the server has accepted them.
+  - AC: complete a sale offline, reload the page, restart the browser: the sale is still in sales history and still counted as pending.
+- **FR-OFF-5** Outbox: every change (sale, return, stock movement, product edit, etc.) is stored locally together with a pending-change entry in one step, so a change is never saved without being queued. Pending changes are sent in batches, in the order they were made, when online, and retried automatically after a failure.
+- **FR-OFF-6** Automatic sync: when the network returns, and then at a regular interval while online (default every 60 seconds, to be confirmed, A46), pending changes are pushed and server changes are pulled. A manual Sync now is also available (FR-SET-2).
+- **FR-OFF-7** No duplicates: sales, returns and stock movements get their identifier on the device when created. If the same change reaches the server more than once (retry, lost response, two tabs), the server records it once.
+  - AC: complete a sale offline, reconnect, and interrupt the connection in the middle of the sync; after it completes there is exactly one copy of the sale and stock is reduced exactly once.
+- **FR-OFF-8** Stock as movements, server wins: stock changes are sent to the server as movements (sale, return, GRN, adjustment), never as a replacement total, so two devices selling the same item both count. For all other data the server wins on conflict, consistent with FR-POS-25 and A40/A43. A sale or return already completed at the till is never discarded by sync.
+  - AC: two devices offline each sell 1 unit of a product with 10 in stock; after both sync the product shows 8. If the same product's price is edited on two devices, the server's value is kept on both after sync.
+- **FR-OFF-9** Rejected changes: if the server rejects a pending change, it is not retried forever and not silently dropped; it appears in a "Needs attention" list (visible from Settings, Backup & sync) with the reason, and the sync pill shows the count. Rules for what the server may reject are open (OQ47).
+- **FR-OFF-10** Sync controls: Settings, Backup & sync shows last successful sync time, pending count, Sync now, and the automatic-sync toggle (FR-SET-2). Signing out with pending changes warns the user that they are not yet on the server and asks them to confirm.
+- **FR-OFF-11** Data safety: the app asks the browser to keep its local data permanently, shows a warning if it cannot, and warns before any action that would clear local data (e.g. sign-out with pending changes). Clearing browser data or losing the device before sync loses unsent changes; this limit is stated to the user in Backup & sync.
+- **FR-OFF-12** Update Products sync (FR-POS-25) is kept as a manual full refresh of the product list from the server, built on the same server and rules (server wins, movements pushed first). Its relation to automatic sync is open (OQ48).
+
+**Backend and database (FR-API)**
+- **FR-API-1** A server application stores all ShopDesk data (all modules in section 5) in a database and exposes it to the app, with server-side validation of every request and consistent, clear error responses. It is the "server" named in FR-POS-25 (resolves OQ41 part 1 if the user confirms).
+- **FR-API-2** Sync interface: accepts batches of pending changes (each with its device-generated identifier, FR-OFF-7), reports per-change accepted / duplicate / rejected with reason, and returns the changes made since the device last synced.
+- **FR-API-3** Stock is held as an ordered record of movements, with current stock derived from them, so stock can be audited and sync never overwrites it with a total.
+- **FR-API-4** Production authentication and authorisation: real sign-in with stored credentials that are never kept in readable form, sessions that expire, and the Full / View / No access matrix (FR-AUTH-3, FR-AUTH-5) enforced on the server for every endpoint, not only in the UI. This satisfies S-2.10.11 for the whole API (A42). The unauthenticated development mode must not exist in production.
+- **FR-API-5** All traffic is over HTTPS only.
+
+**Hosting and operations (FR-DEP)**
+- **FR-DEP-1** The app and API run on one small, low-cost server with a domain name and HTTPS; target is a cost-friendly setup (budget not yet given, OQ49).
+- **FR-DEP-2** Database is backed up automatically (default daily, retention to be confirmed, OQ49) and a restore has been proven to work before go-live.
+- **FR-DEP-3** Deployments are repeatable and can be rolled back; the server has a health check with an alert when it is down; logs are available for troubleshooting.
+- **FR-DEP-4** Production release gate: authentication on (FR-API-4), no mock or unauthenticated mode reachable, secrets stored outside the code, restore drill passed.
+
+**Acceptance scenario for the whole phase (end-to-end):** with the app installed and signed in, switch the network off; complete a sale; reload; the sale is still listed and the pill shows Offline with 1 pending. Reconnect; the pill moves to Syncing then Online with 0 pending; the server holds exactly one copy of the sale and stock is reduced once; repeating the reconnect or pressing Sync now does not create a second copy.
+
 ## 6. Non-Functional Requirements
 | Category | Requirement |
 |---|---|
-| Security | Mock sign-in/session only; no real secrets, credentials or tokens. Route guards and permission gating enforced in UI. Standard frontend security rules in `docs/development-standards/FRONTEND_STANDARDS.md`. |
+| Security | Phase 1: mock sign-in/session only. Phase 2 (v0.15): real authentication, server-side permission enforcement, HTTPS only, hashed credentials, secrets outside code (FR-API-4/5, FR-DEP-4); data kept on the device for offline use is limited to what the signed-in role may see (OQ44). Standard frontend security rules in `docs/development-standards/FRONTEND_STANDARDS.md`. |
 | Performance | One lazy-loaded route per module. Lists of the mock size (hundreds of rows) stay responsive; pagination at 10+ rows. No numeric targets set (OQ6). |
-| Availability | Fully standalone with no backend. Sync pill reflects offline state without blocking any screen. |
+| Availability | Phase 1: fully standalone with no backend. Phase 2 (v0.15): the till and back office keep working with no network (FR-OFF); the server being down or unreachable never blocks a sale. Server uptime target and recovery point are not given (OQ49). Sync pill reflects real state without blocking any screen. |
 | Accessibility | WCAG 2.1 AA: 4.5:1 text contrast and 3:1 controls/focus in both themes, visible focus, aria-label on icon-only buttons, status never conveyed by colour alone, keyboard operable. |
 | Responsiveness | **Desktop-first, and the site MUST be responsive.** 232px sidebar and fluid content at 1280px and wider. On smaller screens the sidebar collapses (e.g. off-canvas or icon rail with a menu toggle), tables scroll horizontally or stack sensibly without losing the key columns, the 12-column form grids reflow to fewer columns, and the 320px summary column moves below the main form. Card grids reflow. Breakpoints and the smallest supported width are not specified by the user (OQ5). |
 | Theming | Light and dark themes, switchable, with all tokens defined for both. |
@@ -301,7 +341,7 @@ This phase delivers the **frontend only**: a working, responsive back-office web
 ## 7. Constraints & Assumptions
 - **Frontend only.** All data is mock or in-memory behind service interfaces (products, batches, GRNs, POs, suppliers, employees, users/roles, reload transactions, settings, auth, sync) so a real API can replace it later. No backend work in this phase. This replaces the earlier HireFlow "demo only / no auth / localStorage" constraints.
 - **Sign-in, roles, permissions:** mock sign-in and session, roles with per-module Full / View / No access (FR-AUTH-3).
-- **Offline-first sync pill is UI-only** for now (NG3). Never block a screen because of it.
+- **Sync pill** (REVISED v0.15): UI-only until Phase 2 sync ships, then real (FR-SHELL-2, section 5.10). Never block a screen because of it.
 - **Desktop-first but responsive is a hard requirement.** No mobile mockups exist, so responsive behaviour (collapsing sidebar, scrolling/stacking tables, reflowing form grids) is derived from the desktop design and the rules in this PRD and must be reviewed by the stakeholder once built.
 - **Design colours are approximate.** The hex values in `docs/design/ShopDesk-design-system.md` were read from swatches (marked "~") and are used as tokens until the user supplies exact values (PDF page 5). Dark theme values were not transcribed and are to be derived to meet the contrast rules, pending exact values (OQ1).
 - Design source of truth: `docs/design/ShopDesk-design-system.md`, a hand transcription of the 31-page PDF. The PDF is not in the repo. Where the transcription and PDF differ, the PDF wins once supplied. `docs/design/SHOPDESK_FRONTEND_GUIDE.md` summarises the what-to-build rules.
@@ -309,6 +349,22 @@ This phase delivers the **frontend only**: a working, responsive back-office web
 - Assumption: sample data follows the design's conventions (Sri Lankan rupees, pharmacy products, named staff and suppliers, signed-in user Nimal Perera).
 - One branch only: no branch selector anywhere.
 - **Archived scope:** the earlier HireFlow job-application PRD and backlog were replaced (see Change Log). The HireFlow design files are stale for ShopDesk work.
+
+### 7.2 Phase 2 direction, constraints and assumptions (v0.15)
+Constraints (user-agreed direction 2026-11-23, recorded verbatim, not PO design):
+- C1 Frontend: the existing Angular 22 app in `frontend-app/` becomes an installable PWA (Angular service worker, manifest).
+- C2 Offline storage: IndexedDB via Dexie, as new data-service implementations behind the existing abstract data services (`frontend-app/src/app/core/services/data/`, currently in-memory only, selected in `data-providers.ts` by `environment.useMockData`). Screens must not change.
+- C3 Sync: local-first reads and writes, an outbox of pending changes pushed in batches, device-generated IDs on sales and stock movements, stock sent as movements not totals, server wins on conflict.
+- C4 Backend: TypeScript on Node, Fastify API, Prisma, PostgreSQL, Caddy for HTTPS, one small VPS.
+- C5 Gap with standards (see OQ42): `docs/development-standards/BACKEND_STANDARDS.md` and the backend templates assume Azure Functions with SQL Server. C4 differs. The standards have NOT been changed; the Fastify/PostgreSQL VPS path is the PO recommendation (lowest cost, fastest, one server for API and app) pending the user's decision.
+
+Assumptions (for the user to confirm):
+- A45 The new server API is the "server" in FR-POS-25 and OQ41 part 1; S-2.10.9 and S-2.10.10 stay as built and are reconciled with the new API at planning (OQ48).
+- A46 Default automatic sync interval is 60 seconds while online, plus immediately on reconnect.
+- A47 One branch, a small number of tills/devices (OQ45 asks how many); no per-device stock reservation.
+- A48 Screens, rules, roles and design are unchanged by Phase 2; only data access, sync status and settings behaviour change.
+- A49 Server data is the source of truth. A fresh device or cleared browser rebuilds its local data from the server on first online sign-in.
+- A50 "Back up now" means a sync that confirms the server has every local change; the database backup itself is an operations duty (FR-DEP-2), not a button.
 
 ### 7.1 Assumptions for the HR amendment (v0.3), for the user to confirm
 - A1 No new top-level sidebar modules; Leave and Payroll live under Employees (FR-SHELL-3 unchanged).
@@ -375,11 +431,20 @@ This phase delivers the **frontend only**: a working, responsive back-office web
 
 - OQ40 — CLOSED (v0.14), Update Products sync follow-ups. User answers verbatim: (1) Server/auth: "no authentication" only for development (A42, S-2.10.11). (2) Fields and app-only stock: "gohead recomennded way" (PO recommendation A40). (3) Batch size: "gohead recomennded way" (PO recommendation A41). (4) Result after auto-close: "modal closes that is" (read as A44, flagged). (5) Failure: "stop-with-message" (A38; applied batches detail assumed in A43). (6) Quick edit coexistence: "yes" (quick edit kept, sync action added inside it; A37). Remaining residue is OQ41. Original questions: (1) Which server/system does the app sync with (name, URL or environment)? Authentication is skipped for now: confirm the API is therefore unauthenticated towards that server, and whether authentication must be added before production. (2) Which product fields are synced (name, code/barcode, price, cost, category, stock, others)? Confirm "yes" means stock levels are included. Also, with two-way sync and server-wins, do app-only stock changes (e.g. POS sales since the last sync) get overwritten by the server value, or pushed first? (3) Batch size: the rule "base on no of products" gives no number; give a size or thresholds (e.g. a fixed N per batch, or number of batches by product count). (4) After the modal auto-closes, should the result (counts updated/failed) be shown (toast or summary), recorded in a log/audit trail, or neither? Your answer repeated the question. (5) Failure: confirm that on a failed batch or unreachable server the sync stops and shows a message, and whether batches already applied stay applied. (6) Trigger: the existing Update Products button currently opens the quick edit (S-2.10.6). Should the sync be started from that same button (e.g. the quick edit screen gains a sync action) with the quick edit kept, or should the button now start only the sync?
 
-- OQ41 — OPEN (v0.14), Update Products sync residue (owner: user): (1) Which server/system does the app sync with (name, URL or environment)? Still not named; the backend cannot be wired to a real target until known. (2) Please review the PO recommendations A40 (field list and stock rule), A41 (500 per batch), A43 (applied batches stay applied) and confirm the A44 reading (no log, no summary after the modal closes).
+- OQ41 — OPEN (v0.14), Update Products sync residue (owner: user): (1) Which server/system does the app sync with (name, URL or environment)? Still not named; the backend cannot be wired to a real target until known. (2) Please review the PO recommendations A40 (field list and stock rule), A41 (500 per batch), A43 (applied batches stay applied) and confirm the A44 reading (no log, no summary after the modal closes). (v0.15: part 1 is proposed to be answered by the new ShopDesk API, A45; awaiting user confirmation.)
+- OQ42 — OPEN (v0.15), backend stack vs development standards (owner: user, BLOCKS E-3 features F-3.3, F-3.5, F-3.6): `BACKEND_STANDARDS.md` and templates assume Azure Functions + SQL Server; the agreed direction is Fastify + Prisma + PostgreSQL + Caddy on one VPS (C4). Please decide: (1) Azure Functions or Fastify? (2) SQL Server or PostgreSQL? PO recommendation: Fastify + PostgreSQL on a VPS (lowest running cost, one server, faster to build). If confirmed, the standards and templates need updating through the Team Lead; the PO has not edited them. The Azure-specific PO rules (VNet-first, Prisma shadow DB, resourceGroupName, ownerObjectIds) do not apply on a VPS and would be dropped; confirm this.
+- OQ43 — OPEN (v0.15), first run and existing data (owner: user): what data does a brand-new device show, and is there real pharmacy data to load (products, batches, suppliers, staff, users)? Can the very first sign-in on a device happen offline (proposed: no, it needs one online sign-in to download data, A49)?
+- OQ44 — OPEN (v0.15), offline sign-in and privacy (owner: user): (1) Must staff sign in again while offline after a restart (proposed: yes, with credentials checked against a device-held verifier from their last online sign-in)? (2) The Admin discount approval (FR-POS-16) while offline: allowed using the same device-held check? (3) How long may a device stay signed in without contact with the server? (4) Is the till PC shared or locked down (customer and staff data sits on it)?
+- OQ45 — OPEN (v0.15), devices: how many tills/devices will sell at the same time, and do they ever need to see each other's sales/stock within seconds (current assumption: no, within the 60-second sync, A46/A47)?
+- OQ46 — OPEN (v0.15), offline scope: confirm FR-OFF-3, i.e. which functions must work offline (proposed: all POS and stock-in; user admin, role changes and payroll runs may require connection).
+- OQ47 — OPEN (v0.15), rejected changes: what may the server reject (e.g. a sale of a product deleted or deactivated on the server, or a sale that takes stock below zero)? Proposed: sales are never rejected for stock reasons (stock may go negative and is flagged for review); only malformed or unauthorised changes are rejected.
+- OQ48 — OPEN (v0.15), Update Products sync (FR-POS-25, S-2.10.9, S-2.10.10): with automatic sync, is the manual Update Products sync still wanted (proposed: yes, as a full refresh)? Where does the done S-2.10.9 API live today and should it be folded into the new API (confirm at planning)?
+- OQ49 — OPEN (v0.15), hosting: (1) monthly budget and VPS provider/region preference, (2) domain name, (3) acceptable downtime and how much data may be lost in a disaster (backup frequency, retention; proposed daily, 30 days), (4) who administers the server after go-live, (5) expected volume (sales per day, number of products) for sizing.
 
 ## 10. Change Log
 | Version | Date | Author | Change |
 |---|---|---|---|
+| v0.15 | 2026-11-23 | Shiham (PO) | Phase 2 direction: offline-capable PWA with local-first data, outbox sync, backend API and VPS hosting. New section 5.10 (FR-OFF-1 to 12, FR-API-1 to 5, FR-DEP-1 to 4), section 7.2 (C1 to C5, A45 to A50). NG1, NG3, NG6 revised; FR-SHELL-2 and FR-SET-2 revised with acceptance criteria; NFR Security and Availability updated. New OQ42 to OQ49 (stack gap with development standards flagged). Epic E-3 added to tasks. |
 | v0.14 | 2026-11-13 | Shiham (PO) | OQ40 closed. Quick edit kept and the sync action added inside it (A37); development-only no-auth with a pre-production authentication story S-2.10.11 (A42); PO-recommended field list and push-then-pull stock rule (A40), 500-per-batch rule (A41), applied batches stay applied (A43), no post-close log (A44, flagged). New OQ41 (server unnamed, review of PO recommendations). A39 superseded. |
 | v0.13 | 2026-11-13 | Shiham (PO) | OQ39 closed with user answers (existing button trigger, two-way, auth skipped, batch by product count, server wins, stop with message, stock included). FR-POS-25 updated; A37 revised, A38 and A39 added; new OQ40 for remaining gaps (server, field list, batch size, result display, failure detail, quick-edit coexistence). FR-POS-13: Update Products button also starts the sync (see FR-POS-25). |
 | v0.12 | 2026-11-13 | Shiham (PO) | Update Products sync process: new section 5.9.8 with FR-POS-25 (confirmation dialog, non-cancellable batch progress modal, new backend sync API), A37, OQ39 (trigger, direction, server, batch size, conflict rule, failure handling all open). FR-POS-13 unchanged; S-2.10.6 unchanged. |

@@ -1,0 +1,41 @@
+@use 'breakpoints' as bp;
+
+.pwa-region {
+  position: fixed;
+  left: var(--sd-space-4);
+  bottom: var(--sd-space-4);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-2);
+  width: min(420px, calc(100vw - 2 * var(--sd-space-4)));
+  pointer-events: none;
+
+  @include bp.below-tablet {
+    right: var(--sd-space-4);
+    width: auto;
+  }
+}
+
+.pwa-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-2);
+  padding: var(--sd-space-3);
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  box-shadow: var(--sd-shadow-pop);
+  pointer-events: auto;
+}
+
+.pwa-text {
+  margin: 0;
+  color: var(--sd-ink);
+}
+
+.pwa-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sd-space-1);
+}
