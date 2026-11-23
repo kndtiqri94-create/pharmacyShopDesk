@@ -1,10 +1,10 @@
 # Solution Tasks (Backlog) — ShopDesk
 
 > **Status:** Draft
-> **Version:** v0.13
+> **Version:** v0.14
 > **Last updated:** 2026-11-23
 > **Owner:** Product Owner (agent: product-owner)
-> **Source PRD:** `docs/SOLUTION_PRD.md` (v0.15)
+> **Source PRD:** `docs/SOLUTION_PRD.md` (v0.16)
 
 ## How to read this document
 
@@ -32,7 +32,7 @@
 | E-2 | ShopDesk back office frontend | 1 | FR-FND, FR-SHELL, FR-AUTH, FR-DASH, FR-PROD, FR-GRN, FR-PO, FR-SUP, FR-EMP, FR-USR, FR-SVC, FR-SET, plus HR amendment FR-EMP-2 to 5, FR-LVE, FR-PAY, FR-AUTH-5 (F-2.6 to F-2.8) |
 | E-3 | Offline-capable PWA, backend and hosting | 2 | FR-OFF, FR-API, FR-DEP (PRD 5.10), FR-SHELL-2, FR-SET-2, FR-AUTH |
 
-E-3 sequencing: F-3.1 PWA shell and F-3.2 local data services need no backend and can start now. F-3.3 backend, F-3.5 production auth and F-3.6 hosting are BLOCKED until the user answers PRD OQ42 (Azure Functions vs Fastify, SQL Server vs PostgreSQL) and OQ49 (hosting). F-3.4 sync needs F-3.2 and F-3.3. Order: F-3.1, F-3.2 (parallel with F-3.3 once unblocked), F-3.3, F-3.4, F-3.5, F-3.6; production go-live needs all of them.
+E-3 sequencing: F-3.1 PWA shell and F-3.2 local data services need no backend and can start now. F-3.3 backend is DELIVERED (2026-11-23, `backend-app/`), built to the working stack Fastify, Prisma 7 and PostgreSQL pending user confirmation of PRD OQ42 (stack) and OQ48 (Update Products sync); OQ47 (server rejections) was also built to assumption. F-3.4 sync needs F-3.2 and F-3.3, so it is now unblocked. F-3.5 production auth depends on F-3.3 (now unblocked) and OQ44. F-3.6 hosting is still BLOCKED until the user answers PRD OQ49 (hosting) and confirms OQ42. Order: F-3.1, F-3.2, F-3.3 (done), F-3.4, F-3.5, F-3.6; production go-live needs all of them.
 
 POS sequencing (PRD 5.9): F-2.9 Phase A (after F-2.2 and F-2.3, S-2.9.2 data layer first, S-2.9.1 button can ship any time), then F-2.10 Phase B only after Phase A is accepted.
 
@@ -180,14 +180,14 @@ Sequencing: F-2.1 first (everything depends on it); F-2.2 next (the product and 
 
 ### F-3.3 Backend API and database (API)
 
-> BLOCKED on OQ42 (stack decision) and OQ48 (fate of S-2.10.9). Stack per user direction C4 (Fastify, Prisma, PostgreSQL) pending that decision. Technical design belongs to the Team Lead flow, not this backlog.
+> Delivered 2026-11-23 in `backend-app/` on the working stack C4 (Fastify 5, Prisma 7, PostgreSQL) at the user's explicit request. PRD OQ42 (stack vs development standards), OQ47 (what the server may reject) and OQ48 (Update Products sync) remain OPEN, built to assumption and awaiting user confirmation; the assumptions used are recorded in `docs/features/3.3_BACKEND_API_AND_DATABASE_PLAN.md` section 9. OQ48: the S-2.10.9 contract is kept as `POST /api/v1/products/sync-batch`. The earlier npm-audit exception (Prisma 6 toolchain) was cleared by the upgrade to Prisma 7. Technical design belongs to the Team Lead flow, not this backlog.
 
-- [ ] **S-3.3.1** [API] API foundation: project scaffold, configuration from environment, health endpoint, consistent error format, request validation, database connection and migration baseline, HTTPS-ready, automated tests run in CI. — _Traces: FR-API-1, FR-API-5_ — _Weight: 5_
-- [ ] **S-3.3.2** [API] Master-data persistence and endpoints: products and batches, suppliers, customers, bank accounts, users/roles, settings, with server-side validation matching the UI rules and uniqueness (SKU, bank + account no). — _Traces: FR-API-1, FR-PROD-3, FR-SET-3, FR-POS-22_ — _Weight: 8_
-- [ ] **S-3.3.3** [API] Stock movement ledger and stock-in endpoints: GRN, PO, adjustments; stock derived from ordered movements; a movement with an already-seen device ID is recorded once. — _Traces: FR-API-3, FR-OFF-7, FR-OFF-8, FR-GRN-5_ — _Weight: 8_
-- [ ] **S-3.3.4** [API] POS transaction endpoints: sales, returns, quotations, cash book, counter close, customer dues; idempotent on device-generated IDs; a sale is never rejected for stock reasons (OQ47 proposal, flagged for review). — _Traces: FR-API-1, FR-OFF-7, FR-POS-7, FR-POS-14, FR-POS-15_ — _Weight: 8_
-- [ ] **S-3.3.5** [API] HR endpoints: employees, leave, salary advances, nopay, payroll inputs. — _Traces: FR-API-1, FR-EMP-3, FR-LVE-2, FR-PAY-2_ — _Weight: 5_
-- [ ] **S-3.3.6** [API] Sync endpoints: push a batch of pending changes (per-change result accepted / duplicate / rejected with reason, whole batch safe to resend), and pull changes since a cursor; server wins on non-stock conflicts. Reconcile with the done S-2.10.9 Update Products sync (OQ48). Acceptance: resending the same batch twice changes nothing; two devices selling the same item both reduce stock. — _Traces: FR-API-2, FR-OFF-7, FR-OFF-8, FR-POS-25_ — _Weight: 8_
+- [x] **S-3.3.1** [API] API foundation: project scaffold, configuration from environment, health endpoint, consistent error format, request validation, database connection and migration baseline, HTTPS-ready, automated tests run in CI. — _Traces: FR-API-1, FR-API-5_ — _Weight: 5_
+- [x] **S-3.3.2** [API] Master-data persistence and endpoints: products and batches, suppliers, customers, bank accounts, users/roles, settings, with server-side validation matching the UI rules and uniqueness (SKU, bank + account no). — _Traces: FR-API-1, FR-PROD-3, FR-SET-3, FR-POS-22_ — _Weight: 8_
+- [x] **S-3.3.3** [API] Stock movement ledger and stock-in endpoints: GRN, PO, adjustments; stock derived from ordered movements; a movement with an already-seen device ID is recorded once. — _Traces: FR-API-3, FR-OFF-7, FR-OFF-8, FR-GRN-5_ — _Weight: 8_
+- [x] **S-3.3.4** [API] POS transaction endpoints: sales, returns, quotations, cash book, counter close, customer dues; idempotent on device-generated IDs; a sale is never rejected for stock reasons (OQ47 proposal, flagged for review). — _Traces: FR-API-1, FR-OFF-7, FR-POS-7, FR-POS-14, FR-POS-15_ — _Weight: 8_
+- [x] **S-3.3.5** [API] HR endpoints: employees, leave, salary advances, nopay, payroll inputs. — _Traces: FR-API-1, FR-EMP-3, FR-LVE-2, FR-PAY-2_ — _Weight: 5_
+- [x] **S-3.3.6** [API] Sync endpoints: push a batch of pending changes (per-change result accepted / duplicate / rejected with reason, whole batch safe to resend), and pull changes since a cursor; server wins on non-stock conflicts. Reconcile with the done S-2.10.9 Update Products sync (OQ48). Acceptance: resending the same batch twice changes nothing; two devices selling the same item both reduce stock. — _Traces: FR-API-2, FR-OFF-7, FR-OFF-8, FR-POS-25_ — _Weight: 8_
 
 ### F-3.4 Outbox sync and real sync pill (WEB)
 
@@ -201,7 +201,7 @@ Sequencing: F-2.1 first (everything depends on it); F-2.2 next (the product and 
 
 ### F-3.5 Production authentication (API / WEB)
 
-> Depends on F-3.3. Open: OQ44 (offline sign-in, Admin discount approval offline, session length).
+> Depends on F-3.3 (delivered). Open: OQ44 (offline sign-in, Admin discount approval offline, session length).
 
 - [ ] **S-3.5.1** [API] Real sign-in: users with credentials stored only in non-readable form, sign-in and sign-out, expiring sessions, lock-out or throttling after repeated failures (rule at planning), password change. — _Traces: FR-API-4, FR-AUTH-1, FR-AUTH-2_ — _Weight: 5_
 - [ ] **S-3.5.2** [API] Server-side authorisation: the Full / View / No access matrix (FR-AUTH-3, FR-AUTH-5, FR-POS-12) enforced on every endpoint including sync; the unauthenticated mode cannot be enabled in production. Satisfies S-2.10.11. — _Traces: FR-API-4, FR-AUTH-3, FR-AUTH-4, FR-POS-25_ — _Weight: 5_
@@ -210,7 +210,7 @@ Sequencing: F-2.1 first (everything depends on it); F-2.2 next (the product and 
 
 ### F-3.6 Hosting and deployment (INFRA)
 
-> BLOCKED on OQ42 and OQ49 (budget, provider, domain, backup targets). Depends on F-3.3. Technical design via the Team Lead and DevOps flow.
+> BLOCKED on OQ49 (and user confirmation of OQ42) (budget, provider, domain, backup targets). Depends on F-3.3. Technical design via the Team Lead and DevOps flow.
 
 - [ ] **S-3.6.1** [INFRA] Provision one small, low-cost server and harden it (firewall, key-only admin access, non-root service user, automatic security updates). — _Traces: FR-DEP-1_ — _Weight: 5_
 - [ ] **S-3.6.2** [INFRA] Domain and HTTPS: domain name pointed at the server, automatic certificates, serving both the PWA and the API over HTTPS only. — _Traces: FR-DEP-1, FR-API-5_ — _Weight: 3_
@@ -235,6 +235,7 @@ The previous HireFlow job-application scope was replaced by ShopDesk. Listed her
 | Version | Date | Author | Change |
 |---|---|---|---|
 | v0.1 | 2026-08-13 | Shiham (PO) | Initial draft: E-1 HireFlow Job Application Screen. |
+| v0.14 | 2026-11-23 | Shiham (PO) | F-3.3 Backend API and database delivered (S-3.3.1 to 6 ticked, `backend-app/`, Fastify 5 + Prisma 7 + PostgreSQL). E-3 sequencing note and F-3.3, F-3.5, F-3.6 header notes updated: F-3.3 no longer blocked; F-3.4 and F-3.5 unblocked; F-3.6 still needs OQ49. OQ42, OQ47, OQ48 stay open as "built to assumption". PRD v0.16. Progress page regenerated. |
 | v0.13 | 2026-11-23 | Shiham (PO) | Added E-3 Offline-capable PWA, backend and hosting: F-3.1 PWA shell (S-3.1.1 to 3), F-3.2 Dexie local data services (S-3.2.1 to 6), F-3.3 backend API and database (S-3.3.1 to 6), F-3.4 outbox sync and real sync pill (S-3.4.1 to 5), F-3.5 production auth (S-3.5.1 to 4), F-3.6 VPS hosting (S-3.6.1 to 6); new INFRA surface tag. S-2.10.11 annotated as covered by S-3.5.2. F-3.3, F-3.5, F-3.6 blocked on PRD OQ42 and OQ49. PRD v0.15. |
 | v0.11 | 2026-11-13 | Shiham (PO) | Added S-2.10.8 Cash Book modal extension (weight 8) under F-2.10: design spec first, then Angular build, mock data, Admin-only edit, Reload & Utility dropped. PRD v0.11 (FR-POS-24, A35, A36, OQ38). |
 | v0.10 | 2026-11-09 | Shiham (PO) | Added F-2.12 POS payment panel redesign and bank accounts (S-2.12.1 to 3, weights 3, 8, 3): in-memory bank accounts with sample seeds and fixed Sri Lankan bank list, redesigned right-hand payment panel with Card/Online fields, X clear buttons and visual restyle folded in, Create Account modal; keypad removed; "More" ignored (OQ25 reopened and re-closed); S-2.9.7 annotated as superseded. PRD v0.10 (FR-POS-21 to 23, FR-POS-9 withdrawn, A27 to A34, OQ37 open). S-2.12.2 is weight 8 and could be split (panel layout vs keypad removal) at the plan gate. |
