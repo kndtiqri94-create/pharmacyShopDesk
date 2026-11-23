@@ -33,6 +33,22 @@ import { SupplierDataService } from './supplier-data.service';
 import { SupplierPaymentDataService } from './supplier-payment-data.service';
 import { SyncDataService } from './sync-data.service';
 import { UserDataService } from './user-data.service';
+import { LocalAttendanceDataService } from './local/local-attendance-data.service';
+import { LocalBankAccountDataService } from './local/local-bank-account-data.service';
+import { LocalEmployeeDataService } from './local/local-employee-data.service';
+import { LocalGrnDataService } from './local/local-grn-data.service';
+import { LocalLeaveDataService } from './local/local-leave-data.service';
+import { LocalPayrollDataService } from './local/local-payroll-data.service';
+import { LocalProductDataService } from './local/local-product-data.service';
+import { LocalPurchaseOrderDataService } from './local/local-purchase-order-data.service';
+import { LocalReloadDataService } from './local/local-reload-data.service';
+import { LocalRoleDataService } from './local/local-role-data.service';
+import { LocalSalesDataService } from './local/local-sales-data.service';
+import { LocalSettingsDataService } from './local/local-settings-data.service';
+import { LocalSupplierDataService } from './local/local-supplier-data.service';
+import { LocalSupplierPaymentDataService } from './local/local-supplier-payment-data.service';
+import { LocalSyncDataService } from './local/local-sync-data.service';
+import { LocalUserDataService } from './local/local-user-data.service';
 
 type DataToken = abstract new () => object;
 
@@ -56,14 +72,47 @@ const IN_MEMORY_BINDINGS: readonly [DataToken, new () => object][] = [
   [ProductSyncServer, InMemoryProductSyncServer],
 ];
 
+const LOCAL_BINDINGS: readonly [DataToken, new () => object][] = [
+  [ProductDataService, LocalProductDataService],
+  [GrnDataService, LocalGrnDataService],
+  [PurchaseOrderDataService, LocalPurchaseOrderDataService],
+  [SupplierDataService, LocalSupplierDataService],
+  [EmployeeDataService, LocalEmployeeDataService],
+  [UserDataService, LocalUserDataService],
+  [RoleDataService, LocalRoleDataService],
+  [ReloadDataService, LocalReloadDataService],
+  [SettingsDataService, LocalSettingsDataService],
+  [SalesDataService, LocalSalesDataService],
+  [SyncDataService, LocalSyncDataService],
+  [SupplierPaymentDataService, LocalSupplierPaymentDataService],
+  [AttendanceDataService, LocalAttendanceDataService],
+  [LeaveDataService, LocalLeaveDataService],
+  [PayrollDataService, LocalPayrollDataService],
+  [BankAccountDataService, LocalBankAccountDataService],
+  [ProductSyncServer, InMemoryProductSyncServer],
+];
+
+export type DataSourceMode = 'mock' | 'local';
+
 function notConfigured(): never {
   throw new Error('A real data source is not configured yet.');
 }
 
-export function provideDataServices(useMockData: boolean): Provider[] {
+function bindings(mode: boolean | DataSourceMode): Provider[] {
+  if (mode === 'local') {
+    return LOCAL_BINDINGS.map(([token, implementation]) => ({
+      provide: token,
+      useClass: implementation,
+    }));
+  }
+  const useMockData = mode === true || mode === 'mock';
   return IN_MEMORY_BINDINGS.map(([token, implementation]) =>
     useMockData
       ? { provide: token, useClass: implementation }
       : { provide: token, useFactory: notConfigured }
   );
+}
+
+export function provideDataServices(mode: boolean | DataSourceMode): Provider[] {
+  return bindings(mode);
 }

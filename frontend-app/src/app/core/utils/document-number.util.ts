@@ -1,3 +1,5 @@
+import { currentDeviceCode } from './device-identity.util';
+
 const NUMBER_DIGITS = 4;
 const ID_DIGITS = 3;
 
@@ -18,6 +20,8 @@ export function nextDocumentNumber(
 }
 
 export function nextRecordId(prefix: string, existing: readonly string[]): string {
-  const next = highestSuffix(existing, `${prefix}-`) + 1;
-  return `${prefix}-${String(next).padStart(ID_DIGITS, '0')}`;
+  const deviceCode = currentDeviceCode();
+  const stem = deviceCode === null ? `${prefix}-` : `${prefix}-${deviceCode}-`;
+  const next = highestSuffix(existing, stem) + 1;
+  return `${stem}${String(next).padStart(ID_DIGITS, '0')}`;
 }

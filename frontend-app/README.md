@@ -20,6 +20,10 @@ npm run check:contrast
 
 `index.html` carries a Content-Security-Policy meta tag. The host should also send the same policy as an HTTP header, plus `frame-ancestors 'none'` (or `X-Frame-Options: DENY`), because `frame-ancestors` is ignored in a meta tag. Production build does not inline critical CSS so no inline script is needed.
 
+## Local environment file
+
+`src/environments/environment.ts` is git-ignored. Create it by copying `src/environments/environment.example.ts`. Required keys: `production`, `appName`, `dataSource` (`'mock'` keeps data in memory, `'local'` stores data in this browser's IndexedDB; the production build uses `'local'`) and `mockAuthEnabled`. An older file that only has `useMockData` no longer compiles; replace it with `dataSource`.
+
 ## Sample sign-in (for testers only)
 
 This is a sample sign-in, not real security. There is no server, and the details below only work in a development build (`mockAuthEnabled: true` in `src/environments/environment.ts`). The production build ships with `mockAuthEnabled: false`, replaces the sample details with an empty list, and shows "Sign-in is not set up" instead.

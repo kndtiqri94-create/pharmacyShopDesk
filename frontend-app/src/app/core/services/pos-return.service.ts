@@ -4,6 +4,7 @@ import { PosCustomer } from '../models/domain/pos-customer.model';
 import { SaleReturn } from '../models/domain/sale-return.model';
 import { Sale } from '../models/domain/sale.model';
 import { ReturnSettlement } from '../models/enums/return-settlement.enum';
+import { StockMovementType } from '../models/enums/stock-movement-type.enum';
 import {
   buildReturnableLines,
   buildSaleReturn,
@@ -137,7 +138,13 @@ export class PosReturnService {
         const status = await this.cashService.status(this.clockService.today());
         if (status.counterClosed) return posFailure('invalid', CASH_REFUND_LOCKED_MESSAGE);
       }
-      await firstValueFrom(this.productDataService.saveAll(built.products));
+      await firstValueFrom(
+        this.productDataService.saveAll(built.products, {
+          type: StockMovementType.RETURN,
+          refId: built.saleReturn.returnNo,
+          userId: user.id,
+        })
+      );
       let saleReturn: SaleReturn;
       try {
         saleReturn = await firstValueFrom(this.salesDataService.saveReturn(built.saleReturn));

@@ -1,3 +1,4 @@
+import { setCurrentDeviceCode } from './device-identity.util';
 import { nextDocumentNumber, nextRecordId } from './document-number.util';
 
 describe('document-number.util', () => {
@@ -20,5 +21,24 @@ describe('document-number.util', () => {
   it('builds the next record id', () => {
     expect(nextRecordId('grn', ['grn-001', 'grn-005'])).toBe('grn-006');
     expect(nextRecordId('bat', [])).toBe('bat-001');
+  });
+
+  describe('with a device code', () => {
+    afterEach(() => setCurrentDeviceCode(null));
+
+    it('puts the device code in the record id', () => {
+      setCurrentDeviceCode('K7M');
+      expect(nextRecordId('sale', [])).toBe('sale-K7M-001');
+      expect(nextRecordId('sale', ['sale-K7M-001', 'sale-001', 'sale-T1-009'])).toBe(
+        'sale-K7M-002'
+      );
+    });
+
+    it('gives two devices different ids for their first record', () => {
+      setCurrentDeviceCode('K7M');
+      const first = nextRecordId('sale', []);
+      setCurrentDeviceCode('T1');
+      expect(nextRecordId('sale', [])).not.toBe(first);
+    });
   });
 });

@@ -43,6 +43,12 @@ describe('AppShellComponent', () => {
     expect(element.querySelector('select')).toBeNull();
   });
 
+  it('shows no storage warning unless the browser refused to keep the data', async () => {
+    const { element } = await openShell(UserRole.ADMIN, '/suppliers');
+    expect(element.querySelector('app-storage-warning')).not.toBeNull();
+    expect(element.querySelector('.storage-warning')).toBeNull();
+  });
+
   it('shows a module page inside the frame', async () => {
     const { element } = await openShell(UserRole.ADMIN, '/settings');
     const main = element.querySelector('main') as HTMLElement;

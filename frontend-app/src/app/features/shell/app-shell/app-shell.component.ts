@@ -15,11 +15,12 @@ import { ShellStateService } from '../../../core/services/shell-state.service';
 import { ViewportService } from '../../../core/services/viewport.service';
 import { moduleKeyFromUrl } from '../../../core/utils/module-definitions.util';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { StorageWarningComponent } from '../storage-warning/storage-warning.component';
 import { TopBarComponent } from '../top-bar/top-bar.component';
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, SidebarComponent, TopBarComponent],
+  imports: [RouterOutlet, SidebarComponent, StorageWarningComponent, TopBarComponent],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',
   host: {

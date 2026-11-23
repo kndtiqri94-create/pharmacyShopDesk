@@ -6,6 +6,7 @@ import { Sale } from '../models/domain/sale.model';
 import { AppUser } from '../models/domain/app-user.model';
 import { ModuleKey } from '../models/enums/module-key.enum';
 import { QuotationStatus } from '../models/enums/quotation-status.enum';
+import { StockMovementType } from '../models/enums/stock-movement-type.enum';
 import { cloneValue } from '../utils/clone.util';
 import { nextRecordId } from '../utils/document-number.util';
 import { nextHoldNumber } from '../utils/invoice-number.util';
@@ -101,11 +102,17 @@ export class PosSaleService {
               quotation === null
                 ? built.sale
                 : { ...built.sale, convertedFromQuotationNo: quotation.quotationNo };
-            return this.productDataService.saveAll(built.products).pipe(
-              switchMap(() => this.salesDataService.saveSale(sale)),
-              switchMap(saved => this.convertQuotation(quotation, saved)),
-              map((saved): SaveSaleResult => ({ ok: true, sale: saved }))
-            );
+            return this.productDataService
+              .saveAll(built.products, {
+                type: StockMovementType.SALE,
+                refId: built.sale.invoiceNo,
+                userId: user.id,
+              })
+              .pipe(
+                switchMap(() => this.salesDataService.saveSale(sale)),
+                switchMap(saved => this.convertQuotation(quotation, saved)),
+                map((saved): SaveSaleResult => ({ ok: true, sale: saved }))
+              );
           })
         )
       );
