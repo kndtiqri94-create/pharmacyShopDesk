@@ -1,0 +1,9 @@
+@if (storagePersistenceService.showWarning()) {
+  <div class="storage-warning" role="alert">
+    <app-alert tone="warning" title="Your saved data may be cleared">
+      This browser did not agree to keep ShopDesk data permanently. If you clear browser data or the
+      browser runs short of space, sales and stock saved on this device could be lost. Allow storage
+      for this site in your browser settings.
+    </app-alert>
+  </div>
+}

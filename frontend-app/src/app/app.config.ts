@@ -12,6 +12,8 @@ import { routes } from './app.routes';
 import { AppTitleStrategy } from './core/services/app-title.strategy';
 import { AuthService } from './core/services/auth/auth.service';
 import { provideDataServices } from './core/services/data/data-providers';
+import { LocalDatabaseProvider } from './core/services/data/local/local-database.provider';
+import { LocalStorageUnavailableError } from './core/services/data/local/local-storage-unavailable.error';
 import { PermissionService } from './core/services/permission.service';
 import { ThemePreferenceService } from './core/services/theme-preference.service';
 
@@ -19,6 +21,12 @@ async function initializeApp(): Promise<void> {
   inject(ThemePreferenceService);
   const permissionService = inject(PermissionService);
   const authService = inject(AuthService);
+  const localDatabaseProvider = inject(LocalDatabaseProvider);
+  if (environment.dataSource === 'local') {
+    await localDatabaseProvider.ready().catch(() => {
+      throw new LocalStorageUnavailableError();
+    });
+  }
   await permissionService.load();
   await authService.restoreSession();
 }
@@ -27,7 +35,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideDataServices(environment.useMockData),
+    provideDataServices(environment.dataSource),
     { provide: TitleStrategy, useClass: AppTitleStrategy },
     provideAppInitializer(initializeApp),
     provideServiceWorker('ngsw-worker.js', {

@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Grn } from '../models/domain/grn.model';
 import { GrnStatus } from '../models/enums/grn-status.enum';
+import { StockMovementType } from '../models/enums/stock-movement-type.enum';
 import { ModuleKey } from '../models/enums/module-key.enum';
 import { nextDocumentNumber, nextRecordId } from '../utils/document-number.util';
 import { applyGrnToOrder, applyGrnToProducts } from '../utils/grn-receiving.util';
@@ -55,7 +56,14 @@ export class StockInService {
     const products = applyGrnToProducts(grn.lines, prepared.products);
     const linked = prepared.orders.find(order => order.number === grn.purchaseOrderNumber);
     const order = linked ? applyGrnToOrder(grn.lines, linked) : null;
-    for (const product of products) await firstValueFrom(this.productDataService.save(product));
+    const context = {
+      type: StockMovementType.GRN,
+      refId: grn.number,
+      userId: this.authService.currentUser()?.id ?? null,
+    };
+    for (const product of products) {
+      await firstValueFrom(this.productDataService.save(product, context));
+    }
     if (order) await firstValueFrom(this.purchaseOrderDataService.save(order));
     const saved = await firstValueFrom(this.grnDataService.save(grn));
     return { ok: true, grn: saved };

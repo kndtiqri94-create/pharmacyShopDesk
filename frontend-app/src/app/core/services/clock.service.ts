@@ -6,7 +6,7 @@ export const SAMPLE_TODAY = '2026-09-21';
 @Injectable({ providedIn: 'root' })
 export class ClockService {
   today(): string {
-    return environment.useMockData ? SAMPLE_TODAY : new Date().toISOString().slice(0, 10);
+    return environment.dataSource === 'mock' ? SAMPLE_TODAY : new Date().toISOString().slice(0, 10);
   }
 
   now(): string {
