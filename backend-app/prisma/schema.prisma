@@ -1,0 +1,74 @@
+// ShopDesk server schema (F-3.3). PostgreSQL via Prisma.
+// Design: every business record mirrors the frontend Dexie data model. Records live in `entities`
+// (JSONB payload plus indexed natural keys); the stock ledger is a typed append-only table.
+// Migration SQL is committed, never applied automatically (see MIGRATION_POLICY.md).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// One row per business record. `collection` matches the frontend table names (products, sales, ...).
+model Entity {
+  collection String
+  id         String
+  /// Case-folded natural key unique within the collection (SKU, bank + account no, invoice no). Null when none.
+  uniqueKey  String?  @map("unique_key")
+  /// Business date (YYYY-MM-DD) for date-ranged reads. Null when none.
+  dateKey    String?  @map("date_key")
+  data       Json
+  /// Creation order within the shared change sequence (stable list order, like the frontend `_ord`).
+  ord        BigInt
+  /// Last change, from the shared change sequence. The pull cursor reads this.
+  seq        BigInt
+  /// Tombstone so deletions reach other devices on pull. A deleted row releases its uniqueKey.
+  deleted    Boolean  @default(false)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@id([collection, id])
+  @@unique([collection, uniqueKey])
+  @@index([seq])
+  @@index([collection, ord])
+  @@index([collection, dateKey])
+  @@map("entities")
+}
+
+/// Append-only stock ledger. Current stock = stored base quantity + sum of qty_delta (FR-API-3).
+model StockMovement {
+  /// Device-generated id (FR-OFF-7). Recording the same id twice is a no-op.
+  id         String   @id
+  /// Server order, from the shared change sequence.
+  seq        BigInt   @unique
+  productId  String   @map("product_id")
+  /// Empty string means the product-level (no batch) bucket.
+  batchId    String   @default("") @map("batch_id")
+  type       String
+  qtyDelta   Int      @map("qty_delta")
+  refId      String?  @map("ref_id")
+  userId     String?  @map("user_id")
+  deviceCode String   @map("device_code")
+  /// Device clock time of the movement (ISO 8601).
+  occurredAt String   @map("occurred_at")
+  receivedAt DateTime @default(now()) @map("received_at")
+
+  @@index([productId, batchId])
+  @@index([type])
+  @@index([refId])
+  @@map("stock_movements")
+}
+
+/// Remembers every sync change already handled so a resent batch changes nothing (FR-OFF-7).
+model ProcessedChange {
+  changeId    String   @id @map("change_id")
+  deviceCode  String   @map("device_code")
+  status      String
+  reason      String?
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@map("processed_changes")
+}
