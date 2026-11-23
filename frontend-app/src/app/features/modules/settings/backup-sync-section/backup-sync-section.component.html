@@ -1,5 +1,18 @@
 <div class="backup">
-  <app-alert tone="success">{{ notice }}</app-alert>
+  <app-alert [tone]="summary().tone">{{ summary().text }}</app-alert>
+  <dl class="backup__facts">
+    <div>
+      <dt class="sd-caption">Last successful sync</dt>
+      <dd class="sd-body-strong">{{ lastSync() }}</dd>
+    </div>
+    <div>
+      <dt class="sd-caption">Changes waiting to send</dt>
+      <dd class="sd-body-strong">{{ pending() }}</dd>
+    </div>
+  </dl>
+  @if (errorText(); as text) {
+    <app-alert tone="warning">{{ text }}</app-alert>
+  }
   <div class="backup__auto">
     <app-toggle
       label="Sync automatically when online"
@@ -10,11 +23,13 @@
     <p class="sd-caption">This applies straight away and does not need Save changes.</p>
   </div>
   <div class="sd-row">
-    <app-button icon="download" [disabled]="disabled()" (click)="showSampleMessage('Back up now')">
+    <app-button icon="download" [disabled]="disabled() || busy()" (click)="backUpNow()">
       Back up now
     </app-button>
-    <app-button icon="cloud" [disabled]="disabled()" (click)="showSampleMessage('Sync now')">
+    <app-button icon="cloud" [disabled]="disabled() || busy()" (click)="syncNow()">
       Sync now
     </app-button>
   </div>
+  <app-needs-attention-list [items]="attentionItems()" />
+  <p class="sd-caption backup__note">{{ dataLossNote }}</p>
 </div>

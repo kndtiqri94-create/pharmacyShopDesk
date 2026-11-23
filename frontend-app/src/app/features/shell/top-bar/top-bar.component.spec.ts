@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { clearBrowserStorage, signInAs, TEST_PROVIDERS } from '../../../../testing/auth-test.util';
+import { SyncState } from '../../../core/models/enums/sync-state.enum';
 import { UserRole } from '../../../core/models/enums/user-role.enum';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { RoleDataService } from '../../../core/services/data/role-data.service';
+import { SyncDataService } from '../../../core/services/data/sync-data.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PermissionService } from '../../../core/services/permission.service';
 import { ShellStateService } from '../../../core/services/shell-state.service';
@@ -85,7 +87,67 @@ describe('TopBarComponent', () => {
       candidate.textContent?.includes('Sign out')
     )!;
     button.click();
+    await new Promise(resolve => setTimeout(resolve, 10));
     expect(signOut).toHaveBeenCalled();
+    expect(element.querySelector('dialog')?.hasAttribute('open')).toBeFalse();
+  });
+
+  it('warns and waits for confirmation when changes are unsent', async () => {
+    const { fixture, element } = await render();
+    const syncDataService = TestBed.inject(SyncDataService);
+    spyOn(syncDataService, 'getStatus').and.returnValue(
+      of({
+        state: SyncState.OFFLINE,
+        pendingChanges: 2,
+        attentionCount: 0,
+        lastSyncAt: null,
+        autoSyncEnabled: true,
+      })
+    );
+    const signOut = spyOn(TestBed.inject(AuthService), 'signOut').and.resolveTo();
+    const button = Array.from(element.querySelectorAll('button')).find(candidate =>
+      candidate.textContent?.includes('Sign out')
+    )!;
+    button.click();
+    await new Promise(resolve => setTimeout(resolve, 10));
+    fixture.detectChanges();
+    expect(signOut).not.toHaveBeenCalled();
+    expect(element.querySelector('dialog')?.textContent).toContain('not on the central record');
+    const cancel = Array.from(element.querySelectorAll('dialog button')).find(candidate =>
+      candidate.textContent?.includes('Stay signed in')
+    ) as HTMLButtonElement;
+    cancel.click();
+    fixture.detectChanges();
+    expect(signOut).not.toHaveBeenCalled();
+    button.click();
+    await new Promise(resolve => setTimeout(resolve, 10));
+    fixture.detectChanges();
+    const confirm = Array.from(element.querySelectorAll('dialog button')).find(candidate =>
+      candidate.textContent?.includes('Sign out anyway')
+    ) as HTMLButtonElement;
+    confirm.click();
+    expect(signOut).toHaveBeenCalledTimes(1);
+  });
+
+  it('warns about refused changes too', async () => {
+    const { fixture, element } = await render();
+    spyOn(TestBed.inject(SyncDataService), 'getStatus').and.returnValue(
+      of({
+        state: SyncState.NEEDS_ATTENTION,
+        pendingChanges: 0,
+        attentionCount: 1,
+        lastSyncAt: null,
+        autoSyncEnabled: true,
+      })
+    );
+    const signOut = spyOn(TestBed.inject(AuthService), 'signOut').and.resolveTo();
+    const button = Array.from(element.querySelectorAll('button')).find(candidate =>
+      candidate.textContent?.includes('Sign out')
+    )!;
+    button.click();
+    await new Promise(resolve => setTimeout(resolve, 10));
+    fixture.detectChanges();
+    expect(signOut).not.toHaveBeenCalled();
   });
 
   it('shows no branch selector and a short page title', async () => {

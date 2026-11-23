@@ -95,7 +95,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   saveSale(sale: Sale): Observable<Sale> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.sales, db.meta, async () => {
+      db.transaction('rw', db.outbox, db.sales, db.meta, async () => {
         const reserved = (await readMeta<number>(db, META_KEYS.invoiceCounter)) ?? 0;
         await writeMeta(
           db,
@@ -109,7 +109,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   nextInvoiceNumber(): Observable<string> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.heldBills, db.meta, async () => {
+      db.transaction('rw', db.outbox, db.heldBills, db.meta, async () => {
         const held = await new LocalCollection<HeldBill>(db.heldBills).all();
         const reserved = (await readMeta<number>(db, META_KEYS.invoiceCounter)) ?? 0;
         const invoiceNo = nextInvoiceNumber(
@@ -124,7 +124,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   releaseInvoiceNumber(invoiceNo: string): Observable<void> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.sales, db.heldBills, db.meta, async () => {
+      db.transaction('rw', db.outbox, db.sales, db.heldBills, db.meta, async () => {
         const sequence = invoiceSequence(invoiceNo);
         const reserved = (await readMeta<number>(db, META_KEYS.invoiceCounter)) ?? 0;
         if (sequence <= 0 || sequence !== reserved) return;
@@ -152,7 +152,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   saveHeldBill(heldBill: HeldBill): Observable<HeldBill> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.heldBills, () =>
+      db.transaction('rw', db.outbox, db.heldBills, () =>
         new LocalCollection<HeldBill>(db.heldBills).upsert(heldBill)
       )
     );
@@ -160,7 +160,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   removeHeldBill(id: string): Observable<boolean> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.heldBills, () =>
+      db.transaction('rw', db.outbox, db.heldBills, () =>
         new LocalCollection<HeldBill>(db.heldBills).remove(id)
       )
     );
@@ -174,7 +174,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   saveReturn(saleReturn: SaleReturn): Observable<SaleReturn> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.saleReturns, db.counterReports, async () => {
+      db.transaction('rw', db.outbox, db.saleReturns, db.counterReports, async () => {
         const day = dateOfTimestamp(saleReturn.createdAt);
         if (
           saleReturn.settlement === ReturnSettlement.CASH_REFUND &&
@@ -193,7 +193,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   saveQuotation(quotation: Quotation): Observable<Quotation> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.quotations, () =>
+      db.transaction('rw', db.outbox, db.quotations, () =>
         new LocalCollection<Quotation>(db.quotations).upsert(quotation)
       )
     );
@@ -201,7 +201,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   removeQuotation(id: string): Observable<boolean> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.quotations, () =>
+      db.transaction('rw', db.outbox, db.quotations, () =>
         new LocalCollection<Quotation>(db.quotations).remove(id)
       )
     );
@@ -209,7 +209,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   markQuotationConverted(id: string, invoiceNo: string): Observable<Quotation | null> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.quotations, async () => {
+      db.transaction('rw', db.outbox, db.quotations, async () => {
         const collection = new LocalCollection<Quotation>(db.quotations);
         const current = await collection.byId(id);
         if (current === null || current.status !== QuotationStatus.OPEN) return null;
@@ -230,7 +230,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   saveDuePayment(payment: DuePayment): Observable<DuePayment> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.duePayments, db.counterReports, async () => {
+      db.transaction('rw', db.outbox, db.duePayments, db.counterReports, async () => {
         const day = dateOfTimestamp(payment.createdAt);
         if (payment.method === SalePaymentMethod.CASH && (await this.isClosed(db, day))) {
           throw new DayLockedError(day);
@@ -254,7 +254,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   saveDayOpening(opening: DayOpening): Observable<DayOpening> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.dayOpenings, db.counterReports, async () => {
+      db.transaction('rw', db.outbox, db.dayOpenings, db.counterReports, async () => {
         if (await this.isClosed(db, opening.date)) throw new DayLockedError(opening.date);
         return new LocalCollection<DayOpening>(db.dayOpenings, 'date').upsert(opening);
       })
@@ -269,7 +269,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   saveDrawerSession(session: DrawerSession): Observable<DrawerSession> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.drawerSessions, () =>
+      db.transaction('rw', db.outbox, db.drawerSessions, () =>
         new LocalCollection<DrawerSession>(db.drawerSessions, 'date').upsert(session)
       )
     );
@@ -283,7 +283,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   saveCounterReport(report: CounterReport): Observable<CounterReport> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.counterReports, async () => {
+      db.transaction('rw', db.outbox, db.counterReports, async () => {
         if (await this.isClosed(db, report.date)) throw new DayLockedError(report.date);
         return new LocalCollection<CounterReport>(db.counterReports, 'date').upsert(report);
       })
@@ -298,7 +298,7 @@ export class LocalSalesDataService extends SalesDataService {
 
   saveProductAdjustment(adjustment: ProductAdjustment): Observable<ProductAdjustment> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.productAdjustments, () =>
+      db.transaction('rw', db.outbox, db.productAdjustments, () =>
         new LocalCollection<ProductAdjustment>(db.productAdjustments).upsert(adjustment)
       )
     );

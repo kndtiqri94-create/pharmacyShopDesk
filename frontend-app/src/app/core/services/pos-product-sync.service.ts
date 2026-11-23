@@ -20,10 +20,12 @@ import {
   productMatchKey,
 } from '../utils/product-sync-merge.util';
 import { isBatchResponseUsable } from '../utils/product-sync-validation.util';
+import { getStockOnHand } from '../utils/stock-status.util';
 import { ClockService } from './clock.service';
 import { ProductDataService } from './data/product-data.service';
 import { ProductSyncServer, ServerUnreachableError } from './data/product-sync-server';
 import { ProductSyncStateStore } from './data/product-sync-state.store';
+import { SyncDataService } from './data/sync-data.service';
 import { PosFailureResult } from './pos-sale.service';
 import { PosWriteGuard } from './pos-write-guard.service';
 
@@ -61,6 +63,7 @@ export class PosProductSyncService {
   private readonly productDataService = inject(ProductDataService);
   private readonly productSyncServer = inject(ProductSyncServer);
   private readonly stateStore = inject(ProductSyncStateStore);
+  private readonly syncDataService = inject(SyncDataService);
   private readonly writeGuard = inject(PosWriteGuard);
 
   sync(onProgress?: ProductSyncProgressHandler): Promise<ProductSyncResult> {
@@ -72,6 +75,8 @@ export class PosProductSyncService {
   private async runSync(
     onProgress: ProductSyncProgressHandler | undefined
   ): Promise<ProductSyncSuccess | ProductSyncFailure> {
+    const exchanged = await firstValueFrom(this.syncDataService.exchangeBeforeProductUpdate());
+    if (!exchanged) return this.unreachable();
     const products = await firstValueFrom(this.productDataService.getAll());
     const refusal = this.refuseUnsyncable(products);
     if (refusal !== null) return refusal;
@@ -98,7 +103,14 @@ export class PosProductSyncService {
         return this.failure(outcome, products.length, batches, succeeded, index + 1);
       }
     }
+    await firstValueFrom(this.syncDataService.exchangeBeforeProductUpdate());
     return this.success(products.length, batches);
+  }
+
+  private unreachable(): ProductSyncFailure {
+    return {
+      ...this.refusal('unreachable', 'The server could not be reached. Nothing was changed.'),
+    };
   }
 
   private refuseUnsyncable(products: readonly Product[]): ProductSyncFailure | null {
@@ -158,6 +170,7 @@ export class PosProductSyncService {
   ): Promise<BatchOutcome> {
     try {
       const sent = await this.currentProducts(ids);
+      if (this.syncDataService.stockTravelsAsMovements) this.rebaseStock(sent);
       const records = sent.map(product =>
         buildSyncRecord(product, this.stateStore.get(productMatchKey(product)))
       );
@@ -172,6 +185,12 @@ export class PosProductSyncService {
       return 'completed';
     } catch (error) {
       return error instanceof ServerUnreachableError ? 'unreachable' : 'batch-failed';
+    }
+  }
+
+  private rebaseStock(products: readonly Product[]): void {
+    for (const product of products) {
+      this.stateStore.seed(productMatchKey(product), getStockOnHand(product));
     }
   }
 

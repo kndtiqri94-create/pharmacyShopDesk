@@ -1,0 +1,19 @@
+<section class="attention" aria-labelledby="attention-title">
+  <h3 id="attention-title" class="sd-body-strong">Needs attention ({{ items().length }})</h3>
+  @if (items().length === 0) {
+    <p class="sd-caption">Nothing needs attention. Every change was accepted.</p>
+  } @else {
+    <p class="sd-caption">
+      The central record could not accept these changes. They will not be retried.
+    </p>
+    <ul class="attention__list">
+      @for (item of items(); track item.id) {
+        <li class="attention__item">
+          <span class="sd-body-strong">{{ item.what }}</span>
+          <span class="sd-caption">Made {{ when(item.madeAt) }}</span>
+          <span class="attention__reason">{{ item.reason }}</span>
+        </li>
+      }
+    </ul>
+  }
+</section>

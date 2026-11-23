@@ -179,21 +179,20 @@ describe('SettingsComponent', () => {
       expect(buttonByText(element, 'Save changes')).toBeUndefined();
     });
 
-    it('shows Backup & sync with the notice, the instant option and sample-only buttons', async () => {
+    it('shows Backup & sync with the live status, the instant option and working buttons', async () => {
       const { fixture, element } = await render();
       openGroup(fixture, element, 'Backup & sync');
       const section = element.querySelector('app-backup-sync-section')!;
-      expect(section.textContent).toContain(
-        'Everything is backed up. Last sync today 09:12 · next automatic sync in 5 minutes.'
-      );
+      expect(section.textContent).toContain('Last successful sync');
+      expect(section.textContent).toContain('Changes waiting to send');
       expect(section.querySelector('[role=switch]')?.getAttribute('aria-checked')).toBe('true');
       expect(section.textContent).toContain('Sync automatically when online');
       buttonByText(section, 'Back up now')!.click();
-      expect(notification()?.message).toBe(
-        'Back up now is sample only for now and does nothing yet.'
-      );
+      await settle(fixture);
+      expect(notification()?.message).toContain('holds every change');
       buttonByText(section, 'Sync now')!.click();
-      expect(notification()?.message).toBe('Sync now is sample only for now and does nothing yet.');
+      await settle(fixture);
+      expect(notification()?.message).toContain('up to date');
       expect(saveButton(element).disabled).toBeTrue();
     });
   });

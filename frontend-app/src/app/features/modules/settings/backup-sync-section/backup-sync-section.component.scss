@@ -13,3 +13,14 @@
   flex-direction: column;
   gap: var(--sd-space-1);
 }
+
+.backup__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sd-space-4);
+  margin: 0;
+
+  dd {
+    margin: 0;
+  }
+}

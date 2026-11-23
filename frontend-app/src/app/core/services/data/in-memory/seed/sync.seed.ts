@@ -4,6 +4,8 @@ import { SyncState } from '../../../../models/enums/sync-state.enum';
 export const SYNC_STATUS_SEED: SyncStatus = {
   state: SyncState.ONLINE,
   pendingChanges: 0,
-  minutesSinceSync: 2,
+  attentionCount: 0,
+  lastSyncAt: null,
   autoSyncEnabled: true,
+  lastError: null,
 };

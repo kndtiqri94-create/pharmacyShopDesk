@@ -3,6 +3,7 @@ import { AttendanceDataService } from './attendance-data.service';
 import { BankAccountDataService } from './bank-account-data.service';
 import { EmployeeDataService } from './employee-data.service';
 import { GrnDataService } from './grn-data.service';
+import { HttpProductSyncServer } from './http-product-sync-server';
 import { InMemoryAttendanceDataService } from './in-memory/in-memory-attendance-data.service';
 import { InMemoryBankAccountDataService } from './in-memory/in-memory-bank-account-data.service';
 import { InMemoryEmployeeDataService } from './in-memory/in-memory-employee-data.service';
@@ -89,7 +90,7 @@ const LOCAL_BINDINGS: readonly [DataToken, new () => object][] = [
   [LeaveDataService, LocalLeaveDataService],
   [PayrollDataService, LocalPayrollDataService],
   [BankAccountDataService, LocalBankAccountDataService],
-  [ProductSyncServer, InMemoryProductSyncServer],
+  [ProductSyncServer, HttpProductSyncServer],
 ];
 
 export type DataSourceMode = 'mock' | 'local';

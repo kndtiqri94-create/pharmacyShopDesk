@@ -23,7 +23,7 @@ export class LocalPurchaseOrderDataService extends PurchaseOrderDataService {
 
   save(item: PurchaseOrder): Observable<PurchaseOrder> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.purchaseOrders, () =>
+      db.transaction('rw', db.outbox, db.purchaseOrders, () =>
         new LocalCollection<PurchaseOrder>(db.purchaseOrders).upsert(item)
       )
     );

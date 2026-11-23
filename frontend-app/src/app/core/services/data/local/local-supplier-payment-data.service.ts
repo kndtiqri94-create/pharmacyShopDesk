@@ -17,7 +17,7 @@ export class LocalSupplierPaymentDataService extends SupplierPaymentDataService 
 
   save(item: SupplierPayment): Observable<SupplierPayment> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.supplierPayments, () =>
+      db.transaction('rw', db.outbox, db.supplierPayments, () =>
         new LocalCollection<SupplierPayment>(db.supplierPayments).upsert(item)
       )
     );

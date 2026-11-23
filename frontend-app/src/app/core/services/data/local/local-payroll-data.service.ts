@@ -49,7 +49,7 @@ export class LocalPayrollDataService extends PayrollDataService {
 
   saveAdvance(advance: SalaryAdvance): Observable<SalaryAdvance> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.salaryAdvances, () =>
+      db.transaction('rw', db.outbox, db.salaryAdvances, () =>
         new LocalCollection<SalaryAdvance>(db.salaryAdvances).upsert(advance)
       )
     );
@@ -57,7 +57,7 @@ export class LocalPayrollDataService extends PayrollDataService {
 
   saveNopay(entry: NopayEntry): Observable<NopayEntry> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.nopayEntries, () =>
+      db.transaction('rw', db.outbox, db.nopayEntries, () =>
         new LocalCollection<NopayEntry>(db.nopayEntries).upsert(entry)
       )
     );

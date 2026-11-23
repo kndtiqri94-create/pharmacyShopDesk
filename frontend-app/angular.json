@@ -73,7 +73,21 @@
                 }
               ]
             },
+            "e2e": {
+              "index": { "input": "src/index.local.html", "output": "index.html" },
+              "outputPath": "dist/e2e",
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": false,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.e2e.ts"
+                }
+              ]
+            },
             "development": {
+              "index": { "input": "src/index.local.html", "output": "index.html" },
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true

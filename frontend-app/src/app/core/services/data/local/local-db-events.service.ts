@@ -1,7 +1,16 @@
 import { Injectable } from '@angular/core';
 
 export type LocalDbEventCode =
-  'local-db.opened' | 'local-db.upgrade' | 'storage.persist.denied' | 'local-db.quota-exceeded';
+  | 'local-db.opened'
+  | 'local-db.upgrade'
+  | 'storage.persist.denied'
+  | 'local-db.quota-exceeded'
+  | 'sync.run.started'
+  | 'sync.run.finished'
+  | 'sync.push.failed'
+  | 'sync.pull.applied'
+  | 'sync.rejected'
+  | 'connectivity.changed';
 
 export interface LocalDbEvent {
   code: LocalDbEventCode;

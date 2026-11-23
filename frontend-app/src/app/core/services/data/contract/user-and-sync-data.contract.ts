@@ -1,9 +1,14 @@
 import { Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
-import { SyncState } from '../../../models/enums/sync-state.enum';
 import { SyncDataService } from '../sync-data.service';
 import { UserDataService } from '../user-data.service';
+
+async function waitUntil(condition: () => boolean): Promise<void> {
+  for (let attempt = 0; attempt < 80 && !condition(); attempt++) {
+    await new Promise(resolve => setTimeout(resolve, 25));
+  }
+}
 
 export function describeUserAndSyncDataContract(label: string, providers: () => Provider[]): void {
   describe(label, () => {
@@ -30,20 +35,20 @@ export function describeUserAndSyncDataContract(label: string, providers: () => 
       expect(status.autoSyncEnabled).toBeTrue();
     });
 
-    it('starts online and emits updated sync state', async () => {
+    it('starts online with nothing waiting and emits the updated automatic-sync setting', async () => {
       const service = TestBed.inject(SyncDataService);
-      const states: string[] = [];
-      const subscription = service.status$.subscribe(status => states.push(status.state));
-      await firstValueFrom(
-        service.setStatus({
-          state: SyncState.OFFLINE,
-          pendingChanges: 3,
-          minutesSinceSync: 40,
-          autoSyncEnabled: true,
-        })
-      );
+      const seen: boolean[] = [];
+      const first = await firstValueFrom(service.getStatus());
+      expect(first.state).toBe('ONLINE');
+      expect(first.pendingChanges).toBe(0);
+      expect(first.attentionCount).toBe(0);
+      expect(first.lastSyncAt).toBeNull();
+      const subscription = service.status$.subscribe(status => seen.push(status.autoSyncEnabled));
+      await waitUntil(() => seen.length === 1);
+      await firstValueFrom(service.setAutoSync(false));
+      await waitUntil(() => seen.includes(false));
       subscription.unsubscribe();
-      expect(states).toEqual([SyncState.ONLINE, SyncState.OFFLINE]);
+      expect(seen).toEqual([true, false]);
     });
   });
 }

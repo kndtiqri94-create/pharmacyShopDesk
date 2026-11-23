@@ -24,7 +24,7 @@ export class LocalReloadDataService extends ReloadDataService {
 
   saveFloat(reloadFloat: ReloadFloat): Observable<ReloadFloat> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.reloadFloats, () =>
+      db.transaction('rw', db.outbox, db.reloadFloats, () =>
         new LocalCollection<ReloadFloat>(db.reloadFloats, 'date').upsert(reloadFloat)
       )
     );
@@ -32,7 +32,7 @@ export class LocalReloadDataService extends ReloadDataService {
 
   addTransaction(transaction: ReloadTransaction): Observable<ReloadTransaction> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.reloadTransactions, () =>
+      db.transaction('rw', db.outbox, db.reloadTransactions, () =>
         new LocalCollection<ReloadTransaction>(db.reloadTransactions).upsert(transaction)
       )
     );

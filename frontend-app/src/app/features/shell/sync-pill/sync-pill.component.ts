@@ -1,18 +1,8 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { SyncStatus } from '../../../core/models/domain/sync-status.model';
-import { SyncState } from '../../../core/models/enums/sync-state.enum';
 import { SyncDataService } from '../../../core/services/data/sync-data.service';
 import { SYNC_STATE_DISPLAY } from '../../../core/utils/status-display.util';
-
-export function describeSyncStatus(status: SyncStatus): string {
-  if (status.state === SyncState.SYNCING) return 'Syncing…';
-  if (status.state === SyncState.OFFLINE) {
-    const noun = status.pendingChanges === 1 ? 'change' : 'changes';
-    return `Offline · ${status.pendingChanges} ${noun} waiting`;
-  }
-  return `Synced · ${status.minutesSinceSync} min ago`;
-}
+import { describeSyncStatus } from '../../../core/utils/sync-status.util';
 
 @Component({
   selector: 'app-sync-pill',

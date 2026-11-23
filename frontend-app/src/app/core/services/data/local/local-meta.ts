@@ -6,6 +6,10 @@ export const META_KEYS = {
   movementSeq: 'movementSeq',
   schemaVersion: 'schemaVersion',
   seededAt: 'seededAt',
+  autoSyncEnabled: 'autoSyncEnabled',
+  lastSyncAt: 'lastSyncAt',
+  pullCursor: 'pullCursor',
+  syncLease: 'syncLease',
 } as const;
 
 export const DOCUMENT_IDS = {
@@ -29,6 +33,8 @@ export async function readDocument<T>(db: LocalDatabase, id: string): Promise<T 
 }
 
 export async function writeDocument(db: LocalDatabase, id: string, value: unknown): Promise<void> {
-  await db.documents.put({ id, value });
-  db.afterWrite('documents', id, 'put');
+  await db.transaction('rw', db.documents, db.outbox, async () => {
+    await db.documents.put({ id, value });
+    await db.enqueue('documents', id, 'put', value);
+  });
 }
