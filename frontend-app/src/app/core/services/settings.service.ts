@@ -65,10 +65,7 @@ export class SettingsService {
 
   async setAutoSync(enabled: boolean): Promise<AutoSyncResult> {
     if (!this.canChange()) return { ok: false, reason: 'denied' };
-    const status = await firstValueFrom(this.syncDataService.getStatus());
-    const saved = await firstValueFrom(
-      this.syncDataService.setStatus({ ...status, autoSyncEnabled: enabled })
-    );
+    const saved = await firstValueFrom(this.syncDataService.setAutoSync(enabled));
     return { ok: true, enabled: saved.autoSyncEnabled };
   }
 

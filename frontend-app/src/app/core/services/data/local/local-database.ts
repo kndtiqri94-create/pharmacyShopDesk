@@ -1,4 +1,6 @@
 import Dexie, { DexieOptions, Table, Transaction } from 'dexie';
+import { cloneValue } from '../../../utils/clone.util';
+import { newId } from '../../../utils/device-id.util';
 import { AppUser } from '../../../models/domain/app-user.model';
 import { AttendanceRecord } from '../../../models/domain/attendance-record.model';
 import { BankAccount } from '../../../models/domain/bank-account.model';
@@ -30,13 +32,8 @@ import { StockMovement } from '../../../models/domain/stock-movement.model';
 import { SupplierPayment } from '../../../models/domain/supplier-payment.model';
 import { Supplier } from '../../../models/domain/supplier.model';
 import { OpeningDueBalance } from '../sales-data.service';
-
-export type LocalWriteOperation = 'put' | 'delete';
-export type LocalAfterWrite = (
-  entityType: string,
-  id: string,
-  operation: LocalWriteOperation
-) => void;
+import { FORBIDDEN_FIELDS, OUTBOX_ENTITIES } from './sync/outbox-entities.const';
+import { OutboxEntry, OutboxOperation, SyncSeqRow, changeKey } from './sync/outbox.model';
 
 export const LOCAL_DB_NAME = 'shopdesk-local';
 
@@ -98,10 +95,49 @@ export const LOCAL_SCHEMA_VERSIONS: readonly SchemaVersion[] = [
       stockMovements: 'id, &seq, productId, [productId+batchId], createdAt, type, refId',
     },
   },
+  {
+    version: 2,
+    stores: {
+      outbox: '++seq, &changeId, status, entity',
+      syncSeqs: 'key',
+    },
+  },
 ];
 
+interface TrackedTransaction extends Transaction {
+  suppressOutbox?: boolean;
+  guardWrites?: Set<string>;
+  guardEnqueued?: Set<string>;
+}
+
+export class OutboxScopeError extends Error {
+  constructor() {
+    super('A local write must run in a transaction that includes the outbox.');
+    this.name = 'OutboxScopeError';
+  }
+}
+
+export function suppressOutbox(): void {
+  const transaction = Dexie.currentTransaction as TrackedTransaction | null;
+  if (transaction) rootOf(transaction).suppressOutbox = true;
+}
+
+function rootOf(transaction: TrackedTransaction): TrackedTransaction {
+  let current = transaction;
+  while (current.parent) current = current.parent as TrackedTransaction;
+  return current;
+}
+
+function snapshotOf(entity: string, data: unknown): unknown {
+  const copy = cloneValue(data) as Record<string, unknown>;
+  delete copy['_ord'];
+  if (entity === 'products') delete copy['skuKey'];
+  for (const field of FORBIDDEN_FIELDS) delete copy[field];
+  return copy;
+}
+
 export class LocalDatabase extends Dexie {
-  afterWrite: LocalAfterWrite = () => undefined;
+  readonly outboxViolations: string[] = [];
 
   declare products: Table<ProductRow, string>;
   declare suppliers: Table<Row<Supplier>, string>;
@@ -136,6 +172,8 @@ export class LocalDatabase extends Dexie {
   declare nopayEntries: Table<Row<NopayEntry>, string>;
   declare payrollPayments: Table<Row<PayrollPayment>, string>;
   declare stockMovements: Table<StockMovement, string>;
+  declare outbox: Table<OutboxEntry, number>;
+  declare syncSeqs: Table<SyncSeqRow, string>;
 
   constructor(
     name: string = LOCAL_DB_NAME,
@@ -146,6 +184,55 @@ export class LocalDatabase extends Dexie {
     for (const schema of versions) {
       const version = this.version(schema.version).stores(schema.stores);
       if (schema.upgrade) version.upgrade(schema.upgrade);
+    }
+  }
+
+  async enqueue(entity: string, id: string, op: OutboxOperation, data: unknown): Promise<void> {
+    const transaction = Dexie.currentTransaction as TrackedTransaction | null;
+    if (transaction && rootOf(transaction).suppressOutbox) return;
+    if (!transaction?.storeNames.includes('outbox')) throw new OutboxScopeError();
+    const root = rootOf(transaction);
+    (root.guardEnqueued ??= new Set()).add(changeKey(entity, id));
+    await this.outbox.add({
+      changeId: newId(),
+      entity,
+      id,
+      op,
+      data: op === 'put' ? snapshotOf(entity, data) : null,
+      createdAt: new Date().toISOString(),
+      status: 'pending',
+      attempts: 0,
+    });
+  }
+
+  installOutboxGuard(): void {
+    for (const entity of OUTBOX_ENTITIES) {
+      const table = this.table(entity);
+      table.hook('creating', (primKey, _row, transaction) => {
+        this.trackWrite(entity, primKey, transaction);
+      });
+      table.hook('updating', (_mods, primKey, _row, transaction) => {
+        this.trackWrite(entity, primKey, transaction);
+      });
+      table.hook('deleting', (primKey, _row, transaction) => {
+        this.trackWrite(entity, primKey, transaction);
+      });
+    }
+  }
+
+  private trackWrite(entity: string, primKey: unknown, transaction: Transaction): void {
+    const tracked = rootOf(transaction as TrackedTransaction);
+    if (tracked.suppressOutbox) return;
+    if (!tracked.guardWrites) {
+      tracked.guardWrites = new Set();
+      transaction.on('complete', () => this.reportViolations(tracked));
+    }
+    tracked.guardWrites.add(changeKey(entity, String(primKey)));
+  }
+
+  private reportViolations(transaction: TrackedTransaction): void {
+    for (const key of transaction.guardWrites ?? []) {
+      if (!transaction.guardEnqueued?.has(key)) this.outboxViolations.push(key.split(':')[0]);
     }
   }
 }

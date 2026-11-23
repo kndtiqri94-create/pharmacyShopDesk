@@ -1,3 +1,5 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Provider } from '@angular/core';
 import Dexie, { DexieOptions } from 'dexie';
 import { IDBFactory, IDBKeyRange } from 'fake-indexeddb';
@@ -9,6 +11,10 @@ import {
   STORAGE_MANAGER,
   StorageManagerLike,
 } from '../app/core/services/data/local/storage-persistence.service';
+
+export function httpTestingProviders(): Provider[] {
+  return [provideHttpClient(), provideHttpClientTesting()] as unknown as Provider[];
+}
 
 export const GRANTING_STORAGE: StorageManagerLike = {
   persisted: () => Promise.resolve(false),
@@ -40,7 +46,11 @@ export function createLocalTestEnvironment(
   const indexedDB = new IDBFactory();
   const databaseName = options.realBrowserStore ? `${name}-${crypto.randomUUID()}` : name;
   const databaseOptions: DexieOptions = options.realBrowserStore ? {} : { indexedDB, IDBKeyRange };
-  const createDatabase = () => new LocalDatabase(databaseName, databaseOptions);
+  const createDatabase = () => {
+    const database = new LocalDatabase(databaseName, databaseOptions);
+    database.installOutboxGuard();
+    return database;
+  };
   return {
     indexedDB,
     databaseOptions,
@@ -48,6 +58,7 @@ export function createLocalTestEnvironment(
     createDatabase,
     cleanup: () => (options.realBrowserStore ? Dexie.delete(databaseName) : Promise.resolve()),
     providers: (storage = GRANTING_STORAGE) => [
+      ...httpTestingProviders(),
       provideDataServices('local'),
       { provide: LOCAL_DATABASE_FACTORY, useValue: createDatabase },
       { provide: STORAGE_MANAGER, useValue: storage },

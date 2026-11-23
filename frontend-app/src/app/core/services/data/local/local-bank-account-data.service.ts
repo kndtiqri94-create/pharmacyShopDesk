@@ -19,7 +19,7 @@ export class LocalBankAccountDataService extends BankAccountDataService {
 
   create(account: BankAccount): Observable<BankAccount> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.bankAccounts, async () => {
+      db.transaction('rw', db.outbox, db.bankAccounts, async () => {
         const collection = new LocalCollection<BankAccount>(db.bankAccounts);
         const others = (await collection.all()).filter(existing => existing.id !== account.id);
         if (isDuplicateAccount(others, account.bank, account.accountNo)) {

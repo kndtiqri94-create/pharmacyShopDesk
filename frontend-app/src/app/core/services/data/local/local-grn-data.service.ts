@@ -19,7 +19,7 @@ export class LocalGrnDataService extends GrnDataService {
 
   save(item: Grn): Observable<Grn> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.grns, () => new LocalCollection<Grn>(db.grns).upsert(item))
+      db.transaction('rw', db.outbox, db.grns, () => new LocalCollection<Grn>(db.grns).upsert(item))
     );
   }
 }

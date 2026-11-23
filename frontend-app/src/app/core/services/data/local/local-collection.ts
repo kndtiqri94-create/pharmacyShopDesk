@@ -30,7 +30,7 @@ export class LocalCollection<T extends object> {
     const existing = await this.table.get(key);
     const order = existing?._ord ?? (await this.nextOrder());
     await this.table.put({ ...copy, _ord: order } as Row<T>);
-    this.notify(key, 'put');
+    await this.database().enqueue(this.table.name, key, 'put', copy);
     return cloneValue(copy);
   }
 
@@ -38,12 +38,12 @@ export class LocalCollection<T extends object> {
     const existing = await this.table.get(key);
     if (existing === undefined) return false;
     await this.table.delete(key);
-    this.notify(key, 'delete');
+    await this.database().enqueue(this.table.name, key, 'delete', null);
     return true;
   }
 
-  private notify(key: string, operation: 'put' | 'delete'): void {
-    (this.table.db as LocalDatabase).afterWrite(this.table.name, key, operation);
+  private database(): LocalDatabase {
+    return this.table.db as LocalDatabase;
   }
 
   private async nextOrder(): Promise<number> {

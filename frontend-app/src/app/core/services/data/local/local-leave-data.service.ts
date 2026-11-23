@@ -29,7 +29,7 @@ export class LocalLeaveDataService extends LeaveDataService {
 
   saveRequest(request: LeaveRequest): Observable<LeaveRequest> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.leaveRequests, () =>
+      db.transaction('rw', db.outbox, db.leaveRequests, () =>
         new LocalCollection<LeaveRequest>(db.leaveRequests).upsert(request)
       )
     );

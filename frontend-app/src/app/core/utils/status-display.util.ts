@@ -84,6 +84,7 @@ export const SYNC_STATE_DISPLAY: Record<SyncState, StatusDisplay> = {
   ONLINE: { label: 'Online', tone: 'success' },
   SYNCING: { label: 'Syncing', tone: 'info' },
   OFFLINE: { label: 'Offline', tone: 'warning' },
+  NEEDS_ATTENTION: { label: 'Needs attention', tone: 'danger' },
 };
 
 export function getActiveDisplay(active: boolean): StatusDisplay {

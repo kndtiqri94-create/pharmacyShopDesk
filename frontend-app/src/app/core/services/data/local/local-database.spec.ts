@@ -90,8 +90,8 @@ describe('LocalDatabase', () => {
     await firstValueFrom(products.save({ ...product, name: 'Amoxicillin (edited)' }));
     const customersBefore = await firstValueFrom(sales.getCustomers());
 
-    const versionTwo: SchemaVersion = {
-      version: 2,
+    const versionThree: SchemaVersion = {
+      version: 3,
       stores: { auditNotes: 'id' },
       upgrade: async transaction => {
         await transaction
@@ -108,7 +108,7 @@ describe('LocalDatabase', () => {
         useValue: () =>
           new LocalDatabase(environment.databaseName, environment.databaseOptions, [
             ...LOCAL_SCHEMA_VERSIONS,
-            versionTwo,
+            versionThree,
           ]),
       },
     ]);
@@ -123,7 +123,7 @@ describe('LocalDatabase', () => {
     );
     const events = TestBed.inject(LocalDbEvents).list();
     expect(
-      events.some(event => event.code === 'local-db.upgrade' && event.detail === 2)
+      events.some(event => event.code === 'local-db.upgrade' && event.detail === 3)
     ).toBeTrue();
   });
 

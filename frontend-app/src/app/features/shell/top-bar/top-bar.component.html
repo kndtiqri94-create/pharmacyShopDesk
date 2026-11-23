@@ -56,3 +56,14 @@
     </div>
   }
 </header>
+<app-confirm-dialog
+  title="Sign out with unsent changes?"
+  confirmLabel="Sign out anyway"
+  cancelLabel="Stay signed in"
+  [danger]="true"
+  [open]="signOutConfirmOpen()"
+  (confirmed)="confirmSignOut()"
+  (cancelled)="cancelSignOut()"
+>
+  <p>{{ signOutWarning }}</p>
+</app-confirm-dialog>

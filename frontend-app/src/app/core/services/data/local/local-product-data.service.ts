@@ -5,6 +5,7 @@ import { StockChangeContext } from '../../../models/domain/stock-movement.model'
 import { StockMovementType } from '../../../models/enums/stock-movement-type.enum';
 import { sortBatchesByExpiry } from '../../../utils/batch-order.util';
 import { nextRecordId } from '../../../utils/document-number.util';
+import { sameContent } from '../../../utils/stable-json.util';
 import { PRODUCT_LEVEL_BATCH_ID, StockSums, batchKey } from '../../../utils/stock-ledger.util';
 import { DuplicateSkuError } from '../duplicate-sku.error';
 import { ProductDataService } from '../product-data.service';
@@ -59,7 +60,7 @@ export class LocalProductDataService extends ProductDataService {
 
   save(product: Product, context: StockChangeContext = DEFAULT_CONTEXT): Observable<Product> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.products, db.stockMovements, db.meta, async () => {
+      db.transaction('rw', db.outbox, db.products, db.stockMovements, db.meta, async () => {
         await this.assertSkuIsFree(db, product);
         const id = product.id === '' ? await this.nextId(db) : product.id;
         return this.write(db, { ...product, id }, context);
@@ -72,7 +73,7 @@ export class LocalProductDataService extends ProductDataService {
     context: StockChangeContext = DEFAULT_CONTEXT
   ): Observable<readonly Product[]> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.products, db.stockMovements, db.meta, async () => {
+      db.transaction('rw', db.outbox, db.products, db.stockMovements, db.meta, async () => {
         const known = new Set(await db.products.toCollection().primaryKeys());
         if (products.some(product => !known.has(product.id))) {
           throw new Error('Cannot save a product that does not exist.');
@@ -118,8 +119,10 @@ export class LocalProductDataService extends ProductDataService {
         quantity: batch.quantity - (after.byBatch.get(batchKey(product.id, batch.id)) ?? 0),
       })),
     };
-    await db.products.put(row);
-    db.afterWrite('products', row.id, 'put');
+    if (existing === undefined || !sameContent(existing, row)) {
+      await db.products.put(row);
+      await db.enqueue('products', row.id, 'put', row);
+    }
     return toProduct(row, after);
   }
 

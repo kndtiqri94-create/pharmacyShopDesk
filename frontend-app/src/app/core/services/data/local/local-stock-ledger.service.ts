@@ -45,7 +45,8 @@ export class LocalStockLedgerService {
     if (movements.length === 0) return movements;
     await db.stockMovements.bulkAdd(movements);
     await writeMeta(db, META_KEYS.movementSeq, seq);
-    for (const movement of movements) db.afterWrite('stockMovements', movement.id, 'put');
+    for (const movement of movements)
+      await db.enqueue('stockMovements', movement.id, 'put', movement);
     return movements;
   }
 
@@ -70,7 +71,7 @@ export class LocalStockLedgerService {
     db: LocalDatabase,
     incoming: readonly StockMovement[]
   ): Promise<StockMovement[]> {
-    return db.transaction('rw', db.stockMovements, db.meta, async () => {
+    return db.transaction('rw', db.outbox, db.stockMovements, db.meta, async () => {
       const current = await this.list(db);
       const merged = mergeMovements(current, incoming);
       const added = merged.slice(current.length);

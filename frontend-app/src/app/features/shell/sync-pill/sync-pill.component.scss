@@ -34,3 +34,7 @@
 .pill[data-tone='warning'] .pill__dot {
   background: var(--sd-warning);
 }
+
+.pill[data-tone='danger'] .pill__dot {
+  background: var(--sd-danger);
+}

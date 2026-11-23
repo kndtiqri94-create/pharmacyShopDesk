@@ -21,7 +21,7 @@ export class LocalSupplierDataService extends SupplierDataService {
 
   save(item: Supplier): Observable<Supplier> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.suppliers, () =>
+      db.transaction('rw', db.outbox, db.suppliers, () =>
         new LocalCollection<Supplier>(db.suppliers).upsert(item)
       )
     );

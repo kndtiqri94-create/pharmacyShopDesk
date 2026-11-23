@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+
+.attention {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-2);
+}
+
+.attention__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.attention__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sd-space-1);
+  padding: var(--sd-space-3);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-md);
+  background: var(--sd-surface);
+}
+
+.attention__reason {
+  color: var(--sd-ink);
+}

@@ -21,7 +21,7 @@ export class LocalEmployeeDataService extends EmployeeDataService {
 
   save(employee: Employee): Observable<Employee> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.employees, () =>
+      db.transaction('rw', db.outbox, db.employees, () =>
         new LocalCollection<Employee>(db.employees).upsert(employee)
       )
     );
@@ -29,7 +29,7 @@ export class LocalEmployeeDataService extends EmployeeDataService {
 
   delete(id: string): Observable<boolean> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.employees, () =>
+      db.transaction('rw', db.outbox, db.employees, () =>
         new LocalCollection<Employee>(db.employees).remove(id)
       )
     );

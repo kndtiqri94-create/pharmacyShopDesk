@@ -16,6 +16,7 @@ import { InMemoryProductSyncServer } from './data/in-memory/in-memory-product-sy
 import { ProductDataService } from './data/product-data.service';
 import { ProductSyncServer } from './data/product-sync-server';
 import { ProductSyncStateStore } from './data/product-sync-state.store';
+import { SyncDataService } from './data/sync-data.service';
 import {
   PosProductSyncService,
   ProductSyncResult,
@@ -478,6 +479,50 @@ describe('PosProductSyncService', () => {
     }));
     return { batchNumber, records, serverOnlyRecords: [] };
   }
+
+  describe('exchange with the central record (S-3.4.2, OQ48)', () => {
+    it('sends waiting changes and collects server changes before the first batch, and again after the last', async () => {
+      await signInAs(UserRole.CASHIER);
+      const order: string[] = [];
+      spyOn(TestBed.inject(SyncDataService), 'exchangeBeforeProductUpdate').and.callFake(() => {
+        order.push('exchange');
+        return of(true);
+      });
+      const original = server().syncBatch.bind(server());
+      spyOn(server(), 'syncBatch').and.callFake(request => {
+        order.push('batch');
+        return original(request);
+      });
+      expectSuccess(await service().sync());
+      expect(order).toEqual(['exchange', 'batch', 'exchange']);
+    });
+
+    it('does not start when the exchange could not finish and says nothing was changed', async () => {
+      await signInAs(UserRole.CASHIER);
+      spyOn(TestBed.inject(SyncDataService), 'exchangeBeforeProductUpdate').and.returnValue(
+        of(false)
+      );
+      const batch = spyOn(server(), 'syncBatch');
+      const failure = expectSyncFailure(await service().sync());
+      expect(failure.reason).toBe('unreachable');
+      expect(failure.message).toContain('Nothing was changed');
+      expect(batch).not.toHaveBeenCalled();
+    });
+
+    it('sends no stock difference when device stock already travels as movements', async () => {
+      await signInAs(UserRole.CASHIER);
+      const sync = TestBed.inject(SyncDataService) as { stockTravelsAsMovements: boolean };
+      Object.defineProperty(sync, 'stockTravelsAsMovements', { value: true });
+      await sell('prod-002', 2);
+      const batch = spyOn(server(), 'syncBatch').and.callThrough();
+      expectSuccess(await service().sync());
+      expectSuccess(await service().sync());
+      const deltas = batch.calls
+        .allArgs()
+        .flatMap(([request]) => request.records.map(record => record.stockDelta));
+      expect(deltas.every(delta => delta === 0)).toBeTrue();
+    });
+  });
 
   function stubProducts(products: Product[]) {
     return {

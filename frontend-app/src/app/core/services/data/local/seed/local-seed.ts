@@ -25,7 +25,7 @@ import { SETTINGS_SEED } from '../../in-memory/seed/settings.seed';
 import { SUPPLIER_PAYMENT_SEED } from '../../in-memory/seed/supplier-payment.seed';
 import { SUPPLIER_SEED } from '../../in-memory/seed/supplier.seed';
 import { USER_SEED } from '../../in-memory/seed/user.seed';
-import { LocalDatabase, ProductRow, Row } from '../local-database';
+import { LocalDatabase, ProductRow, Row, suppressOutbox } from '../local-database';
 import { DOCUMENT_IDS, META_KEYS, readMeta, writeDocument, writeMeta } from '../local-meta';
 import { skuKeyOf } from '../local-product-keys';
 import { sanitizeUser } from '../local-user-sanitizer';
@@ -73,6 +73,7 @@ async function seedCollections(db: LocalDatabase): Promise<void> {
 
 export async function seedLocalDatabase(db: LocalDatabase, now: string): Promise<boolean> {
   return db.transaction('rw', db.tables, async () => {
+    suppressOutbox();
     if ((await readMeta<string>(db, META_KEYS.seededAt)) !== undefined) return false;
     await seedProducts(db);
     await seedCollections(db);

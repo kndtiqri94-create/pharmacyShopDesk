@@ -28,7 +28,7 @@ export class LocalUserDataService extends UserDataService {
 
   save(user: AppUser): Observable<AppUser> {
     return this.databaseProvider.observe(db =>
-      db.transaction('rw', db.users, () =>
+      db.transaction('rw', db.outbox, db.users, () =>
         new LocalCollection<AppUser>(db.users).upsert(sanitizeUser(user))
       )
     );
